@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-007",
+  "test": "Bundle hash mismatch — bundle does not match Host A report",
+  "expected": "Reject — security error, do not trust bundle",
+  "observed": "Rejected (SECURITY: bundle hash does not match Host A report! execution aborts)",
+  "status": "PASS",
+  "evidence": "run_on_host_b.py: external bundle hash verification aborts on mismatch"
+}

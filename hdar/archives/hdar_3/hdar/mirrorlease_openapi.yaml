@@ -1,0 +1,81 @@
+openapi: 3.1.0
+info:
+  title: MirrorLease Guardian
+  version: 1.0.0
+  description: Narrow, owner-controlled access to files retained on a local Mac.
+servers:
+  - url: https://guardian.example.invalid
+    description: Replace with the owner's guarded HTTPS gateway.
+paths:
+  /v1/knocks:
+    post:
+      operationId: mirrorLeaseKnock
+      summary: Present a device-signed invitation and receive public lease metadata.
+      parameters:
+        - in: header
+          name: X-MirrorLease-Transport
+          schema: {type: string, const: gpt_action}
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [invitation]
+              properties:
+                invitation: {type: string}
+                agent_id: {type: string}
+                conversation_label: {type: string}
+      responses:
+        '200':
+          description: Verified lease metadata and a signed knock receipt.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ProtocolResponse'}
+  /v1/requests:
+    post:
+      operationId: mirrorLeaseRequest
+      summary: Request one operation; the laptop asks its owner before disclosure.
+      security: [{leaseBearer: []}]
+      parameters:
+        - in: header
+          name: X-MirrorLease-Transport
+          schema: {type: string, const: gpt_action}
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [invitation_id, citizen_id, operation]
+              properties:
+                invitation_id: {type: string}
+                citizen_id: {type: string}
+                operation: {type: string, enum: [read, summarize, verify_hash]}
+                agent_id: {type: string}
+                conversation_label: {type: string}
+      responses:
+        '200':
+          description: The result or explicit owner denial, with a signed receipt.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ProtocolResponse'}
+        '401': {description: Missing or invalid lease capability}
+        '403': {description: Operation outside the signed lease}
+        '410': {description: Lease expired, revoked, or destroyed}
+components:
+  securitySchemes:
+    leaseBearer:
+      type: http
+      scheme: bearer
+      description: The disposable lease token, never a permanent API key.
+  schemas:
+    ProtocolResponse:
+      type: object
+      properties:
+        ok: {type: boolean}
+        protocol: {type: string, const: mirrorlease/v1}
+        receipt: {type: object, additionalProperties: true}
+      additionalProperties: true

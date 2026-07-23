@@ -1,0 +1,13 @@
+{
+  "session_id": "0d4cab24f8c4",
+  "action": "message_visitor",
+  "status": "fail",
+  "timestamp": "2026-07-21T05:00:50.730036+00:00",
+  "elapsed_s": 31.44,
+  "username": "Karpathianwolf",
+  "reason": "no_message_field",
+  "page_url": "https://rentmasseur.com/mailbox/compose?to=Karpathianwolf",
+  "page_title": "404 Not Found | RentMasseur.com",
+  "iframe_count": 1,
+  "receipt_hash": "90ce076765cc567b"
+}

@@ -1,0 +1,3 @@
+{"timestamp": "2026-06-26T08:26:25.673686+00:00", "date": "2026-06-26", "profile_views": 500, "contact_clicks": 30, "new_visits": 10, "new_emails": 2, "bio_id": "api_test", "availability_status": true, "notes": ""}
+{"timestamp": "2026-06-26T08:26:57.092520+00:00", "date": "2026-06-26", "profile_views": 2802, "contact_clicks": 135, "new_visits": 31, "new_emails": 0, "bio_id": "karpathian_wolf_live", "availability_status": true, "notes": "Real baseline from rm_traffic snapshot. CTR=4.82%. Starting targeted_wolf_v1 experiment."}
+{"timestamp": "2026-06-26T09:05:32.746140+00:00", "date": "2026-06-26", "profile_views": 2802, "contact_clicks": 135, "new_visits": 31, "new_emails": 0, "bio_id": "karpathianwolf_live", "availability_status": true, "notes": ""}

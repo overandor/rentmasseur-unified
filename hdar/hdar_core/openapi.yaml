@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: HDAR Continuity API
+  version: 1.0.0
+  description: |
+    Provider-neutral agent continuity control plane.
+    Seal, restore, verify, and manage agent capsules across execution providers.
+  license:
+    name: MIT
+
+servers:
+  - url: http://127.0.0.1:8390
+    description: Local development
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  version: { type: string }
+
+  /seal:
+    post:
+      summary: Seal a capsule from a workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workspace_dir, agent_id]
+              properties:
+                workspace_dir: { type: string }
+                agent_id: { type: string }
+                agent_name: { type: string }
+                objective: { type: string }
+                continuation_point: { type: string }
+                capabilities:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name: { type: string }
+                      scope: { type: string }
+                epoch_sequence: { type: integer }
+      responses:
+        "200":
+          description: Sealed capsule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Capsule"
+
+  /restore:
+    post:
+      summary: Restore a capsule on the local host
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [capsule, workspace_dir]
+              properties:
+                capsule:
+                  $ref: "#/components/schemas/Capsule"
+                workspace_dir: { type: string }
+                holder_id: { type: string }
+      responses:
+        "200":
+          description: Restoration result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  restored: { type: boolean }
+                  runtime_id: { type: string }
+                  fencing_token: { type: string }
+                  lease_generation: { type: integer }
+
+  /verify:
+    post:
+      summary: Verify a continuity chain offline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capsules:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Capsule"
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid: { type: boolean }
+                  checks_passed: { type: integer }
+                  checks_failed: { type: integer }
+                  problems:
+                    type: array
+                    items: { type: string }
+
+  /metrics:
+    get:
+      summary: Get metrics snapshot
+      responses:
+        "200":
+          description: Metrics
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /events:
+    get:
+      summary: Get events since timestamp
+      parameters:
+        - name: since
+          in: query
+          schema: { type: number }
+      responses:
+        "200":
+          description: Events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: { type: object }
+
+  /secrets:
+    post:
+      summary: Store a secret
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, value]
+              properties:
+                name: { type: string }
+                value: { type: string }
+      responses:
+        "200":
+          description: Stored
+
+  /secrets/log:
+    get:
+      summary: Get secret access audit log
+      responses:
+        "200":
+          description: Audit log
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  log:
+                    type: array
+                    items: { type: object }
+
+  /keys/rotate:
+    post:
+      summary: Rotate the owner signing key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason: { type: string }
+      responses:
+        "200":
+          description: Rotation receipt
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /owner/fingerprint:
+    get:
+      summary: Get owner key fingerprint
+      responses:
+        "200":
+          description: Fingerprint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fingerprint: { type: string }
+
+  /recover:
+    post:
+      summary: Run crash recovery
+      responses:
+        "200":
+          description: Recovery report
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  schemas:
+    Capsule:
+      type: object
+      properties:
+        agent_id: { type: string }
+        agent_name: { type: string }
+        epoch: { type: object }
+        parent_capsule_hash: { type: string }
+        objective: { type: string }
+        continuation_point: { type: string }
+        workspace_manifest: { type: object }
+        capabilities: { type: object }
+        receipts: { type: array, items: { type: object } }
+        manifest_hash: { type: string }
+        signature: { type: string }
+        signer_fingerprint: { type: string }
+        sealed_at: { type: number }

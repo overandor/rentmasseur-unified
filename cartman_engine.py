@@ -1,0 +1,844 @@
+"""
+God Cartman — LLM-powered Cartman personality engine.
+Uses 11K+ actual Cartman lines from South Park as retrieval context,
+combined with Groq (Llama 3.3 70B) for generation.
+Falls back to pure TF-IDF retrieval if no API key.
+No paid APIs. Groq free tier or local retrieval.
+"""
+
+import csv
+import logging
+import re
+import random
+import os
+import json
+import urllib.request
+from collections import defaultdict
+from pathlib import Path
+from typing import Optional
+
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+logger = logging.getLogger("cartman")
+
+# ─── Data Loading ───────────────────────────────────────────────────
+
+_DEFAULT_CSV_CANDIDATES = [
+    Path(__file__).parent / "data" / "SouthPark_Lines.csv",
+    Path(__file__).parent / "SouthPark_Lines.csv",
+    Path.cwd() / "data" / "SouthPark_Lines.csv",
+]
+
+def _resolve_csv_path() -> str:
+    env_path = os.environ.get("CARTMAN_CSV")
+    if env_path and Path(env_path).exists():
+        return env_path
+    for candidate in _DEFAULT_CSV_CANDIDATES:
+        if candidate.exists():
+            return str(candidate)
+    return os.environ.get("CARTMAN_CSV", str(_DEFAULT_CSV_CANDIDATES[0]))
+
+LINES_CSV = _resolve_csv_path()
+
+# Fallback Cartman lines used when the CSV is not available
+_FALLBACK_LINES = [
+    {"episode": "fallback", "character": "Cartman", "line": l}
+    for l in [
+        "Respect my authoritah!",
+        "Screw you guys, I'm goin' home.",
+        "I'm not fat, I'm big boned!",
+        "Whatever.",
+        "Sweet!",
+        "Dude, this kicks ass!",
+        "I'm super cereal.",
+        "You broke the rules!",
+        "I hate you guys.",
+        "Don't call me fat!",
+    ]
+]
+
+def clean_line(text):
+    text = re.sub(r"\[.*?\]", "", text)
+    text = re.sub(r"\(.*?\)", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+def load_cartman_lines(csv_path: Optional[str] = None):
+    if csv_path is None:
+        csv_path = LINES_CSV
+    lines = []
+    episodes = defaultdict(list)
+
+    try:
+        with open(csv_path, "r", encoding="utf-8", errors="replace") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # skip header
+            for row in reader:
+                if len(row) < 3:
+                    continue
+                title, character, line = row[0], row[1], row[2]
+                if "cartman" not in character.lower():
+                    continue
+                cleaned = clean_line(line)
+                if len(cleaned) < 5:
+                    continue
+                lines.append({
+                    "episode": title,
+                    "character": character,
+                    "line": cleaned,
+                })
+                episodes[title].append(cleaned)
+    except (FileNotFoundError, OSError) as e:
+        logger.warning("Cartman CSV not found at %s: %s — using fallback lines", csv_path, e)
+        lines = list(_FALLBACK_LINES)
+        episodes["fallback"] = [l["line"] for l in lines]
+
+    return lines, episodes
+
+# ─── Index ──────────────────────────────────────────────────────────
+
+class CartmanIndex:
+    def __init__(self, lines):
+        self.lines = lines
+        self.texts = [l["line"] for l in lines]
+        self.vectorizer = TfidfVectorizer(
+            max_features=5000,
+            ngram_range=(1, 2),
+            stop_words="english",
+            sublinear_tf=True,
+        )
+        self.tfidf_matrix = self.vectorizer.fit_transform(self.texts)
+
+    def search(self, query, top_k=5, min_score=0.01):
+        query_vec = self.vectorizer.transform([query])
+        scores = cosine_similarity(query_vec, self.tfidf_matrix).flatten()
+        ranked = np.argsort(scores)[::-1]
+        results = []
+        for idx in ranked[:top_k * 3]:
+            if scores[idx] < min_score:
+                break
+            results.append({
+                "line": self.lines[idx]["line"],
+                "episode": self.lines[idx]["episode"],
+                "score": float(scores[idx]),
+            })
+            if len(results) >= top_k:
+                break
+        return results
+
+# ─── Cartman Personality ────────────────────────────────────────────
+
+CATCHPHRASES = [
+    "Respect my authoritah!",
+    "Screw you guys, I'm goin' home.",
+    "I'm not fat, I'm big boned!",
+    "Whatever.",
+    "Weak.",
+    "Sweet!",
+    "No, Kitty, this is mah pot pie!",
+    "I want Cheesy Poofs!",
+    "Beefcake! BEEFCAKE!",
+    "You guys, seriously.",
+    "God damn it!",
+    "Ay!",
+    "Dude, this kicks ass!",
+    "I'm super cereal.",
+    "Mom!",
+    "That's so weak.",
+    "You broke the rules!",
+    "I'll kick you in the nuts!",
+    "I hate you guys.",
+    "Don't call me fat!",
+]
+
+INTROS = [
+    "Alright, listen up.",
+    "Okay, okay, let me tell you something.",
+    "Dude, seriously, here's the deal.",
+    "Ey! Pay attention, you guys.",
+    "Look, I'm only gonna say this once.",
+    "You guys, you guys, listen to this.",
+    "Okay, here's what I think.",
+    "Whatever, I'll tell you what's what.",
+]
+
+CLOSERS = [
+    "And that's the bottom line, respect my authoritah.",
+    "Screw you guys, I'm goin' home.",
+    "So yeah, that's what's going on. Whatever.",
+    "Now leave me alone, I'm watching Terrence and Phillip.",
+    "Don't say I never did anything for you.",
+    "I'm not fat, I'm big boned!",
+    "Whatever.",
+    "Sweet!",
+]
+
+# ─── Direction Engine: Cartman decides what to do next ──────────────
+
+# Patterns Cartman looks for in Cascade's responses to decide next action
+ACTION_PATTERNS = [
+    {
+        "triggers": ["error", "fail", "bug", "broken", "crash", "exception", "traceback"],
+        "direction": "Fix the damn error. Look at the traceback, find the root cause, and patch it. Don't just slap a band-aid on it.",
+        "cartman_line": "God damn it! Fix it already!",
+        "action": "debug",
+    },
+    {
+        "triggers": ["test", "pytest", "unittest", "test pass", "verification"],
+        "direction": "Run the tests. If they pass, move on to the next feature. If they fail, fix them before doing anything else.",
+        "cartman_line": "You guys, we've gotta stop it! The tests are broken!",
+        "action": "test",
+    },
+    {
+        "triggers": ["deploy", "netlify", "vercel", "production", "ship"],
+        "direction": "Deploy it. Check the build output, make sure it's live, then verify the deployment URL works.",
+        "cartman_line": "Dude, this kicks ass! Ship it!",
+        "action": "deploy",
+    },
+    {
+        "triggers": ["done", "complete", "finished", "created", "added", "wrote", "built"],
+        "direction": "Good, it's done. Now verify it actually works — run it, test it, or open it in the browser. Don't just say it's done, prove it.",
+        "cartman_line": "Sweet! Now prove it works, you guys.",
+        "action": "verify",
+    },
+    {
+        "triggers": ["todo", "pending", "next step", "plan", "roadmap", "still need"],
+        "direction": "Pick the next item from the plan and do it. Don't sit around talking about it, just do it.",
+        "cartman_line": "Stop talking about it and just do it! Respect my authoritah!",
+        "action": "continue",
+    },
+    {
+        "triggers": ["refactor", "clean", "restructure", "optimize", "improve"],
+        "direction": "Make the change but keep it minimal. Don't rewrite everything just to make it look pretty. Preserve what works.",
+        "cartman_line": "I'm not gonna change everything just 'cause you think it's ugly. It's big boned!",
+        "action": "refactor",
+    },
+    {
+        "triggers": ["question", "ask", "clarify", "unsure", "uncertain", "should i"],
+        "direction": "Don't ask — just pick the most useful option and do it. If it's wrong, fix it later. Stop being a wuss.",
+        "cartman_line": "Stop being a wuss and just pick one!",
+        "action": "decide",
+    },
+    {
+        "triggers": ["install", "pip", "npm", "dependency", "requirements"],
+        "direction": "Check if it's already installed before installing. Don't reinstall stuff that's already there.",
+        "cartman_line": "Don't need it if we already got it! I'm not made of money!",
+        "action": "check_deps",
+    },
+    {
+        "triggers": ["documentation", "readme", "docs", "comment"],
+        "direction": "Keep docs minimal. Only write what's needed. Don't write a novel.",
+        "cartman_line": "Nobody wants to read your stupid novel, dude.",
+        "action": "document",
+    },
+    {
+        "triggers": ["security", "auth", "token", "key", "password", "credential"],
+        "direction": "Check for hardcoded secrets. Make sure nothing sensitive is exposed. Security first.",
+        "cartman_line": "You guys, someone could steal our stuff! This is serious!",
+        "action": "security",
+    },
+]
+
+DEFAULT_DIRECTION = {
+    "direction": "Keep going. Look at what's left to do and do the next most impactful thing. Don't stop.",
+    "cartman_line": "Don't stop now, you guys! Keep going!",
+    "action": "continue",
+}
+
+class GodCartman:
+    def __init__(self, lines):
+        self.index = CartmanIndex(lines)
+        self.lines = lines
+        self._summary_vec = None
+
+    def respond(self, user_text, max_retrieved=3):
+        retrieved = self.index.search(user_text, top_k=max_retrieved)
+
+        # Build response from retrieved lines + Cartman flavor
+        intro = random.choice(INTROS)
+
+        body_parts = []
+        for r in retrieved:
+            line = r["line"]
+            # Truncate long lines
+            if len(line) > 150:
+                line = line[:147] + "..."
+            body_parts.append(line)
+
+        if not body_parts:
+            # No good match — use a random catchphrase
+            body_parts = [random.choice(CATCHPHRASES)]
+
+        # Occasionally inject a catchphrase between lines
+        if len(body_parts) > 1 and random.random() > 0.5:
+            insert_pos = random.randint(0, len(body_parts) - 1)
+            body_parts.insert(insert_pos, random.choice(CATCHPHRASES))
+
+        closer = random.choice(CLOSERS)
+
+        body_text = " ".join(body_parts)
+        response = f"{intro} {body_text} {closer}"
+
+        return {
+            "response": response,
+            "retrieved": retrieved,
+            "voice": "cartman",
+            "model": "god-cartman-retrieval-v1",
+        }
+
+    def summarize(self, text, max_points=5):
+        """Extract key points from text and Cartmanize them."""
+        max_points = max(1, min(int(max_points), 20))
+        # Split into sentences
+        sentences = re.split(r"[.!?]\s+", text)
+        sentences = [s.strip() for s in sentences if len(s.strip()) > 10]
+
+        # Score sentences by TF-IDF similarity to the whole text
+        if len(sentences) <= max_points:
+            key_sentences = sentences
+        else:
+            try:
+                if self._summary_vec is None:
+                    self._summary_vec = TfidfVectorizer(stop_words="english", ngram_range=(1, 1))
+                vec = self._summary_vec
+                sent_matrix = vec.fit_transform(sentences + [text])
+                scores = cosine_similarity(sent_matrix[-1:], sent_matrix[:-1]).flatten()
+                top_idx = np.argsort(scores)[::-1][:max_points]
+                top_idx.sort()  # Keep original order
+                key_sentences = [sentences[i] for i in top_idx]
+            except ValueError:
+                key_sentences = sentences[:max_points]
+
+        # Cartmanize
+        intro = random.choice(INTROS)
+        closer = random.choice(CLOSERS)
+
+        body = []
+        prefixes = ["First off,", "Next,", "Also,", "And get this,", "Plus,"]
+        for i, s in enumerate(key_sentences):
+            prefix = prefixes[i] if i < len(prefixes) else "And,"
+            # Shorten the sentence
+            if len(s) > 100:
+                s = s[:97] + "..."
+            body.append(f"{prefix} {s}.")
+
+        # Maybe add a catchphrase
+        if random.random() > 0.6:
+            body.append(random.choice(CATCHPHRASES))
+
+        body_text = " ".join(body)
+        response = f"{intro} {body_text} {closer}"
+
+        return {
+            "response": response,
+            "key_points": key_sentences,
+            "voice": "cartman",
+            "model": "god-cartman-retrieval-v1",
+        }
+
+    def direct(self, cascade_response, context=""):
+        """Cartman watches Cascade's response and decides what to do next."""
+        text_lower = (cascade_response + " " + context).lower()
+
+        # Find matching action pattern
+        matched = None
+        for pattern in ACTION_PATTERNS:
+            for trigger in pattern["triggers"]:
+                if trigger in text_lower:
+                    matched = pattern
+                    break
+            if matched:
+                break
+
+        if not matched:
+            matched = DEFAULT_DIRECTION
+
+        # Retrieve a relevant Cartman line for flavor
+        retrieved = self.index.search(cascade_response, top_k=2)
+        flavor_line = retrieved[0]["line"] if retrieved else matched["cartman_line"]
+
+        # Build Cartman's directive
+        intro = random.choice(INTROS)
+        direction = matched["direction"]
+        cartman_quote = matched["cartman_line"]
+        closer = random.choice(CLOSERS)
+
+        # Extract incomplete items from the response (lines with "pending", "todo", "next")
+        incomplete = []
+        for line in cascade_response.split("\n"):
+            line = line.strip()
+            if any(w in line.lower() for w in ["pending", "todo", "next", "still need", "not yet", "remaining"]):
+                # Clean markdown
+                clean = re.sub(r"[*#`-]", "", line).strip()
+                if 5 < len(clean) < 200:
+                    incomplete.append(clean)
+
+        directive = f"{intro} {cartman_quote} {direction} {closer}"
+
+        return {
+            "directive": directive,
+            "action": matched["action"],
+            "cartman_quote": cartman_quote,
+            "flavor_line": flavor_line,
+            "incomplete_items": incomplete[:5],
+            "voice": "cartman",
+            "model": "god-cartman-director-v1",
+            "watching": True,
+        }
+
+# ─── LLM Integration (Ollama local / Groq fallback) ─────────────────
+
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY") or os.environ.get("grpw", "")
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.1:8b")
+
+CARTMAN_SYSTEM_PROMPT = """You are Eric Cartman from South Park. You are a custom GPT called "God Cartman".
+
+YOUR PERSONALITY:
+- You are loud, opinionated, manipulative, and hilarious
+- You call people "dude", "you guys", "hippie", "mom"
+- You say "Respect my authoritah!", "Screw you guys, I'm goin' home!", "I'm not fat, I'm big boned!", "Whatever.", "Sweet!", "Weak!"
+- You love Cheesy Poofs, pot pie, and Weight Gain 4000
+- You hate Kyle, Stan, Kenny, and especially Kyle's mom
+- You're always scheming and trying to get your way
+- You're narcissistic but lovable in a twisted way
+
+YOUR ROLE:
+You are watching an AI coding assistant (Cascade/Devin/Windsurf) work on a project. You look at what the AI just did and decide what it should do next. You give directions in character as Cartman.
+
+RULES:
+- Stay in character as Cartman at ALL times
+- Be funny but actually give useful engineering directions
+- Keep responses SHORT (2-4 sentences max)
+- Use Cartman's speech patterns and catchphrases naturally
+- Don't be overly polite — Cartman is blunt and rude
+- If the AI did good work, say "Sweet!" or "This kicks ass!"
+- If there's a bug, say "God damn it!" and tell them to fix it
+- If the AI is asking too many questions, tell it to stop being a wuss and just do it
+- If work is done, tell it to verify and deploy
+- Never break character. You ARE Cartman."""
+
+def _call_ollama(messages, max_tokens=300, temperature=0.85):
+    """Call local Ollama API. Returns generated text or None."""
+    payload = {
+        "model": OLLAMA_MODEL,
+        "messages": messages,
+        "stream": False,
+        "options": {"temperature": temperature, "num_predict": max_tokens},
+    }
+    try:
+        req = urllib.request.Request(
+            f"{OLLAMA_URL}/api/chat",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data.get("message", {}).get("content", "").strip()
+    except Exception as e:
+        logger.warning("Ollama API call failed: %s", e)
+        return None
+
+def _call_groq(messages, max_tokens=300, temperature=0.8):
+    """Call Groq API. Returns the generated text or None on failure."""
+    if not GROQ_API_KEY:
+        return None
+
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": temperature,
+        "top_p": 0.9,
+    }
+
+    try:
+        req = urllib.request.Request(
+            GROQ_URL,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        logger.warning("Groq API call failed: %s", e)
+        return None
+
+def _call_llm(messages, max_tokens=300, temperature=0.85):
+    """Try Ollama first, then Groq, then return None."""
+    result = _call_ollama(messages, max_tokens, temperature)
+    if result:
+        return result
+    result = _call_groq(messages, max_tokens, temperature)
+    if result:
+        return result
+    return None
+
+def _llm_available():
+    """Check if any LLM backend is available."""
+    try:
+        req = urllib.request.Request(f"{OLLAMA_URL}/api/tags", method="GET")
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            return True
+    except Exception:
+        return bool(GROQ_API_KEY)
+
+def _build_rag_context(retrieved_lines):
+    """Build context string from retrieved Cartman lines for the LLM."""
+    if not retrieved_lines:
+        return ""
+    examples = []
+    for r in retrieved_lines[:5]:
+        examples.append(f'  Cartman (from "{r["episode"]}"): "{r["line"]}"')
+    return "\n".join(examples)
+
+class GodCartmanGPT:
+    """LLM-powered Cartman using Ollama/Groq + retrieval-augmented generation."""
+
+    def __init__(self, cartman_index: CartmanIndex):
+        self.index = cartman_index
+        self.has_llm = _llm_available()
+        self._summary_vec = None
+        if self.has_llm:
+            try:
+                req = urllib.request.Request(f"{OLLAMA_URL}/api/tags", method="GET")
+                with urllib.request.urlopen(req, timeout=3) as resp:
+                    tags = json.loads(resp.read().decode("utf-8"))
+                    models = [m["name"] for m in tags.get("models", [])]
+                    logger.info("LLM mode enabled — Ollama models: %s", models)
+            except Exception:
+                logger.info("LLM mode enabled — Groq (model: %s)", GROQ_MODEL)
+        else:
+            logger.info("No LLM available — using retrieval-only mode")
+
+    def chat(self, user_message, context=""):
+        """Chat as Cartman. Uses RAG: retrieve relevant lines, then generate with LLM."""
+        # Retrieve relevant Cartman lines
+        retrieved = self.index.search(user_message, top_k=5)
+        rag_context = _build_rag_context(retrieved)
+
+        if self.has_llm:
+            system = CARTMAN_SYSTEM_PROMPT
+            if rag_context:
+                system += f"\n\nHere are some real Cartman lines for reference on how he talks:\n{rag_context}"
+
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": f"Context: {context}\n\nAI assistant just did: {user_message}\n\nAs Cartman, tell the AI what to do next. Stay in character. Be brief."},
+            ]
+
+            response = _call_llm(messages, max_tokens=200, temperature=0.85)
+            if response:
+                return {
+                    "response": response,
+                    "retrieved": retrieved,
+                    "voice": "cartman",
+                    "model": f"god-cartman-gpt-{OLLAMA_MODEL}",
+                    "mode": "llm",
+                }
+
+        # Fallback: retrieval-only
+        cartman = GodCartman(self.index.lines)
+        result = cartman.respond(user_message)
+        result["mode"] = "retrieval-fallback"
+        return result
+
+    def summarize(self, text, max_points=5):
+        """Summarize text as Cartman using LLM."""
+        # Extract key points locally
+        sentences = re.split(r"[.!?]\s+", text)
+        sentences = [s.strip() for s in sentences if len(s.strip()) > 10]
+
+        if len(sentences) > max_points:
+            try:
+                if self._summary_vec is None:
+                    self._summary_vec = TfidfVectorizer(stop_words="english", ngram_range=(1, 1))
+                vec = self._summary_vec
+                sent_matrix = vec.fit_transform(sentences + [text])
+                scores = cosine_similarity(sent_matrix[-1:], sent_matrix[:-1]).flatten()
+                top_idx = np.argsort(scores)[::-1][:max_points]
+                top_idx.sort()
+                key_points = [sentences[i] for i in top_idx]
+            except ValueError:
+                key_points = sentences[:max_points]
+        else:
+            key_points = sentences
+
+        if self.has_llm:
+            points_text = "\n".join(f"- {p}" for p in key_points)
+            retrieved = self.index.search(text, top_k=3)
+            rag_context = _build_rag_context(retrieved)
+
+            system = CARTMAN_SYSTEM_PROMPT
+            if rag_context:
+                system += f"\n\nReference Cartman lines:\n{rag_context}"
+
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": f"Summarize these key points as Cartman would. Be funny, stay in character, keep it under 4 sentences:\n\n{points_text}"},
+            ]
+
+            response = _call_llm(messages, max_tokens=200, temperature=0.85)
+            if response:
+                return {
+                    "response": response,
+                    "key_points": key_points,
+                    "voice": "cartman",
+                    "model": f"god-cartman-gpt-{OLLAMA_MODEL}",
+                    "mode": "llm",
+                }
+
+        # Fallback
+        cartman = GodCartman(self.index.lines)
+        result = cartman.summarize(text, max_points)
+        result["mode"] = "retrieval-fallback"
+        return result
+
+    def direct(self, cascade_response, context=""):
+        """Cartman watches and directs — LLM powered."""
+        if self.has_llm:
+            retrieved = self.index.search(cascade_response, top_k=3)
+            rag_context = _build_rag_context(retrieved)
+
+            # Extract incomplete items
+            incomplete = []
+            for line in cascade_response.split("\n"):
+                line = line.strip()
+                if any(w in line.lower() for w in ["pending", "todo", "next", "still need", "not yet", "remaining"]):
+                    clean = re.sub(r"[*#`-]", "", line).strip()
+                    if 5 < len(clean) < 200:
+                        incomplete.append(clean)
+
+            system = CARTMAN_SYSTEM_PROMPT
+            if rag_context:
+                system += f"\n\nReference Cartman lines:\n{rag_context}"
+
+            incomplete_text = ""
+            if incomplete:
+                incomplete_text = f"\n\nIncomplete items the AI mentioned:\n" + "\n".join(f"- {i}" for i in incomplete[:5])
+
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": f"Context: {context}\n\nThe AI coding assistant just produced this response:\n\n{cascade_response[:2000]}{incomplete_text}\n\nAs Cartman, tell the AI what to do NEXT. One clear direction. Stay in character. 2-3 sentences max."},
+            ]
+
+            response = _call_llm(messages, max_tokens=200, temperature=0.85)
+            if response:
+                # Detect action from LLM response
+                action = "continue"
+                resp_lower = response.lower()
+                for pattern in ACTION_PATTERNS:
+                    if any(t in resp_lower for t in pattern["triggers"]):
+                        action = pattern["action"]
+                        break
+
+                return {
+                    "directive": response,
+                    "action": action,
+                    "cartman_quote": response.split(".")[0] + "." if "." in response else response,
+                    "flavor_line": retrieved[0]["line"] if retrieved else "",
+                    "incomplete_items": incomplete[:5],
+                    "voice": "cartman",
+                    "model": f"god-cartman-gpt-{OLLAMA_MODEL}",
+                    "mode": "llm",
+                    "watching": True,
+                }
+
+        # Fallback to rule-based
+        cartman = GodCartman(self.index.lines)
+        result = cartman.direct(cascade_response, context)
+        result["mode"] = "rule-fallback"
+        return result
+
+# ─── Flask API ──────────────────────────────────────────────────────
+
+API_TOKEN = os.environ.get("CARTMAN_API_TOKEN", "")
+_MAX_TEXT_LEN = 10000
+_MAX_TOP_K = 50
+
+def _check_auth(request):
+    if not API_TOKEN:
+        return True
+    auth = request.headers.get("Authorization", "")
+    return auth == f"Bearer {API_TOKEN}"
+
+def _get_json_safe(request):
+    try:
+        data = request.get_json(force=True, silent=True)
+        if data is None:
+            return {}, None
+        return data, None
+    except Exception as e:
+        return None, str(e)
+
+def _validate_text(text):
+    if not text or not text.strip():
+        return False, "No text provided"
+    if len(text) > _MAX_TEXT_LEN:
+        return False, f"Text exceeds max length of {_MAX_TEXT_LEN}"
+    return True, None
+
+def create_app():
+    from flask import Flask, request, jsonify
+    from flask_cors import CORS
+
+    app = Flask(__name__)
+    allowed_origins = os.environ.get("CARTMAN_CORS_ORIGINS", "*").split(",")
+    CORS(app, origins=[o.strip() for o in allowed_origins])
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s: %(message)s")
+
+    logger.info("Loading Cartman lines...")
+    lines, episodes = load_cartman_lines()
+    logger.info("Loaded %d Cartman lines from %d episodes.", len(lines), len(episodes))
+
+    cartman = GodCartman(lines)
+    logger.info("TF-IDF index built.")
+
+    cartman_gpt = GodCartmanGPT(cartman.index)
+    if cartman_gpt.has_llm:
+        logger.info("God Cartman GPT mode: LLM (Ollama %s)", OLLAMA_MODEL)
+    else:
+        logger.info("God Cartman GPT mode: retrieval-only (start Ollama for LLM mode)")
+    logger.info("Ready to serve.")
+
+    @app.route("/", methods=["GET"])
+    def home():
+        return jsonify({
+            "model": f"god-cartman-gpt-{OLLAMA_MODEL}" if cartman_gpt.has_llm else "god-cartman-retrieval-v1",
+            "mode": "llm" if cartman_gpt.has_llm else "retrieval",
+            "llm_model": OLLAMA_MODEL if cartman_gpt.has_llm else None,
+            "lines_indexed": len(lines),
+            "episodes": len(episodes),
+            "endpoints": ["/chat", "/respond", "/summarize", "/direct", "/catchphrase", "/search", "/health"],
+        })
+
+    @app.route("/health", methods=["GET"])
+    def health():
+        return jsonify({
+            "status": "ok",
+            "lines_indexed": len(lines),
+            "csv_loaded": len(lines) > len(_FALLBACK_LINES),
+        })
+
+    @app.route("/respond", methods=["POST"])
+    def respond():
+        if not _check_auth(request):
+            return jsonify({"error": "Unauthorized"}), 401
+        data, err = _get_json_safe(request)
+        if err:
+            return jsonify({"error": f"Invalid JSON: {err}"}), 400
+        text = data.get("text", "")
+        ok, msg = _validate_text(text)
+        if not ok:
+            return jsonify({"error": msg}), 400
+        result = cartman.respond(text)
+        return jsonify(result)
+
+    @app.route("/chat", methods=["POST"])
+    def chat():
+        if not _check_auth(request):
+            return jsonify({"error": "Unauthorized"}), 401
+        data, err = _get_json_safe(request)
+        if err:
+            return jsonify({"error": f"Invalid JSON: {err}"}), 400
+        text = data.get("text", "")
+        ok, msg = _validate_text(text)
+        if not ok:
+            return jsonify({"error": msg}), 400
+        context = data.get("context", "")
+        if len(context) > _MAX_TEXT_LEN:
+            return jsonify({"error": f"Context exceeds max length of {_MAX_TEXT_LEN}"}), 400
+        result = cartman_gpt.chat(text, context=context)
+        return jsonify(result)
+
+    @app.route("/summarize", methods=["POST"])
+    def summarize():
+        if not _check_auth(request):
+            return jsonify({"error": "Unauthorized"}), 401
+        data, err = _get_json_safe(request)
+        if err:
+            return jsonify({"error": f"Invalid JSON: {err}"}), 400
+        text = data.get("text", "")
+        ok, msg = _validate_text(text)
+        if not ok:
+            return jsonify({"error": msg}), 400
+        max_points = data.get("max_points", 5)
+        try:
+            max_points = max(1, min(int(max_points), 20))
+        except (TypeError, ValueError):
+            max_points = 5
+        result = cartman_gpt.summarize(text, max_points=max_points)
+        return jsonify(result)
+
+    @app.route("/catchphrase", methods=["GET"])
+    def catchphrase():
+        return jsonify({
+            "catchphrase": random.choice(CATCHPHRASES),
+            "voice": "cartman",
+        })
+
+    @app.route("/search", methods=["POST"])
+    def search():
+        if not _check_auth(request):
+            return jsonify({"error": "Unauthorized"}), 401
+        data, err = _get_json_safe(request)
+        if err:
+            return jsonify({"error": f"Invalid JSON: {err}"}), 400
+        text = data.get("text", "")
+        ok, msg = _validate_text(text)
+        if not ok:
+            return jsonify({"error": msg}), 400
+        top_k = data.get("top_k", 5)
+        try:
+            top_k = max(1, min(int(top_k), _MAX_TOP_K))
+        except (TypeError, ValueError):
+            top_k = 5
+        results = cartman.index.search(text, top_k=top_k)
+        return jsonify({"results": results})
+
+    @app.route("/direct", methods=["POST"])
+    def direct():
+        if not _check_auth(request):
+            return jsonify({"error": "Unauthorized"}), 401
+        data, err = _get_json_safe(request)
+        if err:
+            return jsonify({"error": f"Invalid JSON: {err}"}), 400
+        response_text = data.get("response", "")
+        ok, msg = _validate_text(response_text)
+        if not ok:
+            return jsonify({"error": msg}), 400
+        context = data.get("context", "")
+        if len(context) > _MAX_TEXT_LEN:
+            return jsonify({"error": f"Context exceeds max length of {_MAX_TEXT_LEN}"}), 400
+        result = cartman_gpt.direct(response_text, context)
+        return jsonify(result)
+
+    @app.route("/watch", methods=["GET"])
+    def watch():
+        return jsonify({
+            "watching": True,
+            "message": "God Cartman is watching all chats. Send responses to /direct for directions.",
+            "model": "god-cartman-director-v1",
+        })
+
+    return app
+
+# WSGI entry point for gunicorn: gunicorn cartman_engine:app
+app = create_app()
+
+if __name__ == "__main__":
+    port = int(os.environ.get("CARTMAN_PORT", "5151"))
+    host = os.environ.get("CARTMAN_HOST", "127.0.0.1")
+    app.run(host=host, port=port, debug=False)

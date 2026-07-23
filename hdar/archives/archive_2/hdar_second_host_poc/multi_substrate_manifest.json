@@ -1,0 +1,66 @@
+{
+  "created_at": 1784616046.4621818,
+  "fixes_applied": [
+    "Fix 1: Owner private key outside build dir",
+    "Fix 2: Verifier on Host A after sandbox shutdown",
+    "Fix 3: Pinned cryptography==44.0.1 + environment manifest",
+    "Fix 4: Guaranteed sandbox cleanup",
+    "Fix 5: File-based output protocol",
+    "Fix 6: Honest workspace-removed language",
+    "Fix 7: Separation model recorded",
+    "Fix 8: Normalized tar metadata",
+    "Fix 9: Independent semantic recomputation in verifier",
+    "Fix 10: Stage chain uses stage_hash field (not recomputed hash)"
+  ],
+  "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "protocol_version": "hdar.transport-capsule/v0.1",
+  "ruleset_version": "seed-criterion-v2",
+  "schema": "hdar.multi-substrate-manifest/v0.1",
+  "substrates": {
+    "codespaces": {
+      "host_b_platform": "Ubuntu 24.04 x86_64 (expected)",
+      "script": "run_two_machine_demo.sh (v2: pipefail, trap cleanup, verifier on Host A)",
+      "separation": {
+        "environment": true,
+        "infrastructure": true,
+        "operator": false
+      },
+      "status": "READY (script updated, pending run)",
+      "verifier_location": "host_a (post-codespace-deletion)"
+    },
+    "colab": {
+      "all_checks_passed": false,
+      "checks_passed": 10,
+      "checks_total": 13,
+      "host_b_platform": "Host A owner Ed25519 signature verified",
+      "note": "Local simulation. Real Colab run requires uploading to Google Colab (Linux VM).",
+      "notebook": "hdar_host_b_colab.ipynb",
+      "script": "run_colab_proof.py",
+      "separation": {
+        "environment": false,
+        "infrastructure": false,
+        "operator": false
+      },
+      "status": "LOCAL SIM (10/13 \u2014 platforms_differ expected fail on same host)",
+      "verifier_location": "host_a"
+    },
+    "e2b": {
+      "all_checks_passed": true,
+      "artifacts_dir": "e2b-results/",
+      "checks_passed": 15,
+      "checks_total": 15,
+      "host_b_platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+      "sandbox_id": "ij42a05k722x51iani7xy",
+      "sandbox_terminated": true,
+      "separation": {
+        "environment": true,
+        "infrastructure": true,
+        "operator": false
+      },
+      "status": "PASS",
+      "verifier_location": "host_a (post-sandbox-termination)"
+    }
+  },
+  "verifier_version": "0.3",
+  "worker_version": "1.1"
+}

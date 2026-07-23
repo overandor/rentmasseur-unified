@@ -1,0 +1,261 @@
+---
+title: "RentMasseur Bio Analysis Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme: bootstrap
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(jsonlite)
+library(DT)
+library(knitr)
+library(scales)
+
+# Load data
+load_data <- function() {
+  # Try to load JSON data
+  tryCatch({
+    json_data <- fromJSON("data/masseur_profiles.json")
+    df <- as.data.frame(t(json_data))
+    return(df)
+  }, error = function(e) {
+    # Fallback to CSV
+    tryCatch({
+      df <- read.csv("data/masseur_profiles.csv", stringsAsFactors = FALSE)
+      return(df)
+    }, error = function(e) {
+      return(NULL)
+    })
+  })
+}
+
+df <- load_data()
+
+# Process data
+if (!is.null(df)) {
+  df$has_bio <- ifelse(nchar(as.character(df$bio)) > 10, "Yes", "No")
+  df$bio_length <- nchar(as.character(df$bio))
+  df$last_updated <- as.character(df$last_updated)
+}
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Overview
+
+```{r}
+if (!is.null(df)) {
+  total_profiles <- nrow(df)
+  profiles_with_bio <- sum(df$has_bio == "Yes")
+  profiles_without_bio <- sum(df$has_bio == "No")
+  
+  valueBox(total_profiles, 
+           icon = "fa-users",
+           caption = "Total Profiles",
+           color = "primary")
+}
+```
+
+### Bio Coverage
+
+```{r}
+if (!is.null(df)) {
+  bio_pct <- round((profiles_with_bio / total_profiles) * 100, 1)
+  
+  valueBox(bio_pct, 
+           icon = "fa-file-text",
+           caption = "% with Bio Content",
+           color = ifelse(bio_pct > 50, "success", "warning"))
+}
+```
+
+### Data Status
+
+```{r}
+if (!is.null(df)) {
+  has_views <- sum(df$total_views > 0, na.rm = TRUE)
+  has_reg_date <- sum(df$registration_date != "", na.rm = TRUE)
+  
+  valueBox(has_views, 
+           icon = "fa-eye",
+           caption = "Profiles with View Data",
+           color = "info")
+}
+```
+
+### Key Findings
+
+**Data Limitations:**
+- CrowdSec captcha protection blocks automated data collection
+- View counts are placeholder values (999)
+- Registration dates not available
+- Only 1 profile has bio content (auto-generated)
+
+**Recommendations:**
+- Manual data collection required for real analysis
+- Use karpathianwolf bio template as best practice
+- Emphasize 24/7 availability in bios
+- Include professional credentials and call-to-action
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Profile Rankings
+
+```{r}
+if (!is.null(df)) {
+  DT::datatable(df %>%
+                select(username, total_views, views_per_day, location, has_bio, bio_length) %>%
+                arrange(desc(total_views)),
+              options = list(pageLength = 10),
+              colnames = c("Username", "Total Views", "Views/Day", "Location", "Has Bio", "Bio Length"))
+}
+```
+
+### Bio Status Distribution
+
+```{r}
+if (!is.null(df)) {
+  bio_status <- data.frame(
+    Status = c("With Bio", "Without Bio"),
+    Count = c(profiles_with_bio, profiles_without_bio)
+  )
+  
+  p <- ggplot(bio_status, aes(x = Status, y = Count, fill = Status)) +
+    geom_bar(stat = "identity") +
+    scale_fill_manual(values = c("With Bio" = "#2ecc71", "Without Bio" = "#e74c3c")) +
+    labs(title = "Bio Content Coverage",
+         x = "Bio Status",
+         y = "Number of Profiles") +
+    theme_minimal() +
+    theme(legend.position = "none")
+  
+  ggplotly(p)
+}
+```
+
+### Bio Length Analysis
+
+```{r}
+if (!is.null(df) && profiles_with_bio > 0) {
+  bio_df <- df %>% filter(bio_length > 0)
+  
+  p <- ggplot(bio_df, aes(x = username, y = bio_length, fill = has_bio)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    labs(title = "Bio Length by Profile",
+         x = "Username",
+         y = "Bio Length (characters)") +
+    theme_minimal()
+  
+  ggplotly(p)
+} else {
+  cat("No bio data available for visualization")
+}
+```
+
+Column
+-----------------------------------------------------------------------
+
+### Bio Best Practices
+
+**High-Performing Bio Characteristics:**
+
+1. **Availability**
+   - "Available 24/7" or "Flexible scheduling"
+   - Same-day availability mentions
+   - Weekend/holiday availability
+
+2. **Experience**
+   - Specific training/certifications
+   - Years of experience
+   - Specialized techniques
+
+3. **Benefits**
+   - Pain relief, stress reduction
+   - Wellness and relaxation focus
+   - Customized approach
+
+4. **Length**
+   - Medium length (200-400 characters)
+   - Long enough to convey value
+   - Short enough to be read quickly
+
+5. **Urgency**
+   - Call-to-action phrases
+   - Contact information
+   - Booking encouragement
+
+### karpathianwolf Bio Analysis
+
+**Current Bio Metrics:**
+- Length: 988 characters (very long)
+- Words: 136
+- Sentences: 8
+- Availability mentions: 4
+- Specialty mentions: 3
+- Benefit mentions: 2
+
+**Strengths:**
+- ✅ 24/7 availability clearly stated
+- ✅ Multiple availability options
+- ✅ Professional experience mentioned
+- ✅ Specialties listed
+- ✅ Call-to-action included
+
+**Potential Improvements:**
+- 📈 Add specific years of experience
+- 📈 Include certification details
+- 📈 Add client testimonials/reviews
+- 📈 Mention specific techniques offered
+- 📈 Include pricing or special offers
+
+### Methodology
+
+**Data Collection:**
+- C++ scraper with libcurl
+- Targeted 19 known profiles
+- Attempted login with credentials
+- Blocked by CrowdSec captcha
+
+**Analysis Framework:**
+- Bio keyword analysis
+- Length optimization
+- Availability messaging
+- Experience credentials
+- Call-to-action effectiveness
+
+**Limitations:**
+- Automated scraping blocked by security
+- Manual data collection required
+- Placeholder data used for demonstration
+- Real engagement metrics unavailable
+
+### Next Steps
+
+**To Get Real Data:**
+1. Manual profile visits with captcha solving
+2. Record actual view counts
+3. Note registration dates
+4. Copy bio content
+
+**To Improve Analysis:**
+1. A/B test different bio variations
+2. Track view changes over time
+3. Correlate bio features with engagement
+4. Identify top-performing patterns
+
+**To Optimize Your Profile:**
+1. Use karpathianwolf bio template
+2. Emphasize 24/7 availability
+3. Add professional credentials
+4. Include clear call-to-action
+5. Monitor and iterate based on results

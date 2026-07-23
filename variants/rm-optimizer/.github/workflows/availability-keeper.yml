@@ -1,0 +1,99 @@
+name: RentMasseur Metrics & Availability Keeper
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+    inputs:
+      manual_metrics:
+        description: 'JSON metrics from manual dashboard read (paste JSON)'
+        required: false
+        default: ''
+
+jobs:
+  collect-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME }}
+      RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Chrome and ChromeDriver
+        run: |
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
+          DRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_${CHROME_VERSION%%.*}")
+          wget -q "https://storage.googleapis.com/chrome-for-testing-public/${DRIVER_VERSION}/linux64/chromedriver-linux64.zip"
+          unzip -q chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Keep availability 24/7
+        run: |
+          # Run a single availability check-and-set cycle.
+          # --once ensures the script exits after one attempt (no infinite loop).
+          # No continue-on-error: if availability fails, CI must show RED.
+          # No || echo: the exit code must propagate.
+          python3 rentmasseur_availability.py --headless true --once
+
+      - name: Ingest manual metrics if provided
+        if: ${{ github.event.inputs.manual_metrics != '' }}
+        run: |
+          mkdir -p content
+          echo "{\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"source\":\"manual_upload\",\"body\":${{ github.event.inputs.manual_metrics }}}" >> content/metrics_ingest.jsonl
+          echo "Manual metrics ingested."
+
+      - name: Fetch metrics from HF Space
+        run: |
+          mkdir -p content
+          curl -s "https://josephrw-rentmasseur-optimizer.hf.space/api/report" -o content/hf_report.json || true
+          echo "HF Space report fetched."
+
+      - name: Process metrics and update state
+        run: |
+          python3 metrics_collector.py --process
+
+      - name: Write proof file
+        run: |
+          python3 metrics_collector.py --proof
+
+      - name: Commit and push state + proof
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/ || true
+          git add availability.json || true
+          git add receipts/ || true
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Metrics + availability keeper: $(date -u +%Y-%m-%d-%H:%M)"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+
+      - name: Upload debug artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-debug
+          path: |
+            content/
+            receipts/
+          retention-days: 7

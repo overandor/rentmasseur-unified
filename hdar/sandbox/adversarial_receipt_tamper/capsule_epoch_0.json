@@ -1,0 +1,75 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-test",
+  "agent_name": "test-agent",
+  "epoch": {
+    "epoch_id": "86b69d65ef534a24838b3bc30a5940a1",
+    "agent_id": "agent-test",
+    "sequence": 0,
+    "parent_epoch": null,
+    "created_at": 1784582350.3220532
+  },
+  "parent_capsule_hash": null,
+  "objective": "test objective",
+  "continuation_point": "step 1",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "63aaa8bbec7d56e67064eeb88fa0d56da7f2e105ba02fe7218087a807e0b1999",
+        "size": 27,
+        "mode": 420
+      },
+      {
+        "rel_path": "task.py",
+        "content_hash": "2d748fe25f2542176478b701458b2650b9a5dabd66b226f1565d0745c473e915",
+        "size": 25,
+        "mode": 420
+      }
+    ],
+    "total_size": 52
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority never expands on migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-test",
+      "epoch_id": "86b69d65ef534a24838b3bc30a5940a1",
+      "timestamp": 1784582350.3225129,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+        "file_count": 2,
+        "total_size": 52,
+        "objective": "test objective",
+        "fencing_token": ""
+      },
+      "state_root": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+      "signer_fingerprint": "6909ec339b47f297",
+      "signer_role": "owner",
+      "receipt_hash": "94cbb06b73a68bf00760e278c545810e0971119436a6ed02d4fcb58fac8f5ddd",
+      "signature": "02d32ec9c32aa147c3b32c8f97e6558076677af655822af869d1f1a804969533e4552aa90f1baabf5dfb4c08db27481a61a89bcab96d70999cbded71186ce904"
+    }
+  ],
+  "manifest_hash": "27fc1e00bac811b2296423c524ec4d2f7cd6e9e5be6ee2d80d1312ba777d69cb",
+  "signer_fingerprint": "6909ec339b47f297",
+  "signature": "89a9076c148c312bc1a2eced78aeae8143da076d5c924f0a12546f9e96ef8bf2635dab65c93334fed4f0d56e1a8efd810a78cc24dd980386e8ff876d68b9ef00",
+  "sealed_at": 1784582350.32255
+}

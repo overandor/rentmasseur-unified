@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-008",
+  "test": "Corrupted workspace — block hash does not match manifest",
+  "expected": "Reject — workspace restoration not exact",
+  "observed": "Rejected (restore.exact=false, execution aborts)",
+  "status": "PASS",
+  "evidence": "run_on_host_b.py: restore_workspace check aborts on inexact restoration"
+}

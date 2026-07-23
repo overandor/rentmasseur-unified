@@ -1,0 +1,15 @@
+claim_id: CLM-0010
+statement: "The deploy package supports blind replication without founder assistance."
+evidence_ids:
+  - EVP-0018
+  - EVP-0019
+independent_verification_procedure: |
+  1. Provide deploy package and runbook to an operator who has never spoken to the founder
+  2. Operator executes documented steps on their own machine
+  3. Operator produces host_b_report.json, host_b_evidence_packet.json,
+     successor_capsule_epoch_2.tar.gz
+  4. Third-party verifier reports 11/11 checks on independent host
+current_status: blind_replication_completed
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: all 11 checks on independent host

@@ -1,0 +1,79 @@
+HDAR Cross-Platform Continuation Proof — Host B Deployment Package
+============================================
+
+This package contains everything needed to run Host B on an independent
+machine and produce a cryptographically verified continuation proof.
+
+CONTENTS
+--------
+  run_on_host_b.py          — Host B runner (self-contained)
+  transport_capsule_epoch_1_signed.tar.gz — Owner-signed E1 capsule
+  host_a_build_report.json  — Host A build report (for cross-verification)
+  owner_public_key.txt      — Owner Ed25519 public key (out-of-band channel)
+  third_party_verifier.py   — Offline verifier (run on a THIRD machine)
+  INSTRUCTIONS.txt          — This file
+
+PREREQUISITES
+-------------
+  - Python 3.9+
+  - cryptography package: pip install cryptography
+
+STEPS
+-----
+
+1. Transfer this entire directory to an independent Linux machine.
+
+2. Run the Host B runner:
+
+   # Verify runner integrity first:
+  RUNNER_SHA="74b42223e8bc80578a0659488987799b8c2cab051ea84e01a800d6f57ebb73f3"
+  sha256sum run_on_host_b.py  # should match $RUNNER_SHA
+
+  python3 run_on_host_b.py \
+       --bundle transport_capsule_epoch_1_signed.tar.gz \
+       --host-a-report host_a_build_report.json \
+       --owner-public-key $(cat owner_public_key.txt) \
+       --verify-runner-hash "$RUNNER_SHA" \
+       --host-label host-b-independent \
+       --operator-identity "your-name-or-pseudonym" \
+       --out host_b_output
+
+3. Collect the output directory:
+   - host_b_output/host_b_report.json    (signed Host B report)
+   - host_b_output/host_b_evidence_packet.json (signed evidence packet)
+   - host_b_output/successor_capsule_epoch_2.tar.gz (signed E2 capsule)
+   - host_b_output/capsule_epoch_2/ (E2 capsule directory)
+
+4. Transfer the output to a THIRD machine and run the verifier:
+
+   python3 third_party_verifier.py \
+       --capsule-e1 capsule_epoch_1 \
+       --capsule-e2 host_b_output/capsule_epoch_2 \
+       --host-b-report host_b_output/host_b_report.json \
+       --evidence-packet host_b_output/host_b_evidence_packet.json \
+       --owner-public-key $(cat owner_public_key.txt) \
+       --host-a-platform "macOS-26.5.2-arm64-arm-64bit"
+
+   The verifier performs 11 checks. On an independent Linux host, all 11 should pass:
+   1. owner_signature: Host A Ed25519 signature verified
+   2. e1_integrity: E1 capsule manifest, blocks, and receipt verified
+   3. e2_integrity: E2 capsule manifest, blocks, and receipt verified
+   4. lineage: E1 -> E2 chain verified (parent hash + epoch +1)
+   5. state_advanced: workspace root hash changed (state actually advanced)
+   6. host_b_signature: Host B Ed25519 signature verified
+   7. task_continuation: deterministic task passed (sum of primes < 100 = 1060)
+   8. platforms_differ: Host A platform != Host B platform (cross-platform continuation evidence)
+   9. report_e1_cross_check: Host B report input_capsule matches E1 manifest
+   10. report_e2_cross_check: Host B report successor_capsule matches E2 manifest
+   11. evidence_packet_signature: evidence packet has independent Ed25519 signature
+
+   NOTE: Check 8 (platforms_differ) will FAIL if run on the same macOS machine.
+   This is expected — it requires a genuinely different platform (different OS/architecture).
+   On the same machine, 10/11 checks pass. On an independent Linux host, 11/11 pass.
+
+SECURITY NOTES
+--------------
+- The owner private key is NOT included in this package. It is stored securely outside the deploy directory.
+- The owner public key is safe to share — it only verifies signatures.
+- The Host B runner generates its own ephemeral Ed25519 keypair per run.
+- All signatures are real Ed25519, not HMAC placeholders.

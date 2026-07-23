@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local File Index — ProofTwin</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>◉ Local File Index</h1>
+    <div class="status" id="status">Loading...</div>
+  </header>
+
+  <main>
+    <section class="stats" id="stats">
+      <div class="stat"><span id="totalFiles">—</span><label>files</label></div>
+      <div class="stat"><span id="totalSize">—</span><label>total size</label></div>
+      <div class="stat"><span id="lastRun">—</span><label>last indexed</label></div>
+    </section>
+
+    <section class="controls">
+      <input type="text" id="search" placeholder="Search path or directory..." autofocus>
+      <input type="text" id="ext" placeholder="Extension filter, e.g. .py">
+      <button id="btnSearch">Search</button>
+      <button id="btnDups" class="secondary">Duplicates</button>
+    </section>
+
+    <section class="ext-cloud" id="extCloud"></section>
+
+    <section class="results">
+      <table id="resultsTable">
+        <thead>
+          <tr>
+            <th>SHA256</th>
+            <th>Size</th>
+            <th>Modified</th>
+            <th>Path</th>
+            <th>Entropy</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

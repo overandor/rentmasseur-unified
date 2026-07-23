@@ -1,0 +1,142 @@
+{
+  "schema": "hdar.technical-ledger/v0.1",
+  "description": "Technical truth only. A technical proof should never imply revenue. Revenue should never imply technical correctness.",
+  "entries": [
+    {
+      "id": "TECH-001",
+      "category": "implemented",
+      "claim": "Owner Ed25519 signing of capsule manifests",
+      "evidence": "owner_sign_capsule.py, capsule_epoch_1/manifest.json",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-002",
+      "category": "implemented",
+      "claim": "Host B Ed25519 report signing",
+      "evidence": "run_on_host_b.py, host_b_report.json",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-003",
+      "category": "implemented",
+      "claim": "Content-addressed workspace hashing",
+      "evidence": "manifest.json workspace_manifest.root_hash",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-004",
+      "category": "implemented",
+      "claim": "Cryptographic lineage chain (E1 -> E2)",
+      "evidence": "capsule_epoch_2/manifest.json parent_manifest_hash",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-005",
+      "category": "implemented",
+      "claim": "Third-party verifier (11 independent checks)",
+      "evidence": "third_party_verifier.py",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-006",
+      "category": "implemented",
+      "claim": "External bundle hash verification against Host A report",
+      "evidence": "run_on_host_b.py --host-a-report flag",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-007",
+      "category": "implemented",
+      "claim": "Runner self-authentication via SHA-256",
+      "evidence": "run_on_host_b.py --verify-runner-hash flag",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-008",
+      "category": "implemented",
+      "claim": "Safe tar extraction (path traversal + symlink rejection)",
+      "evidence": "run_on_host_b.py safe_extract_tar, test_audit_fixes.py",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-009",
+      "category": "implemented",
+      "claim": "Secret scanner for capsule workspaces",
+      "evidence": "secret_scanner.py",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-010",
+      "category": "externally_reproduced",
+      "claim": "Cross-platform continuation (macOS ARM -> Linux x86_64)",
+      "evidence": "GitHub Codespaces Ubuntu 24.04 x86_64, 11/11 verifier checks",
+      "verified": true,
+      "last_verified": "2026-07-20"
+    },
+    {
+      "id": "TECH-011",
+      "category": "pending",
+      "claim": "Multi-hop lineage (E1 -> E2 -> E3 -> E4)",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "TECH-012",
+      "category": "pending",
+      "claim": "Real autonomous agent workload continuation",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "TECH-013",
+      "category": "pending",
+      "claim": "Adversarial host evaluation (Host B attempts to cheat)",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "TECH-014",
+      "category": "pending",
+      "claim": "Hardware-backed remote attestation",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "TECH-015",
+      "category": "pending",
+      "claim": "Production-grade key rotation and revocation",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "TECH-016",
+      "category": "implemented",
+      "claim": "Execution broker with provider abstraction (local, ssh, colab)",
+      "evidence": "execution_broker.py",
+      "verified": true,
+      "last_verified": "2026-07-21"
+    },
+    {
+      "id": "TECH-017",
+      "category": "implemented",
+      "claim": "Functional repository structure (runtime, transport, verification, security, evidence, sdk, examples, docs, investor, archive)",
+      "evidence": "reorganize.sh",
+      "verified": true,
+      "last_verified": "2026-07-21"
+    }
+  ]
+}

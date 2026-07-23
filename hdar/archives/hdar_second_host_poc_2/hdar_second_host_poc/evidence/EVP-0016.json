@@ -1,0 +1,13 @@
+{
+  "evidence_id": "EVP-0016",
+  "source_files": ["run_on_host_b.py", "host_a_build_report.json"],
+  "hashes": {
+    "external_bundle_hash": "c4d741a108a93a6eb66a30e36bdbe971530dc5a82966ca95bbb98749621393e7",
+    "external_bundle_hash_match": true
+  },
+  "signatures": [],
+  "verifier_outputs": ["external_bundle_hash_match: true", "report_e1_cross_check: PASS", "report_e2_cross_check: PASS"],
+  "runtime_logs": ["Transport bundle SHA-256 verified against external Host A report"],
+  "generation_tool": "run_on_host_b.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-002",
+  "test": "Modified manifest — tamper with manifest.json after signing",
+  "expected": "Reject — manifest_hash mismatch",
+  "observed": "Rejected (computed manifest_hash != stored manifest_hash)",
+  "status": "PASS",
+  "evidence": "test_audit_fixes.py: test_tampered_manifest_rejection"
+}

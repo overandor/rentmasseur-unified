@@ -1,0 +1,92 @@
+{
+  "product": "MirrorLease",
+  "as_of": "2026-07-18",
+  "states": [
+    "implemented_and_tested",
+    "implemented_not_hardened",
+    "proposed",
+    "not_claimed"
+  ],
+  "claims": [
+    {
+      "id": "ML-001",
+      "claim": "A device-signed one-use lease binds a token hash, mailbox, recipient, challenge, exact file grants, task, and expiration.",
+      "status": "implemented_and_tested",
+      "evidence": ["palindrome/invitation.py", "test_palindrome.py"]
+    },
+    {
+      "id": "ML-002",
+      "claim": "Public file identity omits the private local path, and a public key alone grants no access.",
+      "status": "implemented_and_tested",
+      "evidence": ["palindrome/file_citizen.py", "test_palindrome.py"]
+    },
+    {
+      "id": "ML-003",
+      "claim": "Lease authority uses explicit states and expires atomically without time-based permission degradation.",
+      "status": "implemented_and_tested",
+      "evidence": ["palindrome/mailbox_manager.py", "machine/mailbox.py", "test_palindrome.py", "test_machine_layer.py"]
+    },
+    {
+      "id": "ML-004",
+      "claim": "Access checks the immutable grant snapshot captured by the signed lease.",
+      "status": "implemented_and_tested",
+      "evidence": ["palindrome/invitation.py", "palindrome/mailbox_manager.py", "test_palindrome.py"]
+    },
+    {
+      "id": "ML-005",
+      "claim": "Receipts are hash-linked, host-signed, commit to the origin request and completion rules, and support reverse tracing.",
+      "status": "implemented_and_tested",
+      "evidence": ["palindrome/receipt_chain.py", "test_palindrome.py"]
+    },
+    {
+      "id": "ML-006",
+      "claim": "Revocation invalidates live sessions and destruction removes live mailbox grants while receipt evidence remains.",
+      "status": "implemented_not_hardened",
+      "evidence": ["palindrome/invitation.py", "palindrome/mailbox_manager.py", "test_palindrome.py"],
+      "limit": "In-memory scrubbing is implemented; secure deletion from physical media is not proven."
+    },
+    {
+      "id": "ML-007",
+      "claim": "Finder right-click Share with AI workflow and clipboard invitation delivery are available.",
+      "status": "implemented_not_hardened",
+      "evidence": [
+        "MirrorLeaseFinderQuickAction/Sources/main.swift",
+        "MirrorLeaseFinderQuickAction/Workflow/Contents/Info.plist",
+        "MirrorLeaseFinderQuickAction/Workflow/Contents/document.wflow"
+      ],
+      "limit": "The native binary and Finder service are installed and registered. First-use clipboard execution awaits the owner's Keychain-creation approval."
+    },
+    {
+      "id": "ML-008",
+      "claim": "A hardened local gateway is reachable through MCP, GPT Actions, email, or HTTPS.",
+      "status": "proposed",
+      "evidence": []
+    },
+    {
+      "id": "ML-009",
+      "claim": "Private content is encrypted at rest and transient copies are securely destroyed.",
+      "status": "proposed",
+      "evidence": []
+    },
+    {
+      "id": "ML-010",
+      "claim": "Completed exchanges are anchored to a public blockchain timestamp.",
+      "status": "proposed",
+      "evidence": []
+    },
+    {
+      "id": "ML-011",
+      "claim": "A receipt cryptographically proves that an AI understood or attended to disclosed material.",
+      "status": "not_claimed",
+      "evidence": [],
+      "limit": "Receipts prove protocol events and checked outputs, not cognition."
+    },
+    {
+      "id": "ML-012",
+      "claim": "A lease grants full-system visibility or authority outside its listed file-operation grants.",
+      "status": "not_claimed",
+      "evidence": [],
+      "limit": "The design explicitly forbids ambient or full-system access."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "hdar.commercial-ledger/v0.1",
+  "description": "Commercial truth only. Revenue should never imply technical correctness. Technical correctness should never imply revenue.",
+  "entries": [
+    {
+      "id": "COMM-001",
+      "category": "interviewed",
+      "claim": "Identified target customer segment (teams running long-lived coding agents)",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "COMM-002",
+      "category": "pending",
+      "claim": "Design partner signed",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "COMM-003",
+      "category": "pending",
+      "claim": "Pilot agreement executed",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "COMM-004",
+      "category": "pending",
+      "claim": "Pilot completed successfully",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "COMM-005",
+      "category": "pending",
+      "claim": "First paid invoice",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    },
+    {
+      "id": "COMM-006",
+      "category": "pending",
+      "claim": "Pilot renewed or expanded",
+      "evidence": null,
+      "verified": false,
+      "last_verified": null
+    }
+  ]
+}

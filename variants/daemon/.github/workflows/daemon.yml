@@ -1,0 +1,98 @@
+name: RentMasseur Optimizer Daemon
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: true
+        default: 'daemon-once'
+        type: choice
+        options:
+          - daemon-once
+          - daily-promotion
+          - view-backfill
+          - traffic-cycle
+
+jobs:
+  daemon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      RM_USERNAME: ${{ secrets.RM_USERNAME }}
+      RM_PASSWORD: ${{ secrets.RM_PASSWORD }}
+      ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+      SPACE_NAME: ${{ secrets.HF_SPACE || 'rentmasseur-optimizer' }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      BACKFILL_VIEWS_DAILY: "0"
+      DAEMON_INTERVAL: "60"
+      TRAFFIC_CYCLE_MINUTES: "5"
+      DAILY_PROMOTION_HOUR: "6"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install selenium  # needed by rm_traffic engine
+
+      - name: Cache Chrome profile
+        uses: actions/cache@v4
+        with:
+          path: /tmp/rm_traffic_chrome
+          key: rm-chrome-profile-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            rm-chrome-profile-${{ runner.os }}-
+
+      - name: Run daemon (single cycle)
+        if: github.event.inputs.mode == 'daemon-once' || github.event.inputs.mode == ''
+        run: |
+          python daemon.py --once
+
+      - name: Run daily promotion
+        if: github.event.inputs.mode == 'daily-promotion'
+        run: |
+          python daily_promotion.py
+
+      - name: Run traffic cycle
+        if: github.event.inputs.mode == 'traffic-cycle'
+        run: |
+          python -c "from rm_traffic.engine import run_cycle; run_cycle()"
+
+      - name: Run view backfill
+        if: github.event.inputs.mode == 'view-backfill'
+        run: |
+          python backfill_views.py
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: daemon-output-${{ github.run_id }}
+          path: |
+            content/
+            logs/
+            rm_traffic/*.db
+            rm_traffic/*.log
+          if-no-files-found: ignore
+
+      - name: Commit updated content back to repo
+        if: github.event.inputs.mode == 'daemon-once'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/ logs/ receipts/
+          git diff --cached --quiet || git commit -m "daemon cycle output $(date -u +%Y-%m-%d-%H%M%S)"
+          git push
+        continue-on-error: true

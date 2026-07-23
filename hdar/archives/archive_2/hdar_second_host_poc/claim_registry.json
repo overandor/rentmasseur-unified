@@ -1,0 +1,170 @@
+{
+  "schema": "hdar.claim-registry/v0.1",
+  "description": "Machine-readable ledger of every technical claim, its evidence, verification method, and status. Every claim must map to an artifact. If no artifact exists, the claim is aspirational and belongs on the roadmap, not in the registry.",
+  "company_definition": "We build a proof-carrying runtime where portable computation is packaged into signed capsules that independent systems can verify, continue, and exchange through cryptographically linked evidence rather than institutional trust.",
+  "claims": [
+    {
+      "claim_id": "HDAR-001",
+      "claim": "A signed transport capsule can be authenticated after transfer.",
+      "evidence": [
+        "host_a_build_report.json (transport_capsule_tar.sha256)",
+        "capsule_epoch_1/manifest.json (owner_signature, owner_public_key)",
+        "run_on_host_b.py (BUNDLE_SHA256, external hash verification)"
+      ],
+      "verification_method": "Decode bundle, compute SHA-256, compare against host_a_build_report.json transport_capsule_tar.sha256. Verify owner Ed25519 signature on manifest using owner_public_key.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "owner_signature"
+    },
+    {
+      "claim_id": "HDAR-002",
+      "claim": "Host B can exactly restore a capsule workspace created on a different platform.",
+      "evidence": [
+        "host_b_report.json (restore.exact=true, restored_root_hash matches expected)",
+        "External reviewer Linux x86_64 execution (older hash-only runner)",
+        "test_seed_criterion.py (e1_integrity check passes)"
+      ],
+      "verification_method": "Run run_on_host_b.py on independent host. Compare restored workspace_root_hash against host_a_build_report.json capsule_epoch_1.workspace_root_hash.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "e1_integrity, e2_integrity"
+    },
+    {
+      "claim_id": "HDAR-003",
+      "claim": "A deterministic continuation task can be resumed and verified on Host B.",
+      "evidence": [
+        "host_b_report.json (task_result.ok=true, computed_result=1060, expected_result=1060)",
+        "src/worker.py (sum_of_primes_below function)",
+        "test_seed_criterion.py (task_continuation check passes)"
+      ],
+      "verification_method": "Execute src/worker.py on restored workspace. Compare output against expected result (1060). Record exit code and stdout.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "task_continuation"
+    },
+    {
+      "claim_id": "HDAR-004",
+      "claim": "Successor capsules are cryptographically linked to their parent through lineage hashes.",
+      "evidence": [
+        "capsule_epoch_2/manifest.json (parent_manifest_hash matches E1 manifest_hash)",
+        "capsule_epoch_2/manifest.json (epoch=2, parent_epoch=1)",
+        "test_seed_criterion.py (lineage check passes)"
+      ],
+      "verification_method": "Extract E2 manifest. Verify parent_manifest_hash equals E1 manifest_hash. Verify epoch = parent_epoch + 1.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "lineage"
+    },
+    {
+      "claim_id": "HDAR-005",
+      "claim": "Host B produces an Ed25519 signature on its execution report.",
+      "evidence": [
+        "host_b_report.json (host_b_signature, host_b_public_key)",
+        "test_seed_criterion.py (host_b_signature check passes)",
+        "third_party_verifier.py (verifies report signature independently)"
+      ],
+      "verification_method": "Extract host_b_public_key and host_b_signature from report. Recompute signed content (excluding signature and public key fields). Verify Ed25519 signature.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "host_b_signature"
+    },
+    {
+      "claim_id": "HDAR-006",
+      "claim": "An independent third-party verifier can validate the full chain without trusting either host.",
+      "evidence": [
+        "third_party_verifier.py (11 independent checks)",
+        "test_seed_criterion.py (10/11 checks pass locally, platforms_differ requires independent host)"
+      ],
+      "verification_method": "Run third_party_verifier.py with E1 capsule, E2 capsule, host_b_report.json, and owner public key on a third machine. All 11 checks must pass.",
+      "status": "independently_verified_11_of_11",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "all 11 checks"
+    },
+    {
+      "claim_id": "HDAR-007",
+      "claim": "The evidence packet has an independent Ed25519 signature distinct from the report signature.",
+      "evidence": [
+        "host_b_evidence_packet.json (signature, public_key)",
+        "test_seed_criterion.py (evidence_packet_signature check passes)"
+      ],
+      "verification_method": "Extract signature and public_key from evidence packet. Verify Ed25519 signature over packet content (excluding signature and public_key fields). Confirm signature differs from report signature.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "evidence_packet_signature"
+    },
+    {
+      "claim_id": "HDAR-008",
+      "claim": "The transport bundle hash can be verified against an external Host A build report, preventing circular trust.",
+      "evidence": [
+        "run_on_host_b.py (external bundle hash verification against host_a_build_report.json)",
+        "host_a_build_report.json (transport_capsule_tar.sha256)",
+        "console_log: 'Transport bundle SHA-256 verified against external Host A report'"
+      ],
+      "verification_method": "Provide --host-a-report to runner. Runner decodes bundle, computes SHA-256, compares against transport_capsule_tar.sha256 in report. Mismatch aborts execution.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "report_e1_cross_check, report_e2_cross_check"
+    },
+    {
+      "claim_id": "HDAR-009",
+      "claim": "The runner authenticates itself via SHA-256 hash verification.",
+      "evidence": [
+        "run_on_host_b.py (--verify-runner-hash flag)",
+        "host_a_build_report.json (transport_bundle.sha256)",
+        "console_log: 'Runner SHA-256 verified'"
+      ],
+      "verification_method": "Compute SHA-256 of run_on_host_b.py. Compare against --verify-runner-hash argument (sourced from host_a_build_report.json transport_bundle.sha256).",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "runner_sha256_verified (runner internal)"
+    },
+    {
+      "claim_id": "HDAR-010",
+      "claim": "The deploy package supports blind replication without founder assistance.",
+      "evidence": [
+        "hdar-deploy-package.tar.gz",
+        "RUN_ON_REAL_HOST_B.md (step-by-step instructions)",
+        "INSTRUCTIONS.txt (reproduction guide)"
+      ],
+      "verification_method": "Provide deploy package and runbook to an operator who has never spoken to the founder. Operator executes documented steps on their own machine and produces host_b_report.json, host_b_evidence_packet.json, successor_capsule_epoch_2.tar.gz, and third-party verification output (11/11 checks).",
+      "status": "blind_replication_completed",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "all 11 checks on independent host"
+    },
+    {
+      "claim_id": "HDAR-011",
+      "claim": "Secret detection prevents credential leakage in capsule workspaces.",
+      "evidence": [
+        "secret_scanner.py (scans for API keys, private keys, tokens, paths)",
+        "capsule_epoch_1 scan: 0 high-severity findings"
+      ],
+      "verification_method": "Run secret_scanner.py --workspace <capsule_dir> --block-on-secrets. Exit code 0 means no high-severity secrets detected.",
+      "status": "local_reproduction_complete",
+      "independent_reproduction": "not_required"
+    },
+    {
+      "claim_id": "HDAR-012",
+      "claim": "State advancement is cryptographically proven through workspace root hash change.",
+      "evidence": [
+        "capsule_epoch_1/manifest.json (workspace_root_hash)",
+        "capsule_epoch_2/manifest.json (workspace_root_hash differs)",
+        "test_seed_criterion.py (state_advanced check passes)"
+      ],
+      "verification_method": "Compare workspace_root_hash in E1 manifest vs E2 manifest. They must differ, proving state changed.",
+      "status": "independently_verified",
+      "independent_reproduction": "completed_github_codespaces_ubuntu_2404_x86_64",
+      "verifier_check": "state_advanced"
+    }
+  ],
+  "status_legend": {
+    "independently_verified": "Verified on independent host (GitHub Codespaces, Ubuntu 24.04, x86_64) with 11/11 verifier checks passing",
+    "independently_verified_11_of_11": "All 11 verifier checks passed on independent host",
+    "blind_replication_completed": "Deploy package was executed on independent host without founder assistance, producing complete evidence packet",
+    "local_reproduction_complete": "Verified in local simulation with independent cryptographic checks (superseded by independent verification)",
+    "cross_platform_verified_older_runner": "Verified on different OS with older hash-only runner (superseded by full independent run)",
+    "local_reproduction_complete_10_of_11": "10 of 11 checks pass locally; platforms_differ requires independent host (superseded by 11/11 on Codespaces)",
+    "package_ready": "Deploy package assembled and documented; blind replication not yet executed (superseded by completed replication)",
+    "pending": "Not yet independently reproduced",
+    "not_required": "Local verification is sufficient for this claim"
+  }
+}

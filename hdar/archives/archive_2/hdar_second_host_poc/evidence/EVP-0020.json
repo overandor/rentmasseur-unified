@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0020",
+  "source_files": ["secret_scanner.py"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["0 high-severity findings in capsule_epoch_1 workspace"],
+  "runtime_logs": [],
+  "generation_tool": "secret_scanner.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

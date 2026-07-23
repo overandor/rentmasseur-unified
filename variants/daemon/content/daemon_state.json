@@ -1,0 +1,83 @@
+{
+  "last_run": "2026-07-16T17:48:28.990088+00:00",
+  "health": {
+    "timestamp": "2026-07-16T17:48:28.990091+00:00",
+    "space": "rentmasseur-optimizer",
+    "subsystems": {
+      "rm_traffic.engine": false,
+      "rm_revenue_engine.revenue_ops": true,
+      "server": true
+    },
+    "credentials_set": true
+  },
+  "scheduler": {
+    "last_traffic": 1784224108.8927722,
+    "last_daily_promotion": null,
+    "last_view_backfill": "2026-07-16",
+    "last_bio_merge": "2026-07-16"
+  },
+  "latest_results": {
+    "bio_merge": {
+      "status": "success",
+      "exit_code": 0,
+      "stdout": "Merged 2,723 profiles -> /Users/alep/Downloads/rentmasseur-optimizer/../data/backups/real_bios_merged_20260716_134630.jsonl\nMissing views for 2,411 profiles -> /Users/alep/Downloads/rentmasseur-optimizer/../data/backups/missing_views_20260716_134630.jsonl\nReport -> /Users/alep/Downloads/rentmasseur-optimizer/../data/backups/merge_report_20260716_134630.txt\n",
+      "stderr": ""
+    },
+    "view_backfill": {
+      "status": "success",
+      "exit_code": 0,
+      "stdout": "Backfilling views for 2,411 profiles with 8 workers...\nBackfilled 2,411 profiles, 0 errors -> /Users/alep/Downloads/data/backups/backfilled_views_20260716_134630.jsonl\n",
+      "stderr": ""
+    },
+    "traffic_cycle": {
+      "status": "skipped",
+      "reason": "rm_traffic.engine not installed"
+    },
+    "daily_promotion": {
+      "status": "error",
+      "exit_code": 1,
+      "stdout": "Generating daily evidence packet from /Users/alep/Downloads/rm_traffic/profileops.db...\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/alep/Downloads/rentmasseur-optimizer/daily_promotion.py\", line 91, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/alep/Downloads/rentmasseur-optimizer/daily_promotion.py\", line 38, in main\n    packet = generate_daily_evidence_packet(args.traffic_db, bio_id=args.bio_id)\n  File \"/Users/alep/Downloads/rentmasseur-optimizer/rm_revenue_engine/revenue_ops.py\", line 371, in generate_daily_evidence_packet\n    traffic_conn = sqlite3.connect(rm_traffic_db)\nsqlite3.OperationalError: unable to open database file\n"
+    }
+  },
+  "history_tail": [
+    {
+      "name": "bio_merge",
+      "timestamp": "2026-07-16T17:46:30.113121+00:00",
+      "result": {
+        "status": "success",
+        "exit_code": 0,
+        "stdout": "Merged 2,723 profiles -> /Users/alep/Downloads/rentmasseur-optimizer/../data/backups/real_bios_merged_20260716_134630.jsonl\nMissing views for 2,411 profiles -> /Users/alep/Downloads/rentmasseur-optimizer/../data/backups/missing_views_20260716_134630.jsonl\nReport -> /Users/alep/Downloads/rentmasseur-optimizer/../data/backups/merge_report_20260716_134630.txt\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "view_backfill",
+      "timestamp": "2026-07-16T17:48:28.892147+00:00",
+      "result": {
+        "status": "success",
+        "exit_code": 0,
+        "stdout": "Backfilling views for 2,411 profiles with 8 workers...\nBackfilled 2,411 profiles, 0 errors -> /Users/alep/Downloads/data/backups/backfilled_views_20260716_134630.jsonl\n",
+        "stderr": ""
+      }
+    },
+    {
+      "name": "traffic_cycle",
+      "timestamp": "2026-07-16T17:48:28.892772+00:00",
+      "result": {
+        "status": "skipped",
+        "reason": "rm_traffic.engine not installed"
+      }
+    },
+    {
+      "name": "daily_promotion",
+      "timestamp": "2026-07-16T17:48:28.990058+00:00",
+      "result": {
+        "status": "error",
+        "exit_code": 1,
+        "stdout": "Generating daily evidence packet from /Users/alep/Downloads/rm_traffic/profileops.db...\n",
+        "stderr": "Traceback (most recent call last):\n  File \"/Users/alep/Downloads/rentmasseur-optimizer/daily_promotion.py\", line 91, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/alep/Downloads/rentmasseur-optimizer/daily_promotion.py\", line 38, in main\n    packet = generate_daily_evidence_packet(args.traffic_db, bio_id=args.bio_id)\n  File \"/Users/alep/Downloads/rentmasseur-optimizer/rm_revenue_engine/revenue_ops.py\", line 371, in generate_daily_evidence_packet\n    traffic_conn = sqlite3.connect(rm_traffic_db)\nsqlite3.OperationalError: unable to open database file\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,730 @@
+#!/usr/bin/env python3
+"""
+Selenium automation script to keep rentmasseur.com availability set to 24/7.
+Credentials are loaded from a .env file or environment variables.
+"""
+
+import argparse
+import sys
+import time
+import logging
+from datetime import datetime
+from typing import Optional
+import os
+
+from dotenv import load_dotenv
+try:
+    import undetected_chromedriver as uc
+    HAS_UC = True
+except ImportError:
+    HAS_UC = False
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import (
+    TimeoutException,
+    NoSuchElementException,
+    WebDriverException,
+    ElementClickInterceptedException,
+)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
+logger = logging.getLogger(__name__)
+
+# Load .env file if present (project root or current directory)
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+load_dotenv()
+
+# Configuration from environment
+RENTMASSEUR_USERNAME = os.getenv("RENTMASSEUR_USERNAME", "")
+RENTMASSEUR_PASSWORD = os.getenv("RENTMASSEUR_PASSWORD", "")
+AVAILABILITY_URL = "https://rentmasseur.com/settings?availability=1"
+LOGIN_URL = "https://rentmasseur.com/login"
+
+# Timing settings
+IMPLICIT_WAIT = 10
+PAGE_TIMEOUT = 30
+CHECK_INTERVAL_MINUTES = 5
+
+
+def setup_driver(headless: bool = True) -> webdriver.Chrome:
+    """Configure and return a Chrome WebDriver instance with stealth options."""
+    if HAS_UC:
+        chrome_options = uc.ChromeOptions()
+        if headless:
+            chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--window-size=1920,1080")
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        try:
+            import subprocess, re
+            chrome_ver_out = subprocess.check_output(["google-chrome", "--version"], stderr=subprocess.DEVNULL).decode().strip()
+            chrome_major = int(re.search(r'(\d+)\.', chrome_ver_out).group(1))
+            driver = uc.Chrome(options=chrome_options, version_main=chrome_major)
+        except Exception:
+            driver = uc.Chrome(options=chrome_options)
+        driver.implicitly_wait(IMPLICIT_WAIT)
+        driver.set_page_load_timeout(PAGE_TIMEOUT)
+        return driver
+    else:
+        chrome_options = Options()
+        if headless:
+            chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--window-size=1920,1080")
+        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        chrome_options.add_argument("--disable-extensions")
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        chrome_options.add_experimental_option("useAutomationExtension", False)
+        chrome_options.add_argument(
+            "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+        )
+        driver = webdriver.Chrome(options=chrome_options)
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        driver.implicitly_wait(IMPLICIT_WAIT)
+        driver.set_page_load_timeout(PAGE_TIMEOUT)
+        return driver
+
+
+POPUP_DISMISS_SELECTORS = [
+    # Cookie / GDPR consent
+    "button[id*='cookie']",
+    "button[class*='cookie']",
+    "button[aria-label*='cookie']",
+    "button[aria-label*='Cookie']",
+    "button[aria-label*='Accept']",
+    "button[aria-label*='accept']",
+    "button[data-testid*='cookie']",
+    "button[data-testid*='close']",
+    "a[href*='cookie']",
+    "[class*='cookie-banner'] button",
+    "[class*='cookieConsent'] button",
+    "[class*='gdpr'] button",
+    "[class*='consent'] button",
+    "[id*='onetrust'] button",
+    "[id*='CybotCookiebotDialogBodyButton']",
+    "[class*='banner'] button[aria-label*='close']",
+    "[class*='modal'] button[aria-label*='close']",
+    "[class*='dialog'] button[aria-label*='close']",
+    "[role='dialog'] button",
+    "[role='alert'] button",
+    # Text-based common buttons
+    "//button[contains(text(),'Accept')]",
+    "//button[contains(text(),'OK')]",
+    "//button[contains(text(),'Got it')]",
+    "//button[contains(text(),'Dismiss')]",
+    "//button[contains(text(),'Agree')]",
+    "//button[contains(text(),'Continue')]",
+    "//button[contains(text(),'I understand')]",
+    "//button[contains(text(),'Allow')]",
+    "//button[contains(text(),'Enable')]",
+    "//button[contains(text(),'Maybe later')]",
+    "//button[contains(text(),'Not now')]",
+    "//button[contains(text(),'Close')]",
+    "//button[contains(text(),'×')]",
+    "//a[contains(text(),'Accept')]",
+    "//a[contains(text(),'Dismiss')]",
+]
+
+
+def dismiss_popups(driver: webdriver.Chrome) -> None:
+    """Dismiss cookie banners, GDPR dialogs, and other popups that block interaction."""
+    clicked = 0
+    # Try CSS selectors first via JS (fastest)
+    for selector in POPUP_DISMISS_SELECTORS:
+        if not selector.startswith("//"):
+            try:
+                elements = driver.execute_script(
+                    "return Array.from(document.querySelectorAll(arguments[0])).filter(el => el.offsetParent !== null);",
+                    selector,
+                )
+                for el in elements:
+                    try:
+                        driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", el)
+                        clicked += 1
+                        time.sleep(0.3)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+    # Try XPath selectors
+    for xpath in POPUP_DISMISS_SELECTORS:
+        if xpath.startswith("//"):
+            try:
+                elements = driver.find_elements(By.XPATH, xpath)
+                for el in elements:
+                    try:
+                        if el.is_displayed():
+                            driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", el)
+                            clicked += 1
+                            time.sleep(0.3)
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+    # Generic overlay / modal close via JS: try to click anything with 'close' or 'dismiss' aria-label
+    try:
+        driver.execute_script("""
+            const closeBtns = Array.from(document.querySelectorAll('button, a, [role="button"]'))
+                .filter(b => b.offsetParent !== null &&
+                    (/close|dismiss|reject|deny|skip|cancel/i.test((b.getAttribute('aria-label')||'') + ' ' + (b.innerText||''))));
+            closeBtns.forEach(b => { try { b.click(); } catch(e) {} });
+        """)
+    except Exception:
+        pass
+    if clicked:
+        logger.info("Dismissed %d popup/banner elements", clicked)
+
+
+def _find_element(driver, by, value, timeout=5):
+    """Helper to find an element with a short timeout."""
+    try:
+        return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+    except TimeoutException:
+        return None
+
+
+def scan_page(driver: webdriver.Chrome) -> None:
+    """Brute-force scan: dump every interactive element with its selector hash."""
+    logger.info("=== DOM SCAN START ===")
+    elements = driver.execute_script("""
+        const data = [];
+        const inputs = document.querySelectorAll('input, textarea, select');
+        const buttons = document.querySelectorAll('button, [role="button"]');
+        
+        function shortId(el) {
+            const id = el.id ? '#' + el.id : '';
+            const cls = (el.className && typeof el.className === 'string')
+                ? '.' + el.className.split(' ').filter(Boolean).join('.')
+                : '';
+            const name = el.name ? '[name=' + el.name + ']' : '';
+            const type = el.type ? '[type=' + el.type + ']' : '';
+            return el.tagName.toLowerCase() + id + name + type;
+        }
+        
+        function xpath(el) {
+            const idx = (s, n) => {
+                let c = 1;
+                for (const p of n.parentNode.children) {
+                    if (p === n) return c;
+                    if (p.nodeName === n.nodeName) c++;
+                }
+                return 1;
+            };
+            let p = el, path = '';
+            while (p && p.nodeType === 1) {
+                const name = p.nodeName.toLowerCase();
+                const i = idx(name, p);
+                path = '/' + name + '[' + i + ']' + path;
+                p = p.parentNode;
+            }
+            return path;
+        }
+        
+        for (const el of inputs) {
+            data.push({
+                tag: el.tagName.toLowerCase(),
+                type: el.type || '',
+                name: el.name || '',
+                id: el.id || '',
+                placeholder: el.placeholder || '',
+                selector: shortId(el),
+                xpath: xpath(el),
+                text: (el.value || el.textContent || '').slice(0, 50),
+            });
+        }
+        for (const el of buttons) {
+            data.push({
+                tag: el.tagName.toLowerCase(),
+                type: el.type || '',
+                name: el.name || '',
+                id: el.id || '',
+                selector: shortId(el),
+                xpath: xpath(el),
+                text: (el.textContent || el.innerText || '').trim().slice(0, 50),
+            });
+        }
+        return data;
+    """)
+    for el in elements:
+        logger.info("SCAN | %-12s | %-20s | xpath=%s", el['selector'], el['text'][:20], el['xpath'])
+    logger.info("=== DOM SCAN END (%d elements) ===", len(elements))
+
+
+def _is_captcha_page(driver: webdriver.Chrome) -> bool:
+    """Check if the current page is a CrowdSec captcha or anti-bot challenge."""
+    try:
+        page_text = driver.execute_script("return document.body ? document.body.innerText.slice(0, 2000) : '';") or ""
+        page_src = driver.execute_script("return document.documentElement ? document.documentElement.outerHTML.slice(0, 3000) : '';") or ""
+        indicators = [
+            "crowdsec", "captcha", "checking your browser", "please wait",
+            "ddos protection", "access denied", "are you human", "verify you are",
+            "challenge", "cloudflare", "just a moment", "enable javascript",
+        ]
+        text_lower = page_text.lower() + page_src.lower()
+        return any(ind in text_lower for ind in indicators)
+    except Exception:
+        return False
+
+
+def brute_force_login(driver: webdriver.Chrome, max_retries: int = 5) -> bool:
+    """Log in using brute-force DOM discovery via JavaScript with retry logic."""
+    if not RENTMASSEUR_USERNAME or not RENTMASSEUR_PASSWORD:
+        logger.error("Missing credentials")
+        return False
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            logger.info("Login attempt %d/%d — navigating to %s", attempt, max_retries, LOGIN_URL)
+            driver.set_page_load_timeout(90)
+            driver.get(LOGIN_URL)
+
+            # Wait for SPA hydration with increasing delays
+            wait_time = 5 + (attempt * 3)
+            logger.info("Waiting %ds for page to render...", wait_time)
+            time.sleep(wait_time)
+
+            # Check for captcha / anti-bot page
+            if _is_captcha_page(driver):
+                logger.warning("Captcha/anti-bot page detected on attempt %d — refreshing", attempt)
+                if attempt < max_retries:
+                    time.sleep(10)
+                    driver.refresh()
+                    time.sleep(10)
+                    continue
+                else:
+                    logger.error("Captcha blocking login after %d attempts", max_retries)
+                    _dump_debug(driver, "login_captcha_final")
+                    return False
+
+            # Dismiss cookie/GPS banners and other popups
+            dismiss_popups(driver)
+            time.sleep(2)
+
+            # Wait for password field to appear (SPA may still be hydrating)
+            pwd_field = _find_element(driver, By.CSS_SELECTOR, 'input[type="password"]', timeout=15)
+            if not pwd_field:
+                logger.warning("No password field found on attempt %d — page may still be loading", attempt)
+                # Check if page has any inputs at all
+                input_count = driver.execute_script("return document.querySelectorAll('input').length;") or 0
+                logger.info("Page has %d input elements", input_count)
+                if input_count == 0:
+                    logger.warning("Page has 0 inputs — likely blocked or not rendered")
+                    _dump_debug(driver, f"login_no_inputs_attempt{attempt}")
+                    if attempt < max_retries:
+                        time.sleep(15)
+                        continue
+                else:
+                    _dump_debug(driver, f"login_no_password_attempt{attempt}")
+                    if attempt < max_retries:
+                        time.sleep(10)
+                        continue
+
+            # Brute-force: ask the browser to find login fields for us
+            result = driver.execute_script("""
+                const pwd = document.querySelector('input[type=\"password\"]');
+                if (!pwd) return {error: 'no_password'};
+                
+                // Scan ALL inputs on the page, then find text/email ones that precede the password
+                const allInputs = Array.from(document.querySelectorAll('input'));
+                const candidates = allInputs.filter(i => 
+                    i !== pwd && (i.type === 'text' || i.type === 'email' || i.type === 'tel')
+                );
+                
+                // Prefer the candidate that is closest (preceding) in DOM order
+                let user = null;
+                let bestDist = Infinity;
+                for (const cand of candidates) {
+                    const pos = pwd.compareDocumentPosition(cand);
+                    if (pos & Node.DOCUMENT_POSITION_PRECEDING) {
+                        // Heuristic: measure "distance" by counting elements between them
+                        let dist = 0;
+                        let el = cand;
+                        while (el && el !== pwd) {
+                            el = el.nextElementSibling || el.parentElement;
+                            dist++;
+                            if (dist > 100) break;
+                        }
+                        if (dist < bestDist) {
+                            bestDist = dist;
+                            user = cand;
+                        }
+                    }
+                }
+                if (!user && candidates.length > 0) user = candidates[0];
+                if (!user) return {error: 'no_username'};
+                
+                // Find submit button: search form first, then ancestor chain, then whole doc
+                let btn = null;
+                const form = pwd.closest('form');
+                if (form) {
+                    btn = form.querySelector('button[type=\"submit\"]') || form.querySelector('input[type=\"submit\"]');
+                    if (!btn) {
+                        const fb = Array.from(form.querySelectorAll('button'));
+                        btn = fb.find(b => /login|sign.in|submit/i.test(b.innerText)) || fb[0];
+                    }
+                }
+                if (!btn) {
+                    // Walk up ancestors looking for a button
+                    let ancestor = pwd.parentElement;
+                    for (let i = 0; i < 5 && ancestor && !btn; i++) {
+                        const ab = Array.from(ancestor.querySelectorAll('button'));
+                        btn = ab.find(b => /login|sign.in|submit/i.test(b.innerText)) || ab[0];
+                        ancestor = ancestor.parentElement;
+                    }
+                }
+                if (!btn) {
+                    // Last resort: any button on page that looks like login
+                    const allBtns = Array.from(document.querySelectorAll('button, [role=\"button\"]'));
+                    btn = allBtns.find(b => /login|sign.in|submit/i.test(b.innerText));
+                }
+                if (!btn) return {error: 'no_button'};
+                
+                // Return identifying attributes so Selenium can locate them
+                function attrs(el) {
+                    const id = el.id ? '#' + el.id : '';
+                    const cls = (el.className && typeof el.className === 'string')
+                        ? '.' + el.className.split(' ').filter(Boolean).join('.')
+                        : '';
+                    const name = el.name ? '[name=' + el.name + ']' : '';
+                    const type = el.type ? '[type=' + el.type + ']' : '';
+                    return {
+                        tag: el.tagName.toLowerCase(),
+                        id: el.id || '',
+                        name: el.name || '',
+                        type: el.type || '',
+                        class: (el.className && typeof el.className === 'string') 
+                            ? el.className.split(' ').filter(Boolean).join(' ') 
+                            : '',
+                        placeholder: el.placeholder || '',
+                        selector: el.tagName.toLowerCase() + id + name + type + cls.split('.')[0],
+                    };
+                }
+                return {
+                    user: attrs(user),
+                    pwd: attrs(pwd),
+                    btn: attrs(btn),
+                };
+            """)
+            
+            if isinstance(result, dict) and 'error' in result:
+                logger.warning("Login discovery failed on attempt %d: %s", attempt, result['error'])
+                scan_page(driver)
+                _dump_debug(driver, f"login_brute_force_{result['error']}_attempt{attempt}")
+                if attempt < max_retries:
+                    time.sleep(10)
+                    continue
+                return False
+            
+            logger.info("Discovered login form: user=%s, pwd=%s, btn=%s", 
+                        result['user']['selector'], result['pwd']['selector'], result['btn']['selector'])
+            
+            # Build Selenium selectors from discovered attributes
+            def build_selector(info: dict) -> str:
+                tag = info['tag']
+                if info['id']: return f"#{info['id']}"
+                if info['name']: return f"{tag}[name='{info['name']}']"
+                if info['placeholder']: return f"{tag}[placeholder='{info['placeholder']}']"
+                if info['class']: return f"{tag}.{info['class'].split()[0]}"
+                return tag
+            
+            user_sel = build_selector(result['user'])
+            pwd_sel  = build_selector(result['pwd'])
+            btn_sel  = build_selector(result['btn'])
+            
+            username_field = driver.find_element(By.CSS_SELECTOR, user_sel)
+            password_field = driver.find_element(By.CSS_SELECTOR, pwd_sel)
+            submit_btn     = driver.find_element(By.CSS_SELECTOR, btn_sel)
+            
+            username_field.clear()
+            username_field.send_keys(RENTMASSEUR_USERNAME)
+            password_field.clear()
+            password_field.send_keys(RENTMASSEUR_PASSWORD)
+            logger.info("Filled credentials into %s / %s", user_sel, pwd_sel)
+            
+            driver.execute_script("arguments[0].click();", submit_btn)
+            logger.info("Clicked submit: %s", btn_sel)
+            time.sleep(5)
+            
+            # Verify login success
+            dismiss_popups(driver)
+            current_url = driver.current_url
+            if LOGIN_URL not in current_url:
+                logger.info("Login successful (redirected to %s)", current_url)
+                return True
+            
+            # Check for error messages
+            error_text = driver.execute_script("""
+                const el = document.querySelector('[role=alert], .error, .form-error, .notification');
+                return el ? el.innerText : '';
+            """)
+            if error_text:
+                logger.error("Login page shows error: %s", error_text.strip())
+            
+            logger.warning("Still on login page after submit (attempt %d)", attempt)
+            scan_page(driver)
+            _dump_debug(driver, f"login_still_on_page_attempt{attempt}")
+            if attempt < max_retries:
+                time.sleep(10)
+                continue
+            
+        except TimeoutException:
+            logger.warning("Login page load timed out on attempt %d", attempt)
+            _dump_debug(driver, f"login_timeout_attempt{attempt}")
+            if attempt < max_retries:
+                time.sleep(15)
+                continue
+        except WebDriverException as e:
+            logger.warning("WebDriver error on attempt %d: %s", attempt, e)
+            _dump_debug(driver, f"login_webdriver_error_attempt{attempt}")
+            if attempt < max_retries:
+                time.sleep(15)
+                continue
+        except Exception as e:
+            logger.warning("Unexpected error on attempt %d: %s", attempt, e)
+            if attempt < max_retries:
+                time.sleep(15)
+                continue
+    
+    logger.error("Login failed after %d attempts", max_retries)
+    return False
+
+
+def login(driver: webdriver.Chrome) -> bool:
+    """Login using native input setter + Enter key (works with Next.js/React SPAs)."""
+    if not RENTMASSEUR_USERNAME or not RENTMASSEUR_PASSWORD:
+        logger.error("Missing credentials")
+        return False
+
+    for attempt in range(1, 4):
+        logger.info("Login attempt %d/3 — navigating to %s", attempt, LOGIN_URL)
+        driver.set_page_load_timeout(90)
+        driver.get(LOGIN_URL)
+        time.sleep(6)
+
+        # Check for CAPTCHA
+        captcha = driver.execute_script("""
+            return !!document.querySelector('.g-recaptcha, #captcha, iframe[src*="recaptcha"]');
+        """)
+        if captcha:
+            logger.warning("CAPTCHA detected on attempt %d — waiting", attempt)
+            time.sleep(10)
+            captcha = driver.execute_script("""
+                return !!document.querySelector('.g-recaptcha, #captcha, iframe[src*="recaptcha"]');
+            """)
+            if captcha:
+                logger.error("CAPTCHA still present after wait")
+                _dump_debug(driver, f"login_captcha_attempt{attempt}")
+                if attempt < 3:
+                    time.sleep(10)
+                    continue
+                return False
+
+        # Dismiss popups
+        dismiss_popups(driver)
+        time.sleep(2)
+
+        # Fill login form using native setter
+        result = driver.execute_script("""
+            const pwd = document.querySelector('input[type="password"]');
+            const user = document.querySelector('input[type="text"], input[type="email"]');
+            if (!pwd) return {error: 'no_password'};
+            if (!user) return {error: 'no_username'};
+            const ns = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+            ns.call(user, arguments[0]);
+            user.dispatchEvent(new Event('input', {bubbles: true}));
+            ns.call(pwd, arguments[1]);
+            pwd.dispatchEvent(new Event('input', {bubbles: true}));
+            return {ok: true, user_id: user.id, pwd_id: pwd.id};
+        """, RENTMASSEUR_USERNAME, RENTMASSEUR_PASSWORD)
+
+        if isinstance(result, dict) and 'error' in result:
+            logger.warning("Login form error on attempt %d: %s", attempt, result['error'])
+            _dump_debug(driver, f"login_{result['error']}_attempt{attempt}")
+            if attempt < 3:
+                time.sleep(10)
+                continue
+            return False
+
+        time.sleep(1)
+
+        # Submit via Enter key on password field
+        try:
+            pwd_el = driver.find_element(By.CSS_SELECTOR, 'input[type="password"]')
+            pwd_el.send_keys(Keys.ENTER)
+        except Exception:
+            driver.execute_script("""
+                const btn = document.querySelector('button[type="submit"]') ||
+                            Array.from(document.querySelectorAll('button')).find(b => /login|sign|submit/i.test(b.innerText));
+                if (btn) btn.click();
+            """)
+
+        time.sleep(5)
+
+        if LOGIN_URL not in driver.current_url:
+            logger.info("Login successful (redirected to %s)", driver.current_url)
+            return True
+
+        logger.warning("Still on login page after submit (attempt %d)", attempt)
+        _dump_debug(driver, f"login_still_on_page_attempt{attempt}")
+        if attempt < 3:
+            time.sleep(10)
+            continue
+
+    logger.error("Login failed after 3 attempts")
+    return False
+
+
+def _dump_debug(driver: webdriver.Chrome, label: str) -> None:
+    """Save screenshot and page source for debugging."""
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    debug_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "debug")
+    os.makedirs(debug_dir, exist_ok=True)
+    prefix = os.path.join(debug_dir, f"debug_{label}_{ts}")
+    try:
+        driver.save_screenshot(f"{prefix}.png")
+        logger.info("Screenshot saved: %s.png", prefix)
+    except Exception as e:
+        logger.error("Failed to save screenshot: %s", e)
+    try:
+        with open(f"{prefix}.html", "w", encoding="utf-8") as f:
+            f.write(driver.page_source)
+        logger.info("Page source saved: %s.html", prefix)
+    except Exception as e:
+        logger.error("Failed to save page source: %s", e)
+
+
+def set_availability_24_7(driver: webdriver.Chrome) -> bool:
+    """Navigate to availability settings and enable 24/7 availability."""
+    try:
+        logger.info("Navigating to availability settings: %s", AVAILABILITY_URL)
+        driver.get(AVAILABILITY_URL)
+        time.sleep(3)  # Let page render
+
+        # Dismiss any popups that could block the availability controls
+        dismiss_popups(driver)
+
+        # Do everything in JS since the two selects share identical classes
+        ok = driver.execute_script("""
+            const selects = Array.from(document.querySelectorAll('select'));
+            const buttons = Array.from(document.querySelectorAll('button'));
+            
+            // Find availability status select (options contain 'Available' / 'Not Set')
+            const statusSelect = selects.find(s => {
+                const opts = Array.from(s.options).map(o => o.text.toLowerCase());
+                return opts.includes('available') || opts.includes('not set');
+            });
+            if (!statusSelect) return {error: 'no_status_select'};
+            
+            // Select 'Available' (skip 'Not Available')
+            const availOpt = Array.from(statusSelect.options).find(
+                o => o.text.toLowerCase().includes('available') && !o.text.toLowerCase().includes('not')
+            );
+            if (availOpt) {
+                statusSelect.value = availOpt.value;
+                statusSelect.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+            
+            // Find time select (options contain 'Hour' or 'Minutes')
+            const timeSelect = selects.find(s => {
+                const opts = Array.from(s.options).map(o => o.text.toLowerCase());
+                return opts.some(t => t.includes('hour') || t.includes('minute'));
+            });
+            if (timeSelect) {
+                // Pick the longest duration (last option that contains a number)
+                const durationOpts = Array.from(timeSelect.options).filter(
+                    o => /\\d/.test(o.text)
+                );
+                if (durationOpts.length > 0) {
+                    const longest = durationOpts[durationOpts.length - 1];
+                    timeSelect.value = longest.value;
+                    timeSelect.dispatchEvent(new Event('change', {bubbles: true}));
+                }
+            }
+            
+            // Find and click SET button
+            const setBtn = buttons.find(b => /set|save|apply/i.test(b.innerText));
+            if (!setBtn) return {error: 'no_set_button'};
+            setBtn.click();
+            
+            return {ok: true};
+        """)
+        
+        if isinstance(ok, dict) and ok.get('error'):
+            logger.error("Availability JS automation failed: %s", ok['error'])
+            scan_page(driver)
+            _dump_debug(driver, f"availability_{ok['error']}")
+            return False
+        
+        logger.info("Availability set via JS automation")
+        time.sleep(2)
+        return True
+        
+    except TimeoutException:
+        logger.error("Availability page timed out")
+        return False
+    except WebDriverException as e:
+        logger.error("WebDriver error setting availability: %s", e)
+        return False
+
+
+def run_once(headless: bool = True) -> bool:
+    """Execute a single availability check-and-set cycle."""
+    driver: Optional[webdriver.Chrome] = None
+    try:
+        driver = setup_driver(headless=headless)
+        if not login(driver):
+            return False
+        return set_availability_24_7(driver)
+    except Exception as e:
+        logger.error("Unexpected error: %s", e)
+        return False
+    finally:
+        if driver:
+            driver.quit()
+
+
+def main() -> None:
+    """Run the availability keeper in a loop or once for CI/CD."""
+    parser = argparse.ArgumentParser(description="Keep RentMasseur availability set to 24/7")
+    parser.add_argument("--once", action="store_true", help="Run a single check and exit (for CI/CD)")
+    parser.add_argument("--headless", default="true", help="Run headless (true/false)")
+    parser.add_argument("--interval", type=int, default=CHECK_INTERVAL_MINUTES, help="Loop interval in minutes")
+    args = parser.parse_args()
+
+    headless = args.headless.lower() != "false"
+
+    if args.once:
+        logger.info("Running single availability check")
+        success = run_once(headless=headless)
+        sys.exit(0 if success else 1)
+
+    run_count = 0
+    logger.info("Starting RentMasseur 24/7 availability keeper")
+    logger.info("Check interval: %d minutes", args.interval)
+
+    while True:
+        run_count += 1
+        logger.info("--- Run #%d at %s ---", run_count, datetime.now().isoformat())
+        success = run_once(headless=headless)
+        if success:
+            logger.info("Run #%d completed successfully", run_count)
+        else:
+            logger.error("Run #%d failed", run_count)
+
+        sleep_seconds = args.interval * 60
+        logger.info("Sleeping for %d minutes...", args.interval)
+        time.sleep(sleep_seconds)
+
+
+if __name__ == "__main__":
+    main()

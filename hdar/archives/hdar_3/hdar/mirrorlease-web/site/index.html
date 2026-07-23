@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MirrorLease — Signed local file leases</title>
+  <meta name="description" content="Create a narrow, expiring, signed local-file invitation. The file stays on the owner's Mac and requests route back through the owner-approved guardian.">
+  <meta property="og:title" content="MirrorLease — Real local lease mechanism">
+  <meta property="og:description" content="A guarded doorway from an AI session to one owner-approved local file.">
+  <meta property="og:image" content="/social-card.svg">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="wrap">
+    <nav>
+      <a class="brand" href="/"><i></i>MirrorLease</a>
+      <div class="links">
+        <a href="/storage/">Where files live</a>
+        <a href="/developers/">Developers</a>
+        <a class="button" href="/developers/">Protocol →</a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="hero wrap">
+      <div>
+        <div class="eyebrow">The laptop remains boss</div>
+        <h1>Sign a lease.<br>Paste a ticket.</h1>
+        <p class="lede">MirrorLease is not this website storing your file. It is a local guardian: a selected file is fingerprinted, a private lease record is written on your Mac, and the public invitation is signed before it reaches an AI session.</p>
+        <div class="actions">
+          <a class="button" href="#mechanism">See the mechanism →</a>
+          <a class="button light" href="/storage/">Where does the file live?</a>
+        </div>
+      </div>
+      <div class="proof">
+        <div class="finder">
+          <div class="finder-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="menu">
+            <div>Open</div>
+            <div>Share…</div>
+            <div class="selected">Share with AI — MirrorLease</div>
+            <div>Copy public lease invitation</div>
+            <div>Get Info</div>
+          </div>
+        </div>
+        <div class="copy">mirrorlease:v1:eyJjaGFsbGVuZ2UiOi…<br>✓ signed · expiring · exact grants · local approval</div>
+      </div>
+    </section>
+
+    <div class="strip">
+      <div class="wrap">
+        <span>Ed25519 lease signature</span>
+        <span>Private local record</span>
+        <span>Owner approval before disclosure</span>
+        <span>Hash-linked receipts</span>
+      </div>
+    </div>
+
+    <section class="section wrap" id="mechanism">
+      <div class="eyebrow">Mechanism status</div>
+      <h2>The runnable path is local.</h2>
+      <p class="lede">The command below creates the same signed invitation the Finder helper uses. It writes the private lease under Application Support and prints the public <code>mirrorlease:v1:</code> token that can be pasted into an AI session.</p>
+      <pre class="code">python -m mirrorlease_protocol.local_cli create /path/to/file --clipboard</pre>
+      <div class="grid3" style="margin-top:18px">
+        <article class="card">
+          <span class="num">01</span>
+          <h3>Private record</h3>
+          <p><code>~/Library/Application Support/MirrorLease/leases/&lt;id&gt;.json</code> stores the local path, file hash, exact grants, token hash, expiration, and signed lease metadata.</p>
+        </article>
+        <article class="card">
+          <span class="num">02</span>
+          <h3>Gateway</h3>
+          <p><code>python -m mirrorlease_protocol.local_cli serve --port 9443</code> exposes the same knock, request, receipt, and MCP adapter on localhost for testing.</p>
+        </article>
+        <article class="card">
+          <span class="num">03</span>
+          <h3>Approval gate</h3>
+          <p>Reads and summaries call back to the owner Mac. The normal path opens a macOS Allow once / Deny dialog before file content is disclosed.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section dark">
+      <div class="wrap">
+        <div class="eyebrow">The mirrored lifecycle</div>
+        <h2>Every adapter hits the same engine.</h2>
+        <p class="lede">Finder, local HTTP, guarded HTTPS, GPT Action, MCP, and optional email all normalize into one signed protocol and one audit chain.</p>
+        <div class="flow">
+          <div><b>01</b>Create lease</div>
+          <div><b>02</b>Knock</div>
+          <div><b>03</b>Lease check</div>
+          <div><b>04</b>Owner approval</div>
+          <div><b>05</b>Disclosure</div>
+          <div><b>06</b>Receipt / expiry</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="eyebrow">Storage truth</div>
+      <h2>The site is not a file cabinet.</h2>
+      <div class="storage">
+        <div class="yes">
+          <h3>What stays on your Mac</h3>
+          <p>The original file, private path mapping, lease ledger, audit trail, and local signing material.</p>
+        </div>
+        <div class="no">
+          <h3>What leaves</h3>
+          <p>Only public file identity, exact grants, expiration, a disposable capability, approved results, and signed receipts.</p>
+        </div>
+      </div>
+      <div class="actions"><a class="button" href="/storage/">Open the storage map →</a></div>
+    </section>
+  </main>
+  <footer><div class="wrap foot"><strong>MirrorLease</strong><span>One ticket. One ride. Owner retains control.</span></div></footer>
+</body>
+</html>

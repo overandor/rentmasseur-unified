@@ -1,0 +1,14 @@
+claim_id: CLM-0005
+statement: "Host B produces an Ed25519 signature on its execution report."
+evidence_ids:
+  - EVP-0011
+  - EVP-0012
+independent_verification_procedure: |
+  1. Extract host_b_public_key and host_b_signature from host_b_report.json
+  2. Recompute signed content (excluding signature field)
+  3. Verify Ed25519 signature using host_b_public_key
+  4. Confirm algorithm is ed25519 and production_grade is true
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: host_b_signature

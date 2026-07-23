@@ -1,0 +1,78 @@
+{
+  "capsule_epoch_1": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 1,
+    "file_count": 4,
+    "manifest_hash": "e152acb8fca4269edd6730c7027199319802361dc528ffcf5c010c728103a1f5",
+    "ok": true,
+    "problems": [],
+    "total_size": 1062,
+    "workspace_root_hash": "718f65a4d4fd93210f611551396642ce27f33de24aeae07811fb3347d6cec004"
+  },
+  "claim_boundary": "Generated Host B bundle is ready for a genuine independent host. Local simulation is not a seed-grade second-host proof.",
+  "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "host_a_runtime_destroyed": true,
+  "host_a_workspace_hash_before_destroy": "718f65a4d4fd93210f611551396642ce27f33de24aeae07811fb3347d6cec004",
+  "local_simulation": {
+    "claim_boundary": "Hash-only portable Host B proof. Real seed proof still requires production Ed25519 verification and a genuinely independent host run.",
+    "continuation_event": {
+      "epoch_from": 1,
+      "epoch_to": 2,
+      "event": "continued_on_host_b",
+      "host_label": "host-b-local-simulation-not-seed-proof",
+      "host_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "timestamp": 1784586627.817436
+    },
+    "host_b_label": "host-b-local-simulation-not-seed-proof",
+    "host_b_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "input_capsule": {
+      "agent_id": "hdar-seed-poc-agent",
+      "epoch": 1,
+      "file_count": 4,
+      "manifest_hash": "e152acb8fca4269edd6730c7027199319802361dc528ffcf5c010c728103a1f5",
+      "ok": true,
+      "problems": [],
+      "total_size": 1062,
+      "workspace_root_hash": "718f65a4d4fd93210f611551396642ce27f33de24aeae07811fb3347d6cec004"
+    },
+    "lineage_advanced": true,
+    "output_dir": "/private/tmp/hdar-regen-v3/local_host_b_simulation",
+    "restore": {
+      "exact": true,
+      "expected_root_hash": "718f65a4d4fd93210f611551396642ce27f33de24aeae07811fb3347d6cec004",
+      "file_count": 4,
+      "restored_root_hash": "718f65a4d4fd93210f611551396642ce27f33de24aeae07811fb3347d6cec004",
+      "total_size": 1062
+    },
+    "schema": "hdar.second-host-proof-report/v0.1",
+    "successor_capsule": {
+      "agent_id": "hdar-seed-poc-agent",
+      "epoch": 2,
+      "file_count": 4,
+      "manifest_hash": "2561d5ff81819d5e24648f00a7be78572afa564ecfba05e0e02517914470052c",
+      "ok": true,
+      "problems": [],
+      "total_size": 1610,
+      "workspace_root_hash": "9e08a3a3c62953b023b76ffe8b0bbddba0e35d128e770298efc1973523d6d5b9"
+    },
+    "successor_tar": {
+      "bytes": 2082,
+      "path": "/private/tmp/hdar-regen-v3/local_host_b_simulation/successor_capsule_epoch_2.tar.gz",
+      "sha256": "ba62d1ead71f15ab1bee4a415ef304dfb737ab74589befda755088410a64d533"
+    },
+    "transport_bundle_sha256": "74827c7eae8694c98d508fad94360d584477eefe7dccf6ff3cae5f4cfe7e9ce0"
+  },
+  "next_real_seed_step": "Run python3 run_on_host_b.py --out /tmp/hdar-host-b-proof on an independent Host B and return host_b_report.json plus successor_capsule_epoch_2.tar.gz.",
+  "run_root": "/private/tmp/hdar-regen-v3",
+  "schema": "hdar.second-host-demo-build/v0.1",
+  "transport_bundle": {
+    "bytes": 12247,
+    "path": "/private/tmp/hdar-regen-v3/run_on_host_b.py",
+    "sha256": "d5eaa248d52b75693767663ee3564621225a04827befd53dedb351d1f4e3c279"
+  },
+  "transport_capsule_tar": {
+    "bytes": 1883,
+    "path": "/private/tmp/hdar-regen-v3/transport_capsule_epoch_1.tar.gz",
+    "sha256": "74827c7eae8694c98d508fad94360d584477eefe7dccf6ff3cae5f4cfe7e9ce0"
+  }
+}

@@ -1,0 +1,15 @@
+claim_id: CLM-0008
+statement: "The transport bundle hash can be verified against an external Host A build report, preventing circular trust."
+evidence_ids:
+  - EVP-0016
+  - EVP-0001
+independent_verification_procedure: |
+  1. Provide --host-a-report to runner
+  2. Runner decodes bundle, computes SHA-256
+  3. Compares against transport_capsule_tar.sha256 in Host A report
+  4. Mismatch aborts execution with security error
+  5. Verify external_bundle_hash_match == true in host_b_report.json
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: report_e1_cross_check, report_e2_cross_check

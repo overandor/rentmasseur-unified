@@ -1,0 +1,12 @@
+{
+  "evidence_id": "EVP-0007",
+  "source_files": ["host_b_report.json"],
+  "hashes": {
+    "task_expected_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f"
+  },
+  "signatures": [],
+  "verifier_outputs": ["task_result.ok: true", "computed_result: 1060", "expected_result: 1060"],
+  "runtime_logs": ["Task continuation: ok=true, result=1060"],
+  "generation_tool": "run_on_host_b.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

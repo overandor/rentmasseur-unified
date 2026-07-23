@@ -1,0 +1,35 @@
+{
+  "total_profiles": 248,
+  "profiles_with_bios": 248,
+  "most_common_services": {
+    "sensual": 118,
+    "deep tissue": 100,
+    "swedish": 72,
+    "sports": 32,
+    "tantric": 26,
+    "thai": 18,
+    "aromatherapy": 15,
+    "stretching": 15,
+    "trigger point": 9,
+    "shiatsu": 9
+  },
+  "most_common_certifications": {
+    "certified": 29,
+    "certified massage therapist": 15,
+    "licensed": 8,
+    "RMT": 5,
+    "CMT": 3
+  },
+  "experience_distribution": {
+    "Not specified": 224,
+    "10 years": 5,
+    "9 years": 3,
+    "8 years": 2,
+    "7 years": 2
+  },
+  "bio_length_stats": {
+    "min": 2,
+    "max": 389,
+    "avg": 140.9516129032258
+  }
+}

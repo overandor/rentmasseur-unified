@@ -1,0 +1,21 @@
+{
+  "evidence_id": "EVP-0001",
+  "source_files": [
+    "host_a_build_report.json"
+  ],
+  "hashes": {
+    "transport_capsule_tar_sha256": "c4d741a108a93a6eb66a30e36bdbe971530dc5a82966ca95bbb98749621393e7",
+    "transport_bundle_sha256": "938a47c7db2d7fcf31849cc970bb6f6fd8a10b05a59378ee3905d6f00493d508"
+  },
+  "signatures": [
+    "none (build report unsigned in v0.2; production will sign)"
+  ],
+  "verifier_outputs": [
+    "transport_capsule_tar.sha256 present and matches bundle"
+  ],
+  "runtime_logs": [
+    "console_log: Transport bundle SHA-256 verified against external Host A report"
+  ],
+  "generation_tool": "seed_milestone_demo.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

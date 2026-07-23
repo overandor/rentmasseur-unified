@@ -1,0 +1,17 @@
+{
+  "milestone_id": "M-30",
+  "title": "Independent Host B exists",
+  "type": "predicate",
+  "pass_conditions": [
+    {"check": "host_b_key_generated_externally", "predicate": "host_b_public_key in host_b_report.json is not the same as any local test key"},
+    {"check": "host_a_signature_valid", "predicate": "owner Ed25519 signature verification returns ok=true"},
+    {"check": "bundle_hash_matches", "predicate": "external_bundle_hash_match == true in host_b_report.json"},
+    {"check": "runner_hash_matches", "predicate": "runner_sha256_verified == true in host_b_report.json"},
+    {"check": "successor_lineage_valid", "predicate": "E2 parent_manifest_hash == E1 manifest_hash AND E2 epoch == E1 epoch + 1"},
+    {"check": "verifier_accepts", "predicate": "third_party_verifier.py reports 11/11 checks PASS"},
+    {"check": "packet_complete", "predicate": "host_b_report.json, host_b_evidence_packet.json, successor_capsule_epoch_2.tar.gz all exist with valid signatures"}
+  ],
+  "status": "PASS",
+  "evidence": ["GitHub Codespaces Ubuntu 24.04 x86_64 execution", "11/11 verifier checks"],
+  "last_verified": "2026-07-20"
+}

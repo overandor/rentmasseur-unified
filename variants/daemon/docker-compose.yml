@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  optimizer:
+    build:
+      context: .
+      dockerfile: Dockerfile.daemon
+    container_name: rentmasseur-optimizer
+    ports:
+      - "7860:7860"
+    environment:
+      - RM_USERNAME=${RM_USERNAME}
+      - RM_PASSWORD=${RM_PASSWORD}
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - SPACE_NAME=${SPACE_NAME:-rentmasseur-optimizer}
+      - BACKFILL_VIEWS_DAILY=0
+      - DAEMON_INTERVAL=60
+      - TRAFFIC_CYCLE_MINUTES=5
+      - DAILY_PROMOTION_HOUR=6
+    volumes:
+      - ./content:/app/content
+      - ./logs:/app/logs
+      - rm_chrome_profile:/tmp/rm_traffic_chrome
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:7860/api/health', timeout=10)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  rm_chrome_profile:

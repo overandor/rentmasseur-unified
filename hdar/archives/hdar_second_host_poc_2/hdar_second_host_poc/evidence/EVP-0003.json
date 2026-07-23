@@ -1,0 +1,13 @@
+{
+  "evidence_id": "EVP-0003",
+  "source_files": ["run_on_host_b.py"],
+  "hashes": {
+    "bundle_sha256_embedded": "c4d741a108a93a6eb66a30e36bdbe971530dc5a82966ca95bbb98749621393e7",
+    "runner_sha256": "938a47c7db2d7fcf31849cc970bb6f6fd8a10b05a59378ee3905d6f00493d508"
+  },
+  "signatures": ["none (runner authenticated by hash, not signature)"],
+  "verifier_outputs": ["runner_sha256_verified: true", "external_bundle_hash_match: true"],
+  "runtime_logs": ["Runner SHA-256 verified", "Transport bundle SHA-256 verified against external Host A report"],
+  "generation_tool": "seed_milestone_demo.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

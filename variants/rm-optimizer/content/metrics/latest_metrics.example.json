@@ -1,0 +1,37 @@
+{
+  "event_type": "baseline_profile_snapshot",
+  "source": "manual_sanitized_upload",
+  "profile": "Karpathianwolf",
+  "timestamp": "2026-06-26T08:43:40Z",
+  "metrics": {
+    "lifetime_profile_views": 78062,
+    "profile_age_days": 964,
+    "views_per_day": 81.0,
+    "online_bookmarks": 2,
+    "confirmed_bookings": 0,
+    "gross_revenue": 0
+  },
+  "services": {
+    "therapeutic": {"active": true, "incall": 199, "outcall": 269},
+    "sensual": {"active": true, "incall": 199, "outcall": 269},
+    "swedish": {"active": true, "incall": 199, "outcall": 269},
+    "deep_tissue": {"active": true, "incall": 199, "outcall": 269},
+    "hot_stone": {"active": true, "incall": "Ask", "outcall": "Ask"}
+  },
+  "current_experiment": {
+    "experiment_id": "exp_bio_001_controlled_wolf",
+    "variable": "bio_only",
+    "control_bio_id": "current_karpathianwolf",
+    "candidate_bio_id": "bio_001_controlled_wolf",
+    "photos_frozen": true,
+    "price_frozen": true,
+    "services_frozen": true,
+    "availability_frozen": true
+  },
+  "safety": {
+    "contains_cookies": false,
+    "contains_tokens": false,
+    "contains_password": false,
+    "manual_capture": true
+  }
+}

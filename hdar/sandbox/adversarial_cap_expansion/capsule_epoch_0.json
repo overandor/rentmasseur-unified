@@ -1,0 +1,81 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-test",
+  "agent_name": "test-agent",
+  "epoch": {
+    "epoch_id": "91f040e6a6d34635ae4dcdca4b247cfc",
+    "agent_id": "agent-test",
+    "sequence": 0,
+    "parent_epoch": null,
+    "created_at": 1784582350.3061812
+  },
+  "parent_capsule_hash": null,
+  "objective": "test objective",
+  "continuation_point": "step 1",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "63aaa8bbec7d56e67064eeb88fa0d56da7f2e105ba02fe7218087a807e0b1999",
+        "size": 27,
+        "mode": 420
+      },
+      {
+        "rel_path": "task.py",
+        "content_hash": "2d748fe25f2542176478b701458b2650b9a5dabd66b226f1565d0745c473e915",
+        "size": 25,
+        "mode": 420
+      }
+    ],
+    "total_size": 52
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace/src",
+        "granted": true,
+        "constraints": {}
+      },
+      {
+        "name": "network.egress",
+        "scope": "api.example.com",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority never expands on migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-test",
+      "epoch_id": "91f040e6a6d34635ae4dcdca4b247cfc",
+      "timestamp": 1784582350.3066728,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+        "file_count": 2,
+        "total_size": 52,
+        "objective": "test objective",
+        "fencing_token": ""
+      },
+      "state_root": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+      "signer_fingerprint": "9ef4b3ed7c95c22c",
+      "signer_role": "owner",
+      "receipt_hash": "e4efbdc2e068cceb0493cb9d5cf7168d2cc084a439dae0819f863e2f7e5f4b73",
+      "signature": "58bfd8123c69088111706bd503344ec45450190a56e0160309bae3bddb6efd9c9546c6c7c8ed92645b6378644845e474c9c4ad3e272b760536204642ab076305"
+    }
+  ],
+  "manifest_hash": "fdfc22d86a52ddc851d4e9ac71fff667f6608535c3bada785c01238f499e8191",
+  "signer_fingerprint": "9ef4b3ed7c95c22c",
+  "signature": "003922dd5c39c25ddeb26e5722b7464115d3eaa86a22d2e6695fa164a5a3374b3fc5bda3f3dfef25ac1e278280831c429ebf589c8941c75f7caab4799573c709",
+  "sealed_at": 1784582350.30672
+}

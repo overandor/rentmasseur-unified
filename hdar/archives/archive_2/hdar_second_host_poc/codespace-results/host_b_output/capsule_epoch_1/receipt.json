@@ -1,0 +1,13 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "epoch": 1,
+  "event": "capsule_sealed",
+  "manifest_hash": "444ddcef0c50b720f5fc561f15fe3e3c2681a53fd7c881fed7681ae238543b12",
+  "owner_public_key": "b39945ae207837a4410254a5850a1a4d448598a67bacec897e69ffcfb8d84031",
+  "owner_signed": true,
+  "receipt_hash": "8a52938f22393ca9e78b1b8a8bb420298b81605ad0bd3c953203ac962c36d7fd",
+  "schema": "hdar.receipt/v0.1",
+  "source_host_label": "host-a-local-mac",
+  "timestamp": 1784617041.9772182,
+  "workspace_root_hash": "01da9458cdc4db79380eba24e55f3b33d797d890e739f4538e4230d6f27e6939"
+}

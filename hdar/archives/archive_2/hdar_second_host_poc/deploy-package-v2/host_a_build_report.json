@@ -1,0 +1,32 @@
+{
+  "capsule_epoch_1": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 1,
+    "file_count": 5,
+    "manifest_hash": "c5b71b38b6ceee7dd68a118ce1d87241c71e9c25cea33fc64baa89bc464adbb1",
+    "ok": true,
+    "owner_public_key": "0df3d9f2b054048518525d82a4b1c33f09084babc28dbdfb33dee0458638313e",
+    "owner_signature_algorithm": "ed25519",
+    "owner_signed": true,
+    "problems": [],
+    "signature_mode": "ed25519-owner-signed",
+    "total_size": 11836,
+    "workspace_root_hash": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d"
+  },
+  "claim_boundary": "Owner-signed portable capsule with Ed25519 owner authorization, multi-stage analysis pipeline, Host B signature verification, evidence packet signing, and third-party verifier support. Ready for external Host B reproduction.",
+  "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "host_a_runtime_destroyed": true,
+  "host_a_workspace_hash_before_destroy": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d",
+  "next_real_seed_step": "Run on independent Host B with --owner-public-key and --host-a-report flags, then run third_party_verifier.py",
+  "schema": "hdar.second-host-demo-build/v0.2",
+  "transport_bundle": {
+    "bytes": 42275,
+    "path": "run_on_host_b.py",
+    "sha256": "0c5b3d752f6d8dba9a7d1c838b8d0f698f4d662e1ff3262f80be2fbe2bb06618"
+  },
+  "transport_capsule_tar": {
+    "bytes": 4739,
+    "path": "transport_capsule_epoch_1_signed.tar.gz",
+    "sha256": "79047d79882e88d46e91e8294e93755651b81b41e8b75b6f47c3adbf64b484c6"
+  }
+}

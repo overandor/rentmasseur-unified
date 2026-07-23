@@ -1,0 +1,18 @@
+claim_id: CLM-0006
+statement: "An independent third-party verifier can validate the full chain without trusting either host."
+evidence_ids:
+  - EVP-0013
+  - EVP-0014
+independent_verification_procedure: |
+  1. Run third_party_verifier.py on a third machine
+  2. Provide E1 capsule, E2 capsule, host_b_report.json, owner public key
+  3. All 11 checks must pass:
+     owner_signature, e1_integrity, e2_integrity, lineage,
+     state_advanced, host_b_signature, task_continuation,
+     report_e1_cross_check, report_e2_cross_check,
+     platforms_differ, evidence_packet_signature
+  4. Record verifier output
+current_status: independently_verified_11_of_11
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: all 11 checks

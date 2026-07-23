@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RentMasseur — Find Your Perfect Masseur</title>
+<style>
+:root{--bg:#0a0a0f;--bg-elev:#12121c;--bg-card:#181826;--border:#222238;--border-h:#33334d;--text:#eaeaef;--text-dim:#7a7a9a;--text-faint:#444466;--accent:#e84393;--accent-dim:rgba(232,67,147,.12);--accent-glow:rgba(232,67,147,.35);--gold:#f0c040;--green:#00b894;--r:12px;--rs:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:Inter,-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes skelPulse{0%,100%{opacity:.35}50%{opacity:.7}}
+.skel{background:var(--bg-elev);animation:skelPulse 1.8s ease-in-out infinite;border-radius:var(--rs)}
+.fade-in{animation:fadeIn .5s ease}.fade-in-up{animation:fadeInUp .5s ease}.scale-in{animation:scaleIn .4s cubic-bezier(.16,1,.3,1)}
+header{background:rgba(10,10,15,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+.logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.logo-sub{font-size:9px;color:var(--text-faint);text-transform:uppercase;letter-spacing:1px}
+.search-wrap{flex:1;max-width:400px;position:relative}
+.search-wrap input{width:100%;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--rs);padding:9px 14px 9px 36px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.4}
+.btn-signin{background:var(--accent);color:#fff;border:none;border-radius:var(--rs);padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-signin:hover{opacity:.9}
+.hero{padding:60px 24px 40px;text-align:center;max-width:800px;margin:0 auto;animation:fadeIn .6s ease}
+.hero h1{font-size:36px;font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:-1px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:15px;color:var(--text-dim);max-width:500px;margin:0 auto 32px;line-height:1.6}
+.spec-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.spec-pill{background:var(--bg-elev);color:var(--text-dim);border:1px solid var(--border);border-radius:24px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.spec-pill.active{background:var(--accent);color:#fff;border:none}
+.spec-pill:hover{border-color:var(--border-h)}
+.grid-section{max-width:1100px;margin:0 auto;padding:0 24px 60px}
+.grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.grid-header h2{font-size:18px;font-weight:700;color:#fff}
+.grid-header span{font-size:11px;color:var(--text-faint)}
+.masseur-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s ease}
+.card:hover{border-color:var(--border-h);transform:translateY(-2px)}
+.card-top{display:flex;gap:14px;margin-bottom:14px}
+.avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--accent)}
+.card-info{flex:1;min-width:0}
+.card-name{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.card-name b{font-size:15px;font-weight:700;color:#fff}
+.verified{font-size:9px;color:var(--green);background:rgba(0,184,148,.1);padding:1px 6px;border-radius:10px;font-weight:600}
+.card-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-dim)}
+.card-meta .star{color:var(--gold)}
+.card-price{text-align:right}
+.card-price b{font-size:18px;font-weight:800;color:#fff}
+.card-price small{font-size:9px;color:var(--text-faint)}
+.card-bio{font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:14px}
+.card-specs{display:flex;gap:6px;flex-wrap:wrap}
+.spec-tag{font-size:10px;color:var(--text-dim);background:var(--bg-elev);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
+.empty{text-align:center;padding:60px;color:var(--text-faint)}
+.empty div:first-child{font-size:48px;margin-bottom:12px}
+.modal-bg{position:fixed;inset:0;background:rgba(8,8,15,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);max-width:480px;width:100%;padding:32px;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--text-faint);font-size:18px;cursor:pointer}
+.modal-top{display:flex;gap:16px;margin-bottom:20px}
+.modal-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--accent)}
+.modal-name{font-size:20px;font-weight:800;color:#fff}
+.modal-bio{font-size:13px;color:var(--text-dim);line-height:1.6;margin-bottom:20px}
+.modal-label{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px}
+.modal-specs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.modal-specs .spec-tag{font-size:11px;padding:5px 12px}
+.book-row{display:flex;gap:10px;margin-bottom:16px}
+.book-row input,.book-row select{flex:1;background:var(--bg-elev);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;color:var(--text);font-size:13px;outline:none;cursor:pointer;color-scheme:dark}
+.btn-book{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-book:disabled{opacity:.4;cursor:not-allowed}
+.booked{text-align:center;padding:24px 0}
+.booked .icon{font-size:40px;margin-bottom:12px}
+.booked b{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;display:block}
+.booked p{font-size:12px;color:var(--text-dim)}
+.btn-close{margin-top:20px;background:var(--bg-elev);color:var(--text-dim);border:1px solid var(--border);border-radius:var(--rs);padding:8px 20px;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const SPECIALTIES=[
+{id:'swedish',name:'Swedish',icon:'🌿'},{id:'deep',name:'Deep Tissue',icon:'💪'},
+{id:'sports',name:'Sports',icon:'⚽'},{id:'thai',name:'Thai',icon:'🧘'},
+{id:'hotstone',name:'Hot Stone',icon:'🔥'},{id:'aromatherapy',name:'Aromatherapy',icon:'🌸'},
+{id:'reflexology',name:'Reflexology',icon:'🦶'},{id:'shiatsu',name:'Shiatsu',icon:'👐'}
+];
+const MASSEURS=[
+{id:1,name:'Marcus',age:32,specialties:['deep','sports'],rating:4.9,reviews:127,rate:85,distance:'1.2 mi',verified:true,bio:'Certified sports massage therapist with 8 years experience. Former NFL recovery specialist.',avatar:'M'},
+{id:2,name:'Elena',age:29,specialties:['swedish','aromatherapy'],rating:5.0,reviews:203,rate:95,distance:'2.5 mi',verified:true,bio:'Luxury spa-trained masseuse specializing in relaxation and stress relief.',avatar:'E'},
+{id:3,name:'Kenji',age:41,specialties:['shiatsu','thai'],rating:4.8,reviews:89,rate:110,distance:'3.1 mi',verified:true,bio:'Tokyo-trained shiatsu master. 15 years of traditional Japanese techniques.',avatar:'K'},
+{id:4,name:'Sofia',age:35,specialties:['hotstone','swedish'],rating:4.9,reviews:156,rate:90,distance:'0.8 mi',verified:true,bio:'Hot stone specialist with wellness center background. Holistic approach.',avatar:'S'},
+{id:5,name:'James',age:38,specialties:['deep','reflexology'],rating:4.7,reviews:72,rate:75,distance:'4.2 mi',verified:false,bio:'Licensed massage therapist focusing on deep tissue and foot reflexology.',avatar:'J'},
+{id:6,name:'Aisha',age:27,specialties:['thai','sports'],rating:4.9,reviews:98,rate:80,distance:'1.9 mi',verified:true,bio:'Thailand-trained Thai massage practitioner. Competitive athlete recovery focus.',avatar:'A'}
+];
+let state={selectedSpec:null,searchQuery:'',filtered:MASSEURS,loading:true,selectedMasseur:null};
+
+function filter(){let r=MASSEURS;if(state.selectedSpec)r=r.filter(m=>m.specialties.includes(state.selectedSpec));if(state.searchQuery.trim()){const q=state.searchQuery.toLowerCase();r=r.filter(m=>m.name.toLowerCase().includes(q)||m.bio.toLowerCase().includes(q));}state.filtered=r;render();}
+
+function specName(id){const s=SPECIALTIES.find(s=>s.id===id);return s?s.name:id;}
+
+function render(){
+  const app=document.getElementById('app');
+  let html='';
+
+  // Header
+  html+='<header><div class="logo"><div class="logo-icon">💆</div><div><div class="logo-text">RentMasseur</div><div class="logo-sub">Find your masseur</div></div></div>';
+  html+='<div class="search-wrap"><span>🔍</span><input id="search" placeholder="Search by name or specialty..." value="'+state.searchQuery.replace(/"/g,'&quot;')+'"></div>';
+  html+='<button class="btn-signin">Sign In</button></header>';
+
+  // Hero
+  html+='<section class="hero"><h1>Professional Massage, <span>On Demand</span></h1>';
+  html+='<p>Verified, reviewed masseurs in your area. Book in seconds, relax in minutes.</p>';
+  html+='<div class="spec-pills">';
+  SPECIALTIES.forEach(s=>{
+    html+='<button class="spec-pill'+(state.selectedSpec===s.id?' active':'')+'" data-spec="'+s.id+'"><span>'+s.icon+'</span> '+s.name+'</button>';
+  });
+  html+='</div></section>';
+
+  // Grid
+  html+='<section class="grid-section"><div class="grid-header"><h2>'+(state.loading?'Loading...':state.filtered.length+' masseurs available')+'</h2><span>Sorted by distance</span></div>';
+
+  if(state.loading){
+    html+='<div class="masseur-grid">';
+    for(let i=0;i<6;i++){
+      html+='<div class="card"><div class="card-top"><div class="skel" style="width:56px;height:56px;border-radius:50%"></div><div style="flex:1"><div class="skel" style="width:60%;height:14px;margin-bottom:8px"></div><div class="skel" style="width:40%;height:10px"></div></div></div><div class="skel" style="width:100%;height:32px;margin-bottom:12px"></div><div style="display:flex;gap:8px"><div class="skel" style="width:60px;height:24px;border-radius:20px"></div><div class="skel" style="width:60px;height:24px;border-radius:20px"></div></div></div>';
+    }
+    html+='</div>';
+  } else if(state.filtered.length===0){
+    html+='<div class="empty"><div>🔍</div><div>No masseurs match your filters. Try a different specialty.</div></div>';
+  } else {
+    html+='<div class="masseur-grid">';
+    state.filtered.forEach((m,i)=>{
+      html+='<div class="card fade-in-up" style="animation-delay:'+(i*.05)+'s" data-masseur="'+m.id+'">';
+      html+='<div class="card-top"><div class="avatar">'+m.avatar+'</div>';
+      html+='<div class="card-info"><div class="card-name"><b>'+m.name+'</b>'+(m.verified?'<span class="verified">✓ Verified</span>':'')+'</div>';
+      html+='<div class="card-meta"><span class="star">★ '+m.rating+'</span> · <span>'+m.reviews+' reviews</span> · <span>'+m.distance+'</span></div></div>';
+      html+='<div class="card-price"><b>$'+m.rate+'</b><br><small>per hour</small></div></div>';
+      html+='<div class="card-bio">'+m.bio+'</div>';
+      html+='<div class="card-specs">';
+      m.specialties.forEach(sid=>{const sp=SPECIALTIES.find(s=>s.id===sid);if(sp)html+='<span class="spec-tag">'+sp.icon+' '+sp.name+'</span>';});
+      html+='</div></div>';
+    });
+    html+='</div>';
+  }
+  html+='</section>';
+
+  // Modal
+  if(state.selectedMasseur){
+    const m=state.selectedMasseur;
+    html+='<div class="modal-bg fade-in" id="modal-bg"><div class="modal scale-in" id="modal-content">';
+    html+='<button class="modal-close" id="modal-close">✕</button>';
+    html+='<div class="modal-top"><div class="modal-avatar">'+m.avatar+'</div><div>';
+    html+='<div class="modal-name">'+m.name+(m.verified?' <span class="verified">✓ Verified</span>':'')+'</div>';
+    html+='<div class="card-meta" style="margin:6px 0"><span class="star">★ '+m.rating+'</span> · '+m.reviews+' reviews · '+m.distance+' away</div>';
+    html+='<div style="font-size:16px;font-weight:700;color:var(--accent)">$'+m.rate+'/hour</div></div></div>';
+    html+='<p class="modal-bio">'+m.bio+'</p>';
+    html+='<div class="modal-label">Specialties</div><div class="modal-specs">';
+    m.specialties.forEach(sid=>{const sp=SPECIALTIES.find(s=>s.id===sid);if(sp)html+='<span class="spec-tag">'+sp.icon+' '+sp.name+'</span>';});
+    html+='</div>';
+    html+='<div class="modal-label">Book a session</div>';
+    html+='<div class="book-row"><input type="date" id="book-date"><select id="book-time"><option value="">Select time</option>';
+    ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM'].forEach(t=>{html+='<option value="'+t+'">'+t+'</option>';});
+    html+='</select></div>';
+    html+='<button class="btn-book" id="btn-book" disabled>Request Booking — $'+m.rate+'/hr</button>';
+    html+='</div></div>';
+  }
+
+  app.innerHTML=html;
+
+  // Events
+  const search=document.getElementById('search');
+  if(search)search.addEventListener('input',e=>{state.searchQuery=e.target.value;filter();});
+  document.querySelectorAll('[data-spec]').forEach(btn=>{
+    btn.onclick=()=>{const id=btn.dataset.spec;state.selectedSpec=state.selectedSpec===id?null:id;filter();};
+  });
+  document.querySelectorAll('[data-masseur]').forEach(card=>{
+    card.onclick=()=>{const id=parseInt(card.dataset.masseur);state.selectedMasseur=MASSEURS.find(m=>m.id===id);render();};
+  });
+  const mb=document.getElementById('modal-bg');if(mb)mb.onclick=e=>{if(e.target===mb){state.selectedMasseur=null;render();}};
+  const mc=document.getElementById('modal-close');if(mc)mc.onclick=()=>{state.selectedMasseur=null;render();};
+  const bd=document.getElementById('book-date');const bt=document.getElementById('book-time');const bb=document.getElementById('btn-book');
+  if(bd&&bt&&bb){
+    const check=()=>{bb.disabled=!(bd.value&&bt.value);};
+    bd.onchange=check;bt.onchange=check;
+    bb.onclick=()=>{
+      const m=state.selectedMasseur;
+      const modal=document.getElementById('modal-content');
+      modal.innerHTML='<button class="modal-close" id="modal-close">✕</button><div class="booked"><div class="icon">✅</div><b>Booking Confirmed!</b><p>'+m.name+' will see your request for '+bd.value+' at '+bt.value+'</p><button class="btn-close" id="btn-close">Close</button></div>';
+      document.getElementById('modal-close').onclick=()=>{state.selectedMasseur=null;render();};
+      document.getElementById('btn-close').onclick=()=>{state.selectedMasseur=null;render();};
+    };
+  }
+}
+
+// Initial load with skeleton
+render();
+setTimeout(()=>{state.loading=false;filter();},800);
+</script>
+</body>
+</html>

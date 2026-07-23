@@ -1,0 +1,163 @@
+{
+  "claim_boundary": "Ed25519-signed portable Host B proof with owner signature verification, receipt verification, path safety, deterministic task execution, runner authentication, Host B keypair signing, and evidence packet. Seed-grade proof requires a genuinely independent host run with platforms_differ=true and external verifier.",
+  "console_transcript": [
+    "Host B keypair: algorithm=ed25519, production_grade=True",
+    "Runner SHA-256 verified: 0c5b3d752f6d8dba9a7d1c838b8d0f698f4d662e1ff3262f80be2fbe2bb06618",
+    "Transport bundle SHA-256 verified against external Host A report: 79047d79882e88d46e91e8294e93755651b81b41e8b75b6f47c3adbf64b484c6",
+    "Transport capsule extracted (safe member validation)",
+    "Input capsule verified: ok=True, epoch=1",
+    "Owner signature: ok=True, reason=owner Ed25519 signature verified",
+    "Host A report verified: manifest_hash_match=True, platforms_differ=True",
+    "Workspace restored: exact=True, files=5",
+    "Task continuation: ok=True, result=N/A"
+  ],
+  "continuation_event": {
+    "epoch_from": 1,
+    "epoch_to": 2,
+    "event": "continued_on_host_b",
+    "host_label": "e2b-cloud-sandbox",
+    "host_platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "machine_hostname": "e2b.local",
+    "task_result": {
+      "computed_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f",
+      "expected_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f",
+      "ok": true,
+      "passed": true,
+      "stages_completed": 5,
+      "task": "multi_stage_analysis_pipeline"
+    },
+    "timestamp": 1784607548.4363384
+  },
+  "download_headers": {},
+  "exit_codes": [
+    {
+      "exit_code": 0,
+      "step": "complete"
+    }
+  ],
+  "host_a_report_verification": {
+    "epoch_match": true,
+    "external_bundle_hash": "79047d79882e88d46e91e8294e93755651b81b41e8b75b6f47c3adbf64b484c6",
+    "external_bundle_hash_match": true,
+    "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "host_b_platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "manifest_hash_match": true,
+    "platforms_differ": true,
+    "provided": true,
+    "workspace_root_hash_match": true
+  },
+  "host_b_identity": {
+    "host_label": "e2b-cloud-sandbox",
+    "machine_hostname": "e2b.local",
+    "machine_nonce": "57e7bb6c1f30ebb7c69faca5ca223eff",
+    "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "python_version": "3.11.6 (main, Nov 29 2023, 04:19:53) [GCC 12.2.0]",
+    "runner_duration_seconds": 0.075,
+    "runner_end_timestamp": 1784607548.4467402,
+    "runner_end_utc": "2026-07-21T04:19:08.446746+00:00",
+    "runner_start_timestamp": 1784607548.3716707,
+    "runner_start_utc": "2026-07-21T04:19:08.371675+00:00"
+  },
+  "host_b_keypair": {
+    "algorithm": "ed25519",
+    "production_grade": true,
+    "public_key_hex": "d8e8214a7490c5a5fa23511052835ee0ffd42e570c4de174e9e5ef1b55fb9d44"
+  },
+  "host_b_label": "e2b-cloud-sandbox",
+  "host_b_platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+  "host_b_public_key": "d8e8214a7490c5a5fa23511052835ee0ffd42e570c4de174e9e5ef1b55fb9d44",
+  "host_b_signature": "5e680f2f77a25ecc0d9b4444b8ada4d9bb4a3110e3f9de9aaa273997b24d602abfe33d30b4d60f46b48c637fb4315a35367f7e1ef42cd46d567f3cba14f0c102",
+  "host_b_signature_algorithm": "ed25519",
+  "input_capsule": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 1,
+    "file_count": 5,
+    "manifest_hash": "c5b71b38b6ceee7dd68a118ce1d87241c71e9c25cea33fc64baa89bc464adbb1",
+    "ok": true,
+    "owner_signature_verified": {
+      "algorithm": "ed25519",
+      "ok": true,
+      "owner_public_key": "0df3d9f2b054048518525d82a4b1c33f09084babc28dbdfb33dee0458638313e",
+      "reason": "owner Ed25519 signature verified"
+    },
+    "problems": [],
+    "receipt_verified": {
+      "epoch": 1,
+      "event": "capsule_sealed",
+      "manifest_hash_match": true,
+      "ok": true,
+      "problems": [],
+      "receipt_hash": "5e68d71123c2f8ca39ce85faa3b2518ac81d77997d95479b400a74148d6cb463"
+    },
+    "total_size": 11836,
+    "workspace_root_hash": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d"
+  },
+  "lineage_advanced": true,
+  "network_source": "e2b-sandbox-api",
+  "operator_identity": "e2b-cloud",
+  "output_dir": "/tmp/hdar-output",
+  "receipt_verification": {
+    "input_capsule_receipt": {
+      "epoch": 1,
+      "event": "capsule_sealed",
+      "manifest_hash_match": true,
+      "ok": true,
+      "problems": [],
+      "receipt_hash": "5e68d71123c2f8ca39ce85faa3b2518ac81d77997d95479b400a74148d6cb463"
+    },
+    "successor_capsule_receipt": {
+      "epoch": 2,
+      "event": "capsule_sealed_after_host_b_continuation",
+      "manifest_hash_match": true,
+      "ok": true,
+      "problems": [],
+      "receipt_hash": "a32a3d37be97ab1a0ca53efa83e1352d38c5608d2a2cb5a6b10b7aebfebfb4b4"
+    }
+  },
+  "restore": {
+    "exact": true,
+    "expected_root_hash": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d",
+    "file_count": 5,
+    "restored_root_hash": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d",
+    "total_size": 11836
+  },
+  "runner_sha256": "0c5b3d752f6d8dba9a7d1c838b8d0f698f4d662e1ff3262f80be2fbe2bb06618",
+  "runner_sha256_verified": true,
+  "schema": "hdar.second-host-proof-report/v0.3",
+  "successor_capsule": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 2,
+    "file_count": 12,
+    "manifest_hash": "564c65ef407e69f3027368ce529a6e0dd5bdfb206db40322c5438504bd9f86ee",
+    "ok": true,
+    "owner_signature_verified": {
+      "ok": true,
+      "reason": "owner signature not present (successor capsule sealed by Host B)"
+    },
+    "problems": [],
+    "receipt_verified": {
+      "epoch": 2,
+      "event": "capsule_sealed_after_host_b_continuation",
+      "manifest_hash_match": true,
+      "ok": true,
+      "problems": [],
+      "receipt_hash": "a32a3d37be97ab1a0ca53efa83e1352d38c5608d2a2cb5a6b10b7aebfebfb4b4"
+    },
+    "total_size": 21179,
+    "workspace_root_hash": "9fa2987c10815954798fe83b2ace27e2e54afef96dfdcaec6e785e2fbfa47721"
+  },
+  "successor_tar": {
+    "bytes": 6942,
+    "path": "/tmp/hdar-output/successor_capsule_epoch_2.tar.gz",
+    "sha256": "862b5e30ba35124e0f37adf57c0f57a687c5baafc5fb33200738ef6896855c79"
+  },
+  "task_continuation": {
+    "computed_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f",
+    "expected_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f",
+    "ok": true,
+    "passed": true,
+    "stages_completed": 5,
+    "task": "multi_stage_analysis_pipeline"
+  },
+  "transport_bundle_sha256": "79047d79882e88d46e91e8294e93755651b81b41e8b75b6f47c3adbf64b484c6"
+}

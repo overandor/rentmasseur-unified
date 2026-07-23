@@ -1,0 +1,69 @@
+{
+  "completed_at": "2026-07-21T04:19:08.446746+00:00",
+  "console_transcript": [
+    "Host B keypair: algorithm=ed25519, production_grade=True",
+    "Runner SHA-256 verified: 0c5b3d752f6d8dba9a7d1c838b8d0f698f4d662e1ff3262f80be2fbe2bb06618",
+    "Transport bundle SHA-256 verified against external Host A report: 79047d79882e88d46e91e8294e93755651b81b41e8b75b6f47c3adbf64b484c6",
+    "Transport capsule extracted (safe member validation)",
+    "Input capsule verified: ok=True, epoch=1",
+    "Owner signature: ok=True, reason=owner Ed25519 signature verified",
+    "Host A report verified: manifest_hash_match=True, platforms_differ=True",
+    "Workspace restored: exact=True, files=5",
+    "Task continuation: ok=True, result=N/A"
+  ],
+  "evidence_packet_sha256": "5a80d0a79f1f820fe5c91ae29b540479fd04a68d1995768488bffe3d4b7f9cb5",
+  "evidence_packet_signature": "2b07b775167a9ba67f170d731e55a14b66c1e97978a7d798f119cf9c7dc1fc76bfe16779d73a7432d59645715b7a51a0d2609f330603903d1af673e3b2d79a0b",
+  "exit_codes": [
+    {
+      "exit_code": 0,
+      "step": "complete"
+    }
+  ],
+  "expected_tree_hash": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d",
+  "host_a_agent_runtime_accessible": {
+    "evidence_type": "operator_declared",
+    "note": "Not technically measured by runner; asserted by operator.",
+    "value": false
+  },
+  "host_a_filesystem_accessible": {
+    "evidence_type": "operator_declared",
+    "note": "Not technically measured by runner; asserted by operator.",
+    "value": false
+  },
+  "host_b_public_key": "d8e8214a7490c5a5fa23511052835ee0ffd42e570c4de174e9e5ef1b55fb9d44",
+  "host_b_report_sha256": "efbf0434f9ff837257f7744a2f8e7c278a891c0e8cc4e056f4613513933bbfc4",
+  "host_fingerprint": {
+    "machine_hostname": "e2b.local",
+    "machine_nonce": "57e7bb6c1f30ebb7c69faca5ca223eff",
+    "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "python_version": "3.11.6 (main, Nov 29 2023, 04:19:53) [GCC 12.2.0]"
+  },
+  "host_label": "e2b-cloud-sandbox",
+  "lineage_advanced": true,
+  "network_source": "e2b-sandbox-api",
+  "operator_identity_or_pseudonym": "e2b-cloud",
+  "proof_version": "hdar-host-b-v1",
+  "restore_exact": true,
+  "restored_tree_hash": "d5c28ac1deb138b751e21765e4f0f3370afd26448089987c85af5e6ada4c980d",
+  "runner_sha256": "0c5b3d752f6d8dba9a7d1c838b8d0f698f4d662e1ff3262f80be2fbe2bb06618",
+  "runner_sha256_verified": true,
+  "signature_algorithm": "ed25519",
+  "source_capsule_sha256": "79047d79882e88d46e91e8294e93755651b81b41e8b75b6f47c3adbf64b484c6",
+  "source_epoch": 1,
+  "started_at": "2026-07-21T04:19:08.371675+00:00",
+  "successor_capsule_sha256": "862b5e30ba35124e0f37adf57c0f57a687c5baafc5fb33200738ef6896855c79",
+  "successor_epoch": 2,
+  "task_continuation_passed": true,
+  "task_result": {
+    "computed_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f",
+    "expected_output_hash": "e1efd2a02130d65da232aa2338b75b0278d168a77fd8fb4f10dc6023cc6ff46f",
+    "ok": true,
+    "passed": true,
+    "stages_completed": 5,
+    "task": "multi_stage_analysis_pipeline"
+  },
+  "verification_commands": [
+    "shasum -a 256 -c <<< '0c5b3d752f6d8dba9a7d1c838b8d0f698f4d662e1ff3262f80be2fbe2bb06618  run_on_host_b.py'",
+    "python3 -c \"import json; r=json.load(open('host_b_report.json')); assert r['restore']['exact']; assert r['lineage_advanced']; assert r['successor_capsule']['ok']\""
+  ]
+}

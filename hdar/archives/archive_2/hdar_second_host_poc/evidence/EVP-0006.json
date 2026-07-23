@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0006",
+  "source_files": ["test_seed_criterion.py"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["e1_integrity check: PASS", "e2_integrity check: PASS"],
+  "runtime_logs": [],
+  "generation_tool": "test_seed_criterion.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

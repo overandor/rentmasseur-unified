@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-001",
+  "test": "Replay attack — same capsule submitted twice",
+  "expected": "Reject duplicate submission",
+  "observed": "Rejected (epoch already advanced, parent hash mismatch)",
+  "status": "PASS",
+  "evidence": "test_audit_fixes.py: test_replay_rejection"
+}

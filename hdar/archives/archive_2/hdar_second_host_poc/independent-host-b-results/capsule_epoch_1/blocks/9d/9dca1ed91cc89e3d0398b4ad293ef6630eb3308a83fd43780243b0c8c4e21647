@@ -1,0 +1,2 @@
+[{"event":"agent_created","host":"host-a","timestamp":1784613861.836386,"epoch":1}]
+{"event":"workspace_sealed","host":"host-a","timestamp":1784613861.836389,"epoch":1}

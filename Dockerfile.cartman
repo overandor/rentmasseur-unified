@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential g++ curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements-cartman.txt .
+RUN pip install --no-cache-dir -r requirements-cartman.txt
+
+COPY data/SouthPark_Lines.csv data/SouthPark_Lines.csv
+COPY cartman_engine.py .
+
+ENV PYTHONUNBUFFERED=1
+ENV CARTMAN_CSV=/app/data/SouthPark_Lines.csv
+ENV CARTMAN_HOST=0.0.0.0
+ENV CARTMAN_PORT=7860
+
+EXPOSE 7860
+
+CMD ["python", "cartman_engine.py"]

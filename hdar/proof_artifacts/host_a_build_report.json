@@ -1,0 +1,42 @@
+{
+  "capsule_epoch_1": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 1,
+    "file_count": 5,
+    "manifest_hash": "fd6cec928409865c71b7a41dc92a591e8677e88e174e1883b94e81a073a8b847",
+    "ok": true,
+    "owner_public_key": "3e24d007f4fec6b10befb59d2fe77fd53fb5e4dfef860bc96350bc83e475e199",
+    "owner_signed": true,
+    "workspace_root_hash": "eadb2e5993e58d8ebf0a9ec6c58bef9a7324babd45fc86129cea4e4bc2d11908"
+  },
+  "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "host_a_runtime_destroyed": false,
+  "host_a_workspace_hash_before_removal": "eadb2e5993e58d8ebf0a9ec6c58bef9a7324babd45fc86129cea4e4bc2d11908",
+  "host_a_workspace_removed_after_sealing": true,
+  "pinned_dependencies": {
+    "cryptography": "44.0.1"
+  },
+  "reproducibility_claims": {
+    "byte_identical_capsule_reproduction": false,
+    "deterministic_computation": true,
+    "deterministic_logical_state": true,
+    "note": "Task output is deterministic. Capsule manifest contains timestamps making byte-identical reproduction across builds impossible. This is acceptable for unique authenticated state."
+  },
+  "schema": "hdar.second-host-demo-build/v0.3",
+  "separation_model": {
+    "environment_separation": true,
+    "infrastructure_separation": true,
+    "note": "Host A and Host B run on different infrastructure (macOS arm64 vs E2B Linux x86_64). Verifier C runs on Host A after Host B completes \u2014 operationally separate but not operator-independent.",
+    "operator_separation": false
+  },
+  "transport_bundle": {
+    "bytes": 42705,
+    "path": "run_on_host_b.py",
+    "sha256": "b7a221356addda86e2b6e3c89c22377905c10fe5125fd5a021c0cc7e558de0e1"
+  },
+  "transport_capsule_tar": {
+    "bytes": 3734,
+    "path": "transport_capsule_epoch_1_signed.tar.gz",
+    "sha256": "830c3bc65b4ec24362209b937fbc6871014712a494f7cdd9b1058102380310d3"
+  }
+}

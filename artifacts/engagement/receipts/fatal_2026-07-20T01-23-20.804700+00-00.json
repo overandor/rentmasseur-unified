@@ -1,0 +1,10 @@
+{
+  "session_id": "dc9f0f2755af",
+  "action": "fatal",
+  "status": "error",
+  "timestamp": "2026-07-20T01:23:20.804700+00:00",
+  "elapsed_s": 595.05,
+  "error": "no such table: visit_log",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/alep/Downloads/MEMBRA::SURFACE=BUILD@LIVE/02_AI_Agents/rentmasseur-extension/rm_engagement_engine.py\", line 947, in main\n  File \"/Users/alep/Downloads/MEMBRA::SURFACE=BUILD@LIVE/02_AI_Agents/rentmasseur-extension/rm_engagement_engine.py\", line 645, in visit_profile\n  File \"/Users/alep/Downloads/MEMBRA::SURFACE=BUILD@LIVE/02_AI_Agents/rentmasseur-extension/rm_engagement_engine.py\", line 159, in already_visited_today\nsqlite3.OperationalError: no such table: visit_log\n",
+  "receipt_hash": "ccbb00c182cdcafe"
+}

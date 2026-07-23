@@ -1,0 +1,52 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "continuation_point": "Host B restored the workspace, advanced progress.log, updated agent_state.json, and sealed epoch 2.",
+  "created_at": 1784598820.0385678,
+  "epoch": 2,
+  "host_public_key": "28aea7fdd596ac511d86c17c379626afbd0dd4c6ce0e12adea7f203a7c5bb5d0",
+  "host_signature": "0ea32ebc6e450cd0855520674b757292a547339359f5e229be85878badaa757ea5dc59b98dff19e02e472875d413f6d4064fc0959018ba123f759c6fc3764a02",
+  "host_signature_algorithm": "ed25519",
+  "manifest_hash": "02b4d4c6bcdc9999b29badcee2d1d0fd10b2bfd8e50616da6eb7ee1dcb2cb365",
+  "objective": "Continue unfinished work after Host A runtime destruction.",
+  "parent_manifest_hash": "eaeb707b8d99b0aa9fe9656293eca01e6b903eb4501c624d7d646b2c0e9a28a2",
+  "schema": "hdar.transport-capsule/v0.1",
+  "signature_mode": "ed25519-host-signed",
+  "source_host_label": "github-codespaces-linux-x86_64",
+  "verification_mode": "sha256-content-addressed-hash-plus-ed25519",
+  "workspace_manifest": {
+    "files": [
+      {
+        "mode": 420,
+        "rel_path": "agent_state.json",
+        "sha256": "8eaa28127b848425e475d9b64a5d75369f42a9160b6c135fc95503a5ac5f6243",
+        "size": 1136
+      },
+      {
+        "mode": 420,
+        "rel_path": "progress.log",
+        "sha256": "c895c226a1b753c15aecf44b6bf47582ff243beb738598321fd98375d155ff4e",
+        "size": 550
+      },
+      {
+        "mode": 420,
+        "rel_path": "src/worker.py",
+        "sha256": "9c40b0dd69da56ae7f59fc30d8ffa1ecc0dafb91f3c0cf60b817387e9e259af5",
+        "size": 368
+      },
+      {
+        "mode": 422,
+        "rel_path": "task_result.json",
+        "sha256": "e1b1b7a32e152e3c36c7cc22d40d71a03e6bc553c7b3f2cc4fc5abfde6a9ce60",
+        "size": 228
+      },
+      {
+        "mode": 420,
+        "rel_path": "todo.md",
+        "sha256": "f8d27a710f04aee02e8c6e0a3b576bc2b7c4aa8f4c531a84c2d7332509e01853",
+        "size": 192
+      }
+    ],
+    "root_hash": "2e70ab1cddacef1d3ecb751f448308acb9aa542f200dc25ec88afebc69b3d4a0",
+    "total_size": 2474
+  }
+}

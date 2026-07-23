@@ -1,0 +1,14 @@
+claim_id: CLM-0009
+statement: "The runner authenticates itself via SHA-256 hash verification."
+evidence_ids:
+  - EVP-0017
+  - EVP-0001
+independent_verification_procedure: |
+  1. Compute SHA-256 of run_on_host_b.py
+  2. Compare against --verify-runner-hash argument
+  3. Argument sourced from host_a_build_report.json transport_bundle.sha256
+  4. Mismatch aborts execution
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: runner_sha256_verified

@@ -1,0 +1,16 @@
+claim_id: CLM-0001
+statement: "A signed transport capsule can be authenticated after transfer."
+evidence_ids:
+  - EVP-0001
+  - EVP-0002
+  - EVP-0003
+independent_verification_procedure: |
+  1. Decode the transport bundle from run_on_host_b.py
+  2. Compute SHA-256 of the decoded bundle
+  3. Compare against host_a_build_report.json transport_capsule_tar.sha256
+  4. Verify owner Ed25519 signature on manifest.json using owner_public_key
+  5. Mismatch on either check must abort execution
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: owner_signature

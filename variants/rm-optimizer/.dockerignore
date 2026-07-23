@@ -1,0 +1,17 @@
+.env
+*.env
+session.json
+*cookies*
+__MACOSX/
+.DS_Store
+__pycache__/
+*.pyc
+.git/
+*bios_1m*.jsonl
+*bios_v2_1m*.jsonl
+*bios_300k*.jsonl
+*bios_30k*.jsonl
+*bios_3k*.jsonl
+private_secrets_quarantine/
+api_map.json
+*.secret.json

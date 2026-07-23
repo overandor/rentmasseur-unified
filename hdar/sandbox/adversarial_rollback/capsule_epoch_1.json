@@ -1,0 +1,117 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-test",
+  "agent_name": "test-agent",
+  "epoch": {
+    "epoch_id": "c3478857dbb34602bed1de2ae86870b3",
+    "agent_id": "agent-test",
+    "sequence": 1,
+    "parent_epoch": "b153e399373941629549fd396d6c0e71",
+    "created_at": 1784582350.28923
+  },
+  "parent_capsule_hash": "18bc6fc4ee7ac10dc7f93a82b8009ab39d0c851aa89fa1cac99bb181e0e8cc17",
+  "objective": "done",
+  "continuation_point": "complete",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "f017f4a030442c19c9cee48e5c28e8983890aaa0abbfd6f5c6e98f22e835b7a0",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "de9e26071be124c4487ed3ae93b12202eab76491298e2aaeeb838ba2d8a08a7c",
+        "size": 37,
+        "mode": 420
+      },
+      {
+        "rel_path": "task.py",
+        "content_hash": "2d748fe25f2542176478b701458b2650b9a5dabd66b226f1565d0745c473e915",
+        "size": 25,
+        "mode": 420
+      }
+    ],
+    "total_size": 62
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority preserved after cross-host migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-test",
+      "epoch_id": "b153e399373941629549fd396d6c0e71",
+      "timestamp": 1784582350.288707,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+        "file_count": 2,
+        "total_size": 52,
+        "objective": "test objective",
+        "fencing_token": ""
+      },
+      "state_root": "dfbccd9a4d3c4428a9c02b232824797febc3cf52f95cf80fe6a10c42722dd42c",
+      "signer_fingerprint": "f9636d7db4cff9cd",
+      "signer_role": "owner",
+      "receipt_hash": "1a324bb32eeaf16ca12e867470169ad52433ecb9b12d2b15e74222389dd5f7c8",
+      "signature": "0a78484d2a31656737f15618d9f48a4f1af90927e9b3a6c86703fea842f56b6ddabde4324f6ec9b03f3a37ef7e04468f209b87a701f9f8078c0f10beba7c8e07"
+    },
+    {
+      "receipt_type": "WITNESS",
+      "agent_id": "agent-test",
+      "epoch_id": "c3478857dbb34602bed1de2ae86870b3",
+      "timestamp": 1784582350.296179,
+      "prior_receipt_hash": "1a324bb32eeaf16ca12e867470169ad52433ecb9b12d2b15e74222389dd5f7c8",
+      "action": "host_execution_witnessed",
+      "action_payload": {
+        "host_os": "Linux",
+        "host_arch": "x86_64",
+        "runtime_id": "rt-862fc125",
+        "operations_count": 1,
+        "test_results_count": 0,
+        "output_workspace_root_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "delta_hash": "e6f81eb153746360ef99e23944d47b6b258af62be3c0ef98649076d5250e7ada"
+      },
+      "state_root": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "signer_fingerprint": "2d7e123f1f4b63b4",
+      "signer_role": "host",
+      "receipt_hash": "1a29b5366798c4a3fd6c49f6f79396064a3975cc0bffbb88a2f7d0aa517033b7",
+      "signature": "37dfc3ff1431173c987f909c0be9eaafc52529201339b13945b3e7b0ef77946e6bb108310eb4483e23ec86d18ab6492a6b5420e3e3ff5693a768a9e01fc49a0b"
+    },
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-test",
+      "epoch_id": "c3478857dbb34602bed1de2ae86870b3",
+      "timestamp": 1784582350.297963,
+      "prior_receipt_hash": "1a29b5366798c4a3fd6c49f6f79396064a3975cc0bffbb88a2f7d0aa517033b7",
+      "action": "capsule_resealed_after_migration",
+      "action_payload": {
+        "workspace_root_hash": "f017f4a030442c19c9cee48e5c28e8983890aaa0abbfd6f5c6e98f22e835b7a0",
+        "file_count": 2,
+        "total_size": 62,
+        "witness_hash": "1a29b5366798c4a3fd6c49f6f79396064a3975cc0bffbb88a2f7d0aa517033b7",
+        "parent_epoch": 0
+      },
+      "state_root": "f017f4a030442c19c9cee48e5c28e8983890aaa0abbfd6f5c6e98f22e835b7a0",
+      "signer_fingerprint": "f9636d7db4cff9cd",
+      "signer_role": "owner",
+      "receipt_hash": "7ce64fe38fad116b2c2c7d4c74e685027f8767a477b240f98c6d972fac45e1de",
+      "signature": "238af97a4122b6b064be00819f29d8e15716d894ef8a3f5baba8a5e56d6ca5b385fe59f18697937664b9073a641a6143febf695bc77cb5c902c7b5018ee1b809"
+    }
+  ],
+  "manifest_hash": "f7d30c4a32d74054090acc88926ee43f63548a3f1041c61d4ff20f60b51a5430",
+  "signer_fingerprint": "f9636d7db4cff9cd",
+  "signature": "d499f8fb581185c3087453a649fe8e176e2a5aabc843f9277f145bf579f08d2261e024e7e9e4535e769f05a7033b714e3d681cdcc0c4a3d0c4187a79f766f003",
+  "sealed_at": 1784582350.298006
+}

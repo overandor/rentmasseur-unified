@@ -1,0 +1,163 @@
+=== HDAR FULL PIPELINE EVIDENCE MANIFEST ===
+Pipeline ID: hdar-pipeline-20260718T075626Z
+Generated: 2026-07-18T08:23:17Z
+
+=== PROVENANCE ===
+Git commit: bb230bfa2b50008d29373430be0bc58b2728a754
+Git branch: main
+Git dirty files at pipeline start: 0
+
+=== ENVIRONMENT ===
+macOS: 26.5.2
+Build: 25F84
+Darwin: 25.5.0
+Arch: arm64
+Python: Python 3.13.12
+Compiler: Apple clang version 21.0.0 (clang-2100.1.1.101)
+OpenSSL: OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)
+container CLI: container CLI version 1.1.0 (build: release, commit: unspeci)
+container SHA-256: 9fb1e387868ab01822a5efbac267161b8860af96ff9560cc8b60841840dea3f3
+container package: container 1.1.0
+
+=== NATIVE BINARY ===
+Binary SHA-256: ef145622c6dd41bbe8557d3932dfb7060b493b29a45e0848220fc596d9124c6d
+Binary size: 208472 bytes
+
+=== PHASE 2: DECISIVE LOOP RESULT ===
+Exit code: 0
+Duration: 19s
+Result:   55 passed, 0 failed
+
+  Key evidence:
+        Capsule hash: afba67134f5c8026...
+        Runtime B: hdar-restore-36b86925
+        Gateway output:
+    HDAR SSH Gateway — Agent: agent-native
+      Capsule: epoch 1 hash abedcf483e8b119b...
+      Fencing token: 9566991a-94fc-4c0b-9499-899208360015
+      Witness signed: c9d0951a8b9ec529...
+        Runtime A: real Linux VM (arm64), destroyed, absence proven
+        Runtime B: real Linux VM (arm64), destroyed, absence proven
+        Capsule 0: epoch 0, sealed on A, hash afba67134f5c8026...
+        Capsule 1: epoch 1, resealed by owner, hash abedcf483e8b119b...
+        Fencing: token invalidated, stale token rejected
+        Witness: signed by host B ephemeral key, verified by owner
+        Offline: 15 checks, 0 failures
+        Task: solve(10)=55, solve(100)=5050 — completed across 2 real VMs
+
+=== PHASE 3: BATTLE TEST RESULT ===
+Migrations requested: 100
+Migrations successful: 100
+Migrations failed: 0
+Success rate: 100.0%
+Wilson 95% lower bound: 96.3%
+Leaked runtimes: 0
+Total checks passed: 1831
+Total checks failed: 0
+Duration: 1587s
+
+=== PHASE 4: FAILURE ANALYSIS ===
+Total failures preserved: 1
+  Assertion failures: 0
+  Infrastructure exceptions: 1
+    blob not found (storage): 1
+    restore failures: 0
+    other infra: 0
+  Lease acquisition failures: 0
+
+  FAILURE RECORDS (preserved with full diagnostics):
+    --- failure_16e2347e_0002.json ---
+    migration_id: 2
+    run_id: 16e2347e
+    failure_type: exception
+    failure_detail: blob not found: 753dc3082e3bf753ec28dd36a985e61db4eb289a5b2a1c43c3ae893a63d692e8
+    last_phase: restore_vm_b
+    vm_a_id: hdar-16e2347e-A-0002
+    vm_b_id: 
+    vm_a_absent: True
+    vm_b_absent: False
+    capsule_hash: d1b0902d80ef5b7f
+    epoch: LineageEpoch(epoch_id='c162485e5c204c8c8815f3dad82486f7', agent_id='agent-vm-0002', sequence=0, parent_epoch=None, created_at=1784349042.0153642)
+    lease_state: lease query failed
+    inject_failure: duplicate_wake
+    duration_ms: 5838.3469581604
+    cleanup_errors: []
+    timestamp: 1784349047.8535428
+
+=== SOURCE HASHES ===
+    92adeea99ed329ca79f03b171ac1d40926a594e4bc90db8b58f18c2eabb392d1  native/main.cpp
+    4964036f100f79e2c2d41bccec83a2e4a4ea18c2aea22dc6239752c68a28c3b2  native/hdar_provider.cpp
+    b2e571b6fab741fc50bd8afdbfc822b34425d7f24d1bbaefef4002b266849dd4  native/hdar_provider.h
+    897b17dedf2e56968508aecd5cac961afcd574d7983b0116c71f4a06b392bc05  native/hdar_crypto.cpp
+    0972fd0695dbae6a1f30073c06d085cc2eb3f606ef75f9b934990ee47bb2f8d3  native/hdar_crypto.h
+    5f7b4f08afdbd9c68ecfa6ee2fc64c189fee6ec0c3e547785e3a5406e6a474cc  native/hdar_crypto.mm
+    107ad2bf7ec2154d40a80655c1319a6ae7c3397fc6ce89a4818dc91c8776303e  native/hdar_lease.cpp
+    7e9d6ba3b81fac761cb6156b1062ac7630c8997dceb3391a9a115e68d74f8a56  native/hdar_lease.h
+    34c2bcb456350c489d3e5e4c39c321cffce689ab2a40c8d85bcefd510218dd2e  native/hdar_continuity.cpp
+    3b02f705723881d5b4b9236b915b3cc1e26bd9f81c73dee4fcdcc621a67d2c8b  native/hdar_continuity.h
+    b110ca672ed6f4ffa89984f124d92465d1b35d46057396312b8a5e807b618f64  native/hdar_gateway.cpp
+    ad97ba683639f4cec5f22d4dd1c0e09d60964d93527ba7a04425080052b4f771  native/hdar_gateway.h
+    9cba549ff454061675435a06ef402efd884c90c980df4e232275d111fc2bedfb  native/hdar_store.cpp
+    40cef6f15420b5c972287735c4ecd46b5fa19f6b77823dcf014059e9551f5848  native/hdar_store.h
+    95cc6cfa5b9444fb21798595708982d3d91e83e1766d721ae6cd2247b8d7625e  native/Makefile
+    9c3c95e1d27a64e97d922283afb6fa4c446b5818caea565d764389ac88e0af92  real_vm_harness.py
+    0a88c5c283bae1b3272eaf8b09651e3789a742e9a68635413d1780cb47fc87ae  continuity.py
+    8edc993710cedab0274be9979a1bf8da253b59ee6df6ad3666a6c75a5c26d0d2  capsule/store.py
+    fe0d3daea086452d3acdc8ba96a42ec0092ec9a875e7846f4061337dc2012eef  capsule/identity.py
+    89e0de07dda389ef7912492d59c366ea53743e9c1556da7c56bdbb4e39a8b97c  capsule/capabilities.py
+    fd3cee9f6f3721695294493dd347e73271a7032c95adbeba14659b646d1595d3  capsule/restoration_contract.py
+    80f251a47434c1563c1c558403910a6b03cd2cc66f0b2ce25fa8b81be869a741  lifecycle/lease.py
+    e7bb6e675298b8e4d02a2b3dc492bee5d27b8d84817ca8a534e6cdc2b3fef33a  lifecycle/effects.py
+    0a6a51ccad85d3049f7c27cd4255d15f6d66db7700e9cef547d6e79b3ddbbafa  providers/base.py
+    dcf4593c67284a5473d997ab2d1f2d522ad6a4401e48bc6a13c6e626cb2c6cf0  providers/apple_container.py
+    331861d3a849c01a6f8d735060bf805eb573d761a6c2ca095d9bcc6d3bda7f77  crypto/__init__.py
+    17d49fa08097a2f60384cdf29e1494c744b57c4cfd81f5147c49df64519f2141  .github/workflows/ci.yml
+    51c666417f3d7f86cce634e1f2e31b25a567f25e0409119cd83bfbbc609b5efb  generate_evidence.sh
+    9b86d28c70b548502fe1b80766a131cb8beda565565b934bdeb291a424828817  run_full_pipeline.sh
+
+=== HONEST CLAIMS ===
+Proven by this pipeline:
+  - Native C++ decisive loop:   55 passed, 0 failed
+  - Real Apple Containerization Linux VMs (arm64)
+  - Ed25519 owner signing, host witness, offline verification
+  - VM creation, execution, destruction, absence proof
+  - Capsule sealing, restoration, continuation
+  - Fencing token invalidation, stale rejection
+  - SSH gateway routing (logical)
+  - Battle test: 100/100 migrations (100.0%)
+  - Wilson 95% lower bound: 96.3%
+
+NOT proven by this pipeline:
+  - Cross-host migration (same Mac only)
+  - Real SSH session (gateway logic only)
+  - Model requirements in capsule
+  - External side-effect reconciliation
+  - Provider compatibility resolver
+  - Production-grade reliability (storage blob failures observed)
+
+=== VERIFICATION INSTRUCTIONS ===
+1. Verify git commit: cd /Users/alep/Downloads/hdar && git rev-parse HEAD
+2. Verify source hashes: shasum -a 256 <file>
+3. Verify binary hash: shasum -a 256 native/hdar_native
+4. Verify manifest integrity: shasum -a 256 evidence/manifest.txt
+5. Compare to detached hash: cat evidence/manifest.sha256
+6. Verify Ed25519 signature:
+   openssl pkeyutl -verify -pubin -inkey evidence/verify_key.pem -rawin -in evidence/manifest.sha256 -sigfile evidence/manifest.sig
+7. Re-run pipeline: ./run_full_pipeline.sh 100
+
+=== ARTIFACTS ===
+logs/pipeline.log         — this pipeline's execution log
+logs/decisive_loop.log    — full native decisive loop output
+logs/battle_test.log      — full battle test output
+logs/native_build.log     — native build output
+logs/git_status.txt       — git status (if dirty)
+logs/git_diff.txt         — git diff (if dirty)
+evidence/environment.txt  — full environment snapshot
+evidence/decisive_summary.txt — decisive loop key evidence
+evidence/battle_test_100.json — full battle test results
+evidence/manifest.txt     — this manifest
+evidence/manifest.sha256  — detached SHA-256 of manifest
+evidence/manifest.sig     — Ed25519 signature over manifest hash
+evidence/signing_key.pem  — Ed25519 private key
+evidence/verify_key.pem   — Ed25519 public key
+failures/*.json           — preserved failure records with diagnostics

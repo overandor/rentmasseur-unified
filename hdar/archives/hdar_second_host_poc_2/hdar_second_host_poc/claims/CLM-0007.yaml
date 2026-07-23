@@ -1,0 +1,13 @@
+claim_id: CLM-0007
+statement: "The evidence packet has an independent Ed25519 signature distinct from the report signature."
+evidence_ids:
+  - EVP-0015
+independent_verification_procedure: |
+  1. Extract signature and public_key from host_b_evidence_packet.json
+  2. Verify Ed25519 signature over packet content (excluding signature field)
+  3. Confirm signature differs from report signature
+  4. Confirm evidence_packet_sha256 matches recomputed hash
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: evidence_packet_signature

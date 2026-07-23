@@ -1,0 +1,13 @@
+{
+  "schema": "hdar.claim-coverage/v0.1",
+  "description": "The strongest long-term metric is not repository size, code volume, or number of demonstrations. It is the Claim Coverage Ratio: the fraction of public claims that have machine-verifiable evidence.",
+  "formula": "claim_coverage = claims_with_machine_verifiable_evidence / total_public_claims",
+  "current": {
+    "total_public_claims": 12,
+    "claims_with_evidence": 12,
+    "claim_coverage_ratio": 1.0,
+    "as_of": "2026-07-20"
+  },
+  "target": "A ratio approaching 1.0 means nearly every externally stated capability is backed by an independently inspectable artifact.",
+  "notes": "All 12 claims in the registry have evidence. As new claims are added, they must either have evidence or be marked as roadmap (not public claims). Roadmap items do not count against the ratio."
+}

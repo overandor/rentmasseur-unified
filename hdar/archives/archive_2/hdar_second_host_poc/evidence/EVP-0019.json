@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0019",
+  "source_files": ["RUN_ON_REAL_HOST_B.md", "INSTRUCTIONS.txt"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["Blind replication completed on GitHub Codespaces Ubuntu 24.04 x86_64 without founder assistance"],
+  "runtime_logs": [],
+  "generation_tool": "n/a (documentation)",
+  "schema_version": "hdar.evidence/v0.1"
+}

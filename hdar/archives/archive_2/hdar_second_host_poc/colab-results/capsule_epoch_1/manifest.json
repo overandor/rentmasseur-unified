@@ -1,0 +1,52 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "continuation_point": "Host A sealed epoch 1; Host B must restore and advance progress.log.",
+  "created_at": 1784617647.739271,
+  "epoch": 1,
+  "manifest_hash": "7cd25b2d5521f87343a1e4fbc6d5f9cb754b478ea7b8420eb37e764c6e6af4da",
+  "objective": "Continue unfinished work after Host A runtime destruction.",
+  "owner_public_key": "b39945ae207837a4410254a5850a1a4d448598a67bacec897e69ffcfb8d84031",
+  "owner_signature": "e0c1a1a48e3d3ec480a65a0f4b0242190fe05d418109f5cf1d72964575a0715eb9dcd94fe5e6daf425a240e31be3f6b3d902d1a8318a72e034b387ae442c9e09",
+  "owner_signature_algorithm": "ed25519",
+  "parent_manifest_hash": null,
+  "schema": "hdar.transport-capsule/v0.1",
+  "signature_mode": "ed25519-owner-signed",
+  "source_host_label": "host-a-local-mac",
+  "verification_mode": "sha256-content-addressed-hash-only",
+  "workspace_manifest": {
+    "files": [
+      {
+        "mode": 420,
+        "rel_path": "agent_state.json",
+        "sha256": "7ea3a3ef646e215066e93fdf0632c45f57c775942466acf942f508e35a8237d8",
+        "size": 378
+      },
+      {
+        "mode": 420,
+        "rel_path": "data/input_records.jsonl",
+        "sha256": "cefc1c255a67a3c52ed5ef19974ebb87edd1def50fb7045adef2390238d5fcd3",
+        "size": 4162
+      },
+      {
+        "mode": 420,
+        "rel_path": "progress.log",
+        "sha256": "afd035c1b68694e1f3e747e0099e4f7ffc95f7c0da7fac81678e29f9cdf3944d",
+        "size": 168
+      },
+      {
+        "mode": 420,
+        "rel_path": "src/worker.py",
+        "sha256": "44d983b0840448735ea2b70150ca6cfdf635698ef40677b7178e5d6ca7f2822d",
+        "size": 9656
+      },
+      {
+        "mode": 420,
+        "rel_path": "todo.md",
+        "sha256": "76b6d7239b50cffe3969bfba38a5aed19a413bd130839bbdfb783abe06f35038",
+        "size": 480
+      }
+    ],
+    "root_hash": "85088f946496aa2992b092346d4607fb5feae7ccd1667f8ba0e36c483f10ce1e",
+    "total_size": 14844
+  }
+}
