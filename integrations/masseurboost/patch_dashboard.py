@@ -50,13 +50,19 @@ def patch(path: Path) -> None:
             raise SystemExit("Could not find dashboard helper anchor")
         source = source.replace(anchor, TRIAL_HELPER + "\n" + anchor, 1)
 
-    source = source.replace(
-        "This sends a `trial_signup` event to the live optimizer.",
-        "This creates a dedicated trial record through the active multicloud host."
-    ).replace(
-        "This creates a dedicated trial record in the live optimizer.",
-        "This creates a dedicated trial record through the active multicloud host."
-    )
+    replacements = {
+        "This sends a `trial_signup` event to the live optimizer.":
+            "This creates a dedicated trial record through the active multicloud host.",
+        "This creates a dedicated trial record in the live optimizer.":
+            "This creates a dedicated trial record through the active multicloud host.",
+        "The optimizer accepted the event and returned this receipt:":
+            "The active trial endpoint accepted the request and returned this receipt:",
+        "result.receipt||result.trial_id||'Receipt created'":
+            "result.receiptId||result.receipt||result.trial_id||'Receipt created'",
+    }
+    for old, new in replacements.items():
+        source = source.replace(old, new)
+
     path.write_text(source)
 
 
