@@ -1,17 +1,19 @@
 {
-  "name": "rentmasseur-extension",
-  "version": "1.0.0",
-  "private": true,
-  "description": "RentMasseur OS — Vercel serverless backend proxy",
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  },
-  "dependencies": {},
-  "env": {
-    "HF_SPACE_URL": "https://josephrw-rentmasseur-optimizer.hf.space"
-  },
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" }
+    { "source": "/api/engine/:path*", "destination": "https://josephrw-rentmasseur-optimizer.hf.space/api/:path*" },
+    { "source": "/os/:path*", "destination": "https://josephrw-rentmasseur-optimizer.hf.space/api/os/:path*" }
   ]
 }
