@@ -105,6 +105,8 @@ export default async function handler(req, res) {
   return res.status(201).json({
     ok: true,
     receiptId,
+    receipt: receiptId,
+    trial_id: receiptId,
     acceptedAt,
     trialDays: 7,
     activation: record.activation,
