@@ -14,7 +14,6 @@
   status = 200
   force = true
 
-# Preserve access to the existing Hugging Face service pipeline.
 [[redirects]]
   from = "/api/engine/*"
   to = "https://josephrw-rentmasseur-optimizer.hf.space/api/:splat"
@@ -27,10 +26,14 @@
   status = 200
   force = true
 
+# Netlify is a traffic-collection node. All public page authority is
+# consolidated into the canonical Vercel origin while paths and query
+# parameters are preserved for attribution.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "https://rentmasseur-unified-prod-happo.vercel.app/:splat"
+  status = 301
+  force = true
 
 [[headers]]
   for = "/*"
@@ -38,3 +41,4 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    X-Robots-Tag = "noindex, follow"
