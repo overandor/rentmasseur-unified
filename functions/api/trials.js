@@ -63,12 +63,7 @@ export async function onRequestOptions() {
 
 export async function onRequestGet(context) {
   if (!context.env.LEADS || typeof context.env.LEADS.list !== 'function') {
-    return json({
-      ok: true,
-      trialCount: null,
-      stored: false,
-      storage: 'not_configured'
-    });
+    return json({ ok: true, trialCount: null, stored: false, storage: 'not_configured' });
   }
   const list = await context.env.LEADS.list({ prefix: 'trial:', limit: 1000 });
   return json({
@@ -137,6 +132,8 @@ export async function onRequestPost(context) {
   return json({
     ok: true,
     receiptId,
+    receipt: receiptId,
+    trial_id: receiptId,
     acceptedAt,
     trialDays: 7,
     activation: record.activation,
