@@ -1,13 +1,16 @@
 [build]
-  command = "pip install -r requirements.txt"
-  publish = "netlify_dist"
+  publish = "."
+  functions = "netlify/functions"
 
-[build.environment]
-  PYTHON_VERSION = "3.11"
-
-# Proxy API calls to Hugging Face Space
 [[redirects]]
-  from = "/api/*"
+  from = "/api/intake"
+  to = "/.netlify/functions/intake"
+  status = 200
+  force = true
+
+# Preserve access to the existing Hugging Face service pipeline.
+[[redirects]]
+  from = "/api/engine/*"
   to = "https://josephrw-rentmasseur-optimizer.hf.space/api/:splat"
   status = 200
   force = true
@@ -18,8 +21,14 @@
   status = 200
   force = true
 
-# Serve dashboard as fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
