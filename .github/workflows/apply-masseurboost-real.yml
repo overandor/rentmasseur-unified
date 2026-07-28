@@ -1,4 +1,4 @@
-name: Apply MasseurBoost Real Functionality
+name: Validate MasseurBoost Real Functionality
 
 on:
   push:
@@ -6,43 +6,45 @@ on:
     paths:
       - integrations/masseurboost/**
       - integrations/hf-source/dashboard/index.html
-      - integrations/hf-source/optimizer/cpp_os_server.cpp
+      - .github/workflows/apply-masseurboost-real.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - integrations/masseurboost/**
+      - integrations/hf-source/dashboard/index.html
       - .github/workflows/apply-masseurboost-real.yml
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: masseurboost-real-patch
+  group: masseurboost-real-validation-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  patch-and-validate:
-    if: github.actor != 'github-actions[bot]'
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/masseurboost-real
-          fetch-depth: 0
           lfs: false
 
-      - name: Apply idempotent patches
+      - name: Clone and patch public optimizer source
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
         run: |
           set -euo pipefail
-          python integrations/masseurboost/patch_optimizer.py integrations/hf-source/optimizer/cpp_os_server.cpp
-          python integrations/masseurboost/patch_dashboard.py integrations/hf-source/dashboard/index.html
-
-      - name: Compile-check optimizer server
-        run: |
-          set -euo pipefail
-          g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only integrations/hf-source/optimizer/cpp_os_server.cpp
+          git clone --depth=1 https://huggingface.co/spaces/josephrw/rentmasseur-optimizer /tmp/rm-optimizer
+          python integrations/masseurboost/patch_optimizer.py /tmp/rm-optimizer/cpp_os_server.cpp
+          g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only /tmp/rm-optimizer/cpp_os_server.cpp
 
       - name: Validate dashboard JavaScript and claims
         run: |
           set -euo pipefail
+          python integrations/masseurboost/patch_dashboard.py integrations/hf-source/dashboard/index.html
+          git diff --exit-code -- integrations/hf-source/dashboard/index.html
           python - <<'PY'
           from html.parser import HTMLParser
           from pathlib import Path
@@ -71,16 +73,3 @@ jobs:
           print('dashboard contract validated')
           PY
           node --check /tmp/masseurboost.js
-
-      - name: Commit patched sources
-        run: |
-          set -euo pipefail
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add integrations/hf-source/dashboard/index.html integrations/hf-source/optimizer/cpp_os_server.cpp
-          if git diff --cached --quiet; then
-            echo 'Sources already patched'
-            exit 0
-          fi
-          git commit -m 'Wire MasseurBoost dashboard to dedicated real trial endpoint'
-          git push origin HEAD:feature/masseurboost-real
