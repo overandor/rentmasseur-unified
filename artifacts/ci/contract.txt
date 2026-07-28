@@ -1,0 +1,3 @@
+deterministic-seed
+integrity-required
+artifact-upload-required
