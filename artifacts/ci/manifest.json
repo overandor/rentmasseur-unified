@@ -1,0 +1,7 @@
+{
+  "database": "rentmasseur_ci.sqlite3",
+  "seeded_leads": 50,
+  "seeded_receipts": 50,
+  "deployment_providers": 3,
+  "integrity_check": "ok"
+}
