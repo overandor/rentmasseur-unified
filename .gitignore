@@ -56,6 +56,8 @@ phone_extractor
 rentmasseur_scraper
 rotator_engine
 cpp_os_server
+variants/rm-optimizer/rm_pri/cpp/rm_pri
+variants/daemon/rm_pri/cpp/rm_pri
 
 # Large data files
 *.db
