@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 18
     env:
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_USERNAME: josephrw
       DASHBOARD_SPACE: josephrw/rentmasseur-dashboard
       OPTIMIZER_SPACE: josephrw/rentmasseur-optimizer
       DASHBOARD_URL: https://josephrw-rentmasseur-dashboard.hf.space
@@ -50,8 +51,8 @@ jobs:
           echo clone_spaces > /tmp/deploy-stage
           git config --global user.name github-actions[bot]
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git clone "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/${OPTIMIZER_SPACE}" /tmp/rm-optimizer
-          git clone "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/${DASHBOARD_SPACE}" /tmp/rm-dashboard
+          git clone "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${OPTIMIZER_SPACE}" /tmp/rm-optimizer
+          git clone "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${DASHBOARD_SPACE}" /tmp/rm-dashboard
           echo spaces_cloned > /tmp/deploy-stage
 
       - name: Patch and compile-check optimizer
