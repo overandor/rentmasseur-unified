@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Opening MasseurBoost</title>
+  <style>html{color-scheme:dark}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#090a10;color:#f7f7fb;font-family:system-ui,sans-serif}p{color:#a8adbd}</style>
+</head>
+<body>
+  <main><h1>Opening MasseurBoost</h1><p>Loading the live evidence dashboard…</p></main>
+  <script>
+    const target=new URL('/integrations/hf-source/dashboard/',location.origin);
+    target.search=location.search;
+    target.hash=location.hash;
+    location.replace(target.href);
+  </script>
+  <noscript><a href="/integrations/hf-source/dashboard/">Open MasseurBoost</a></noscript>
+</body>
+</html>
