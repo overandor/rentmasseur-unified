@@ -1,0 +1,112 @@
+name: Deploy Real MasseurBoost
+
+on:
+  push:
+    branches: [feature/masseurboost-real]
+    paths:
+      - integrations/hf-source/dashboard/index.html
+      - integrations/hf-source/optimizer/cpp_os_server.cpp
+      - integrations/masseurboost/**
+      - .github/workflows/deploy-masseurboost-real.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-real-masseurboost
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      DASHBOARD_SPACE: josephrw/rentmasseur-dashboard
+      OPTIMIZER_SPACE: josephrw/rentmasseur-optimizer
+      DASHBOARD_URL: https://josephrw-rentmasseur-dashboard.hf.space
+      OPTIMIZER_URL: https://josephrw-rentmasseur-optimizer.hf.space
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/masseurboost-real
+          lfs: false
+
+      - name: Require Hugging Face deployment token
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo 'HF_TOKEN secret is not configured'; exit 1; }
+
+      - name: Clone target Spaces
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
+        run: |
+          set -euo pipefail
+          git config --global user.name github-actions[bot]
+          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git clone "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/${OPTIMIZER_SPACE}" /tmp/rm-optimizer
+          git clone "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/${DASHBOARD_SPACE}" /tmp/rm-dashboard
+
+      - name: Patch and compile-check optimizer
+        run: |
+          set -euo pipefail
+          python integrations/masseurboost/patch_optimizer.py /tmp/rm-optimizer/cpp_os_server.cpp
+          g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only /tmp/rm-optimizer/cpp_os_server.cpp
+
+      - name: Install real dashboard
+        run: |
+          set -euo pipefail
+          cp integrations/hf-source/dashboard/index.html /tmp/rm-dashboard/index.html
+          grep -q '/api/trials' /tmp/rm-dashboard/index.html
+          ! grep -q 'using demo values' /tmp/rm-dashboard/index.html
+          ! grep -q '1,334' /tmp/rm-dashboard/index.html
+          ! grep -q 'ZK-proof' /tmp/rm-dashboard/index.html
+
+      - name: Push optimizer update
+        run: |
+          set -euo pipefail
+          cd /tmp/rm-optimizer
+          git add cpp_os_server.cpp
+          if ! git diff --cached --quiet; then
+            git commit -m "Add receipt-backed public trial intake"
+            git push origin HEAD:main
+          else
+            echo 'Optimizer already current'
+          fi
+
+      - name: Push dashboard update
+        run: |
+          set -euo pipefail
+          cd /tmp/rm-dashboard
+          git add index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "Replace mock dashboard with live evidence-driven UI"
+            git push origin HEAD:main
+          else
+            echo 'Dashboard already current'
+          fi
+
+      - name: Verify live optimizer and dashboard
+        run: |
+          set -euo pipefail
+          optimizer_ok=0
+          dashboard_ok=0
+          for attempt in $(seq 1 12); do
+            echo "Verification attempt ${attempt}/12"
+            if curl -fsS --max-time 30 "${OPTIMIZER_URL}/api/health" | tee /tmp/health.json | grep -Eq 'GREEN_REAL|"status":"ok"'; then
+              if curl -fsS --max-time 30 "${OPTIMIZER_URL}/api/trials" | tee /tmp/trials.json | grep -q 'trial_count'; then
+                optimizer_ok=1
+              fi
+            fi
+            if curl -fsS --max-time 30 "${DASHBOARD_URL}/" | tee /tmp/dashboard.html | grep -q 'proof instead of theater'; then
+              dashboard_ok=1
+            fi
+            if [[ "$optimizer_ok" == 1 && "$dashboard_ok" == 1 ]]; then
+              echo 'Optimizer and dashboard verified live'
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "optimizer_ok=${optimizer_ok} dashboard_ok=${dashboard_ok}"
+          exit 1
