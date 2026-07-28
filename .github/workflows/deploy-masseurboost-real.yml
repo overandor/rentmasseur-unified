@@ -1,19 +1,13 @@
-name: Deploy Real MasseurBoost
+name: Deploy Real MasseurBoost to Hugging Face
 
 on:
-  push:
-    branches: [feature/masseurboost-real]
-    paths:
-      - integrations/hf-source/dashboard/index.html
-      - integrations/masseurboost/**
-      - .github/workflows/deploy-masseurboost-real.yml
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: deploy-real-masseurboost
+  group: deploy-real-masseurboost-hf
   cancel-in-progress: true
 
 jobs:
@@ -30,137 +24,72 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/masseurboost-real
           lfs: false
 
-      - name: Initialize deployment diagnostics
-        run: echo checkout_complete > /tmp/deploy-stage
-
-      - name: Require Hugging Face deployment token
+      - name: Require a current write token
         run: |
           set -euo pipefail
-          echo token_check > /tmp/deploy-stage
-          test -n "$HF_TOKEN" || { echo 'HF_TOKEN secret is not configured'; exit 1; }
-          echo token_present > /tmp/deploy-stage
+          test -n "$HF_TOKEN" || { echo 'Replace the HF_TOKEN repository secret with a current write token.'; exit 1; }
 
       - name: Clone target Spaces
         env:
           GIT_LFS_SKIP_SMUDGE: "1"
         run: |
           set -euo pipefail
-          echo clone_spaces > /tmp/deploy-stage
           git config --global user.name github-actions[bot]
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
           git clone "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${OPTIMIZER_SPACE}" /tmp/rm-optimizer
           git clone "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${DASHBOARD_SPACE}" /tmp/rm-dashboard
-          echo spaces_cloned > /tmp/deploy-stage
 
-      - name: Patch and compile-check optimizer
+      - name: Patch and validate optimizer
         run: |
           set -euo pipefail
-          echo patch_optimizer > /tmp/deploy-stage
           python integrations/masseurboost/patch_optimizer.py /tmp/rm-optimizer/cpp_os_server.cpp
           g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only /tmp/rm-optimizer/cpp_os_server.cpp
-          echo optimizer_compiled > /tmp/deploy-stage
 
-      - name: Install real dashboard
+      - name: Install dashboard
         run: |
           set -euo pipefail
-          echo validate_dashboard > /tmp/deploy-stage
+          python integrations/masseurboost/patch_dashboard.py integrations/hf-source/dashboard/index.html
           cp integrations/hf-source/dashboard/index.html /tmp/rm-dashboard/index.html
           grep -q '/api/trials' /tmp/rm-dashboard/index.html
           ! grep -q 'using demo values' /tmp/rm-dashboard/index.html
           ! grep -q '1,334' /tmp/rm-dashboard/index.html
           ! grep -q 'ZK-proof' /tmp/rm-dashboard/index.html
-          echo dashboard_validated > /tmp/deploy-stage
 
-      - name: Push optimizer update
+      - name: Push optimizer
         run: |
           set -euo pipefail
-          echo push_optimizer > /tmp/deploy-stage
           cd /tmp/rm-optimizer
           git add cpp_os_server.cpp
           if ! git diff --cached --quiet; then
-            git commit -m "Add receipt-backed public trial intake"
-            if ! output=$(git push origin HEAD:main 2>&1); then
-              printf '%s\n' "$output" | sed "s/${HF_TOKEN}/***/g" > /tmp/deploy-error
-              cat /tmp/deploy-error
-              exit 1
-            fi
-          else
-            echo 'Optimizer already current'
+            git commit -m 'Add receipt-backed public trial intake'
+            git push origin HEAD:main
           fi
-          echo optimizer_pushed > /tmp/deploy-stage
 
-      - name: Push dashboard update
+      - name: Push dashboard
         run: |
           set -euo pipefail
-          echo push_dashboard > /tmp/deploy-stage
           cd /tmp/rm-dashboard
           git add index.html
           if ! git diff --cached --quiet; then
-            git commit -m "Replace mock dashboard with live evidence-driven UI"
-            if ! output=$(git push origin HEAD:main 2>&1); then
-              printf '%s\n' "$output" | sed "s/${HF_TOKEN}/***/g" > /tmp/deploy-error
-              cat /tmp/deploy-error
-              exit 1
-            fi
-          else
-            echo 'Dashboard already current'
+            git commit -m 'Replace mock dashboard with live evidence-driven UI'
+            git push origin HEAD:main
           fi
-          echo dashboard_pushed > /tmp/deploy-stage
 
-      - name: Verify live optimizer and dashboard
+      - name: Verify live Spaces
         run: |
           set -euo pipefail
-          echo verify_live > /tmp/deploy-stage
           optimizer_ok=0
           dashboard_ok=0
           for attempt in $(seq 1 8); do
-            echo "Verification attempt ${attempt}/8"
-            if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/health" | tee /tmp/health.json | grep -Eq 'GREEN_REAL|"status":"ok"'; then
-              if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/trials" | tee /tmp/trials.json | grep -q 'trial_count'; then optimizer_ok=1; fi
-            fi
-            if curl -fsS --max-time 25 "${DASHBOARD_URL}/" | tee /tmp/dashboard.html | grep -q 'proof instead of theater'; then dashboard_ok=1; fi
+            if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/trials" | grep -q 'trial_count'; then optimizer_ok=1; fi
+            if curl -fsS --max-time 25 "${DASHBOARD_URL}/" | grep -q 'proof instead of theater'; then dashboard_ok=1; fi
             if [[ "$optimizer_ok" == 1 && "$dashboard_ok" == 1 ]]; then
-              echo verified_live > /tmp/deploy-stage
+              echo 'Hugging Face optimizer and dashboard verified live.'
               exit 0
             fi
             sleep 25
           done
-          printf 'optimizer_ok=%s dashboard_ok=%s\n' "$optimizer_ok" "$dashboard_ok" > /tmp/deploy-error
+          echo "optimizer_ok=${optimizer_ok} dashboard_ok=${dashboard_ok}"
           exit 1
-
-      - name: Commit deployment receipt
-        if: always()
-        env:
-          DEPLOY_STATUS: ${{ job.status }}
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          stage = Path('/tmp/deploy-stage').read_text().strip() if Path('/tmp/deploy-stage').exists() else 'unknown'
-          error = Path('/tmp/deploy-error').read_text(errors='replace')[-1200:].strip() if Path('/tmp/deploy-error').exists() else ''
-          token = os.environ.get('HF_TOKEN', '')
-          if token: error = error.replace(token, '***')
-          data = {
-              'workflow': 'Deploy Real MasseurBoost',
-              'run_id': os.environ['GITHUB_RUN_ID'],
-              'status': os.environ['DEPLOY_STATUS'],
-              'last_stage': stage,
-              'hf_token_configured': bool(token),
-              'error_tail': error,
-              'source_commit': os.environ['GITHUB_SHA'],
-              'dashboard_space': os.environ['DASHBOARD_SPACE'],
-              'optimizer_space': os.environ['OPTIMIZER_SPACE'],
-          }
-          path = Path('receipts/masseurboost-deploy.json')
-          path.parent.mkdir(exist_ok=True)
-          path.write_text(json.dumps(data, indent=2) + '\n')
-          PY
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add receipts/masseurboost-deploy.json
-          git commit -m "Record MasseurBoost deployment ${DEPLOY_STATUS}" || exit 0
-          git push origin HEAD:feature/masseurboost-real
