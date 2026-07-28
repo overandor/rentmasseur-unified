@@ -1,8 +1,11 @@
 {
   "workflow": "Deploy Real MasseurBoost",
+  "run_id": "30355833150",
   "status": "failure",
-  "source_commit": "7d9d2f4547231b045d11f4a63eb607a34c64ca9b",
+  "last_stage": "push_optimizer",
+  "hf_token_configured": true,
+  "source_commit": "4e161266bbb69e49cc34cad01d10e474f4aad1c9",
   "dashboard_space": "josephrw/rentmasseur-dashboard",
   "optimizer_space": "josephrw/rentmasseur-optimizer",
-  "recorded_at": "2026-07-28T11:41:22Z"
+  "recorded_at": "2026-07-28T11:42:13Z"
 }
