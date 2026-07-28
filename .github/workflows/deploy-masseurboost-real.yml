@@ -32,39 +32,51 @@ jobs:
           ref: feature/masseurboost-real
           lfs: false
 
+      - name: Initialize deployment diagnostics
+        run: echo checkout_complete > /tmp/deploy-stage
+
       - name: Require Hugging Face deployment token
         run: |
           set -euo pipefail
+          echo token_check > /tmp/deploy-stage
           test -n "$HF_TOKEN" || { echo 'HF_TOKEN secret is not configured'; exit 1; }
+          echo token_present > /tmp/deploy-stage
 
       - name: Clone target Spaces
         env:
           GIT_LFS_SKIP_SMUDGE: "1"
         run: |
           set -euo pipefail
+          echo clone_spaces > /tmp/deploy-stage
           git config --global user.name github-actions[bot]
           git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
           git clone "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/${OPTIMIZER_SPACE}" /tmp/rm-optimizer
           git clone "https://hf_user:${HF_TOKEN}@huggingface.co/spaces/${DASHBOARD_SPACE}" /tmp/rm-dashboard
+          echo spaces_cloned > /tmp/deploy-stage
 
       - name: Patch and compile-check optimizer
         run: |
           set -euo pipefail
+          echo patch_optimizer > /tmp/deploy-stage
           python integrations/masseurboost/patch_optimizer.py /tmp/rm-optimizer/cpp_os_server.cpp
           g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only /tmp/rm-optimizer/cpp_os_server.cpp
+          echo optimizer_compiled > /tmp/deploy-stage
 
       - name: Install real dashboard
         run: |
           set -euo pipefail
+          echo validate_dashboard > /tmp/deploy-stage
           cp integrations/hf-source/dashboard/index.html /tmp/rm-dashboard/index.html
           grep -q '/api/trials' /tmp/rm-dashboard/index.html
           ! grep -q 'using demo values' /tmp/rm-dashboard/index.html
           ! grep -q '1,334' /tmp/rm-dashboard/index.html
           ! grep -q 'ZK-proof' /tmp/rm-dashboard/index.html
+          echo dashboard_validated > /tmp/deploy-stage
 
       - name: Push optimizer update
         run: |
           set -euo pipefail
+          echo push_optimizer > /tmp/deploy-stage
           cd /tmp/rm-optimizer
           git add cpp_os_server.cpp
           if ! git diff --cached --quiet; then
@@ -73,10 +85,12 @@ jobs:
           else
             echo 'Optimizer already current'
           fi
+          echo optimizer_pushed > /tmp/deploy-stage
 
       - name: Push dashboard update
         run: |
           set -euo pipefail
+          echo push_dashboard > /tmp/deploy-stage
           cd /tmp/rm-dashboard
           git add index.html
           if ! git diff --cached --quiet; then
@@ -85,10 +99,12 @@ jobs:
           else
             echo 'Dashboard already current'
           fi
+          echo dashboard_pushed > /tmp/deploy-stage
 
       - name: Verify live optimizer and dashboard
         run: |
           set -euo pipefail
+          echo verify_live > /tmp/deploy-stage
           optimizer_ok=0
           dashboard_ok=0
           for attempt in $(seq 1 8); do
@@ -102,6 +118,7 @@ jobs:
               dashboard_ok=1
             fi
             if [[ "$optimizer_ok" == 1 && "$dashboard_ok" == 1 ]]; then
+              echo verified_live > /tmp/deploy-stage
               echo 'Optimizer and dashboard verified live'
               exit 0
             fi
@@ -116,11 +133,17 @@ jobs:
           DEPLOY_STATUS: ${{ job.status }}
         run: |
           set -euo pipefail
+          stage=$(cat /tmp/deploy-stage 2>/dev/null || echo unknown)
+          token_configured=false
+          if [[ -n "${HF_TOKEN:-}" ]]; then token_configured=true; fi
           mkdir -p receipts
           cat > receipts/masseurboost-deploy.json <<EOF
           {
             "workflow": "Deploy Real MasseurBoost",
+            "run_id": "${GITHUB_RUN_ID}",
             "status": "${DEPLOY_STATUS}",
+            "last_stage": "${stage}",
+            "hf_token_configured": ${token_configured},
             "source_commit": "${GITHUB_SHA}",
             "dashboard_space": "${DASHBOARD_SPACE}",
             "optimizer_space": "${OPTIMIZER_SPACE}",
