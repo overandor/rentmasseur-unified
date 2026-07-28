@@ -1,11 +1,11 @@
 {
   "workflow": "Deploy Real MasseurBoost",
-  "run_id": "30355973422",
+  "run_id": "30356400375",
   "status": "failure",
   "last_stage": "push_optimizer",
   "hf_token_configured": true,
   "error_tail": "remote: Invalid username or password.\nfatal: Authentication failed for 'https://huggingface.co/spaces/josephrw/rentmasseur-optimizer/'",
-  "source_commit": "74bf2b0b80f9ac3766b568336b8f039153baedb0",
+  "source_commit": "03a3cd79edaf28f3afc0741eee9ca8e9697e57d2",
   "dashboard_space": "josephrw/rentmasseur-dashboard",
   "optimizer_space": "josephrw/rentmasseur-optimizer"
 }
