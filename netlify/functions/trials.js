@@ -112,6 +112,8 @@ exports.handler = async (event) => {
   return response(201, {
     ok: true,
     receiptId,
+    receipt: receiptId,
+    trial_id: receiptId,
     acceptedAt,
     trialDays: 7,
     activation: record.activation,
