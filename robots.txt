@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /.netlify/
+
+Sitemap: https://rentmasseur-unified-prod-happo.vercel.app/sitemap.xml
