@@ -6,6 +6,11 @@ on:
     branches: [feature/masseurboost-real]
     paths:
       - .github/workflows/mirror-hf-spaces.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/mirror-hf-spaces.yml
+      - integrations/hf-source/**
 
 permissions:
   contents: write
@@ -45,6 +50,7 @@ jobs:
             --exclude='*.gif' --exclude='*.webp' --exclude='*.mp4' --exclude='*.mov' --exclude='*.zip' --exclude='*.tar*' \
             /tmp/rm-optimizer/ integrations/hf-source/optimizer/
           find integrations/hf-source -type f -size +1M -delete
+          find integrations/hf-source -type f -print | sort > integrations/hf-source/MANIFEST.txt
 
       - name: Commit mirrored source
         run: |
