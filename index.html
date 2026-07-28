@@ -492,6 +492,13 @@
 
     form.addEventListener('submit',async event=>{
       event.preventDefault();
+      if(step!==3){
+        if(validateStep()){
+          step=Math.min(3,step+1);
+          renderStep();
+        }
+        return;
+      }
       if(!validateStep())return;
       statusBox.className='status';
       statusBox.textContent='';
