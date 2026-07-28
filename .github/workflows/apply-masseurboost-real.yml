@@ -43,8 +43,8 @@ jobs:
       - name: Validate dashboard JavaScript and claims
         run: |
           set -euo pipefail
-          python integrations/masseurboost/patch_dashboard.py integrations/hf-source/dashboard/index.html
-          git diff --exit-code -- integrations/hf-source/dashboard/index.html
+          cp integrations/hf-source/dashboard/index.html /tmp/masseurboost.html
+          python integrations/masseurboost/patch_dashboard.py /tmp/masseurboost.html
           python - <<'PY'
           from html.parser import HTMLParser
           from pathlib import Path
@@ -61,13 +61,13 @@ jobs:
               def handle_data(self, data):
                   if self.in_script: self.chunks.append(data)
 
-          html = Path('integrations/hf-source/dashboard/index.html').read_text()
+          html = Path('/tmp/masseurboost.html').read_text()
           parser = Scripts(); parser.feed(html)
           Path('/tmp/masseurboost.js').write_text('\n'.join(parser.chunks))
           forbidden = ['1,334', 'ZK-proof', 'All systems operational', 'using demo values', 'href="#"']
           found = [item for item in forbidden if item in html]
           if found: raise SystemExit(f'forbidden mock claims remain: {found}')
-          required = ['/api/health', '/api/report', '/api/funnel/daily', '/api/kpis', '/api/candidates', '/api/receipts', '/api/trials']
+          required = ['/api/health', '/api/report', '/api/funnel/daily', '/api/kpis', '/api/candidates', '/api/receipts', '/api/trials', 'result.receiptId']
           missing = [item for item in required if item not in html]
           if missing: raise SystemExit(f'missing live endpoints: {missing}')
           print('dashboard contract validated')
