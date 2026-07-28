@@ -81,7 +81,11 @@ jobs:
           git add cpp_os_server.cpp
           if ! git diff --cached --quiet; then
             git commit -m "Add receipt-backed public trial intake"
-            git push origin HEAD:main
+            if ! output=$(git push origin HEAD:main 2>&1); then
+              printf '%s\n' "$output" | sed "s/${HF_TOKEN}/***/g" > /tmp/deploy-error
+              cat /tmp/deploy-error
+              exit 1
+            fi
           else
             echo 'Optimizer already current'
           fi
@@ -95,7 +99,11 @@ jobs:
           git add index.html
           if ! git diff --cached --quiet; then
             git commit -m "Replace mock dashboard with live evidence-driven UI"
-            git push origin HEAD:main
+            if ! output=$(git push origin HEAD:main 2>&1); then
+              printf '%s\n' "$output" | sed "s/${HF_TOKEN}/***/g" > /tmp/deploy-error
+              cat /tmp/deploy-error
+              exit 1
+            fi
           else
             echo 'Dashboard already current'
           fi
@@ -110,21 +118,16 @@ jobs:
           for attempt in $(seq 1 8); do
             echo "Verification attempt ${attempt}/8"
             if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/health" | tee /tmp/health.json | grep -Eq 'GREEN_REAL|"status":"ok"'; then
-              if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/trials" | tee /tmp/trials.json | grep -q 'trial_count'; then
-                optimizer_ok=1
-              fi
+              if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/trials" | tee /tmp/trials.json | grep -q 'trial_count'; then optimizer_ok=1; fi
             fi
-            if curl -fsS --max-time 25 "${DASHBOARD_URL}/" | tee /tmp/dashboard.html | grep -q 'proof instead of theater'; then
-              dashboard_ok=1
-            fi
+            if curl -fsS --max-time 25 "${DASHBOARD_URL}/" | tee /tmp/dashboard.html | grep -q 'proof instead of theater'; then dashboard_ok=1; fi
             if [[ "$optimizer_ok" == 1 && "$dashboard_ok" == 1 ]]; then
               echo verified_live > /tmp/deploy-stage
-              echo 'Optimizer and dashboard verified live'
               exit 0
             fi
             sleep 25
           done
-          echo "optimizer_ok=${optimizer_ok} dashboard_ok=${dashboard_ok}"
+          printf 'optimizer_ok=%s dashboard_ok=%s\n' "$optimizer_ok" "$dashboard_ok" > /tmp/deploy-error
           exit 1
 
       - name: Commit deployment receipt
@@ -133,23 +136,28 @@ jobs:
           DEPLOY_STATUS: ${{ job.status }}
         run: |
           set -euo pipefail
-          stage=$(cat /tmp/deploy-stage 2>/dev/null || echo unknown)
-          token_configured=false
-          if [[ -n "${HF_TOKEN:-}" ]]; then token_configured=true; fi
-          mkdir -p receipts
-          cat > receipts/masseurboost-deploy.json <<EOF
-          {
-            "workflow": "Deploy Real MasseurBoost",
-            "run_id": "${GITHUB_RUN_ID}",
-            "status": "${DEPLOY_STATUS}",
-            "last_stage": "${stage}",
-            "hf_token_configured": ${token_configured},
-            "source_commit": "${GITHUB_SHA}",
-            "dashboard_space": "${DASHBOARD_SPACE}",
-            "optimizer_space": "${OPTIMIZER_SPACE}",
-            "recorded_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          stage = Path('/tmp/deploy-stage').read_text().strip() if Path('/tmp/deploy-stage').exists() else 'unknown'
+          error = Path('/tmp/deploy-error').read_text(errors='replace')[-1200:].strip() if Path('/tmp/deploy-error').exists() else ''
+          token = os.environ.get('HF_TOKEN', '')
+          if token: error = error.replace(token, '***')
+          data = {
+              'workflow': 'Deploy Real MasseurBoost',
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'status': os.environ['DEPLOY_STATUS'],
+              'last_stage': stage,
+              'hf_token_configured': bool(token),
+              'error_tail': error,
+              'source_commit': os.environ['GITHUB_SHA'],
+              'dashboard_space': os.environ['DASHBOARD_SPACE'],
+              'optimizer_space': os.environ['OPTIMIZER_SPACE'],
           }
-          EOF
+          path = Path('receipts/masseurboost-deploy.json')
+          path.parent.mkdir(exist_ok=True)
+          path.write_text(json.dumps(data, indent=2) + '\n')
+          PY
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add receipts/masseurboost-deploy.json
