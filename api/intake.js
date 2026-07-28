@@ -17,11 +17,15 @@ function scoreLead(lead) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed.' });
-  const input = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+  let input;
+  try { input = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}); }
+  catch { return res.status(400).json({ error: 'Invalid JSON body.' }); }
   const lead = {
     name: clean(input.name, 80), contact: clean(input.contact, 120), service: clean(input.service, 80),
     timing: clean(input.timing, 20), budget: clean(input.budget, 20), location: clean(input.location, 120),
-    notes: clean(input.notes, 1000), source: clean(input.source || 'vercel', 60),
+    notes: clean(input.notes, 1000), source: clean(input.source || 'vercel', 100),
+    landingPath: clean(input.landingPath, 240), referrer: clean(input.referrer, 500),
+    utmSource: clean(input.utmSource, 100), utmMedium: clean(input.utmMedium, 100), utmCampaign: clean(input.utmCampaign, 140),
     submittedAt: clean(input.submittedAt || new Date().toISOString(), 40)
   };
   if (!lead.name || !lead.contact || !lead.location) return res.status(422).json({ error: 'Name, contact, and location are required.' });
@@ -31,7 +35,8 @@ export default async function handler(req, res) {
   const receiptId = `RM-${acceptedAt.slice(0,10).replaceAll('-','')}-${hash.slice(0,12).toUpperCase()}`;
   const priority = score >= 80 ? 'hot' : score >= 60 ? 'warm' : 'standard';
   const nextAction = score >= 80 ? 'Immediate booking follow-up' : score >= 60 ? 'Confirm availability and session details' : 'Nurture and clarify requirements';
-  const record = { receiptId, acceptedAt, priority, score, reasons, nextAction, lead, platform: 'vercel' };
+  const attribution = { source: lead.source, landingPath: lead.landingPath, referrer: lead.referrer, utmSource: lead.utmSource, utmMedium: lead.utmMedium, utmCampaign: lead.utmCampaign };
+  const record = { receiptId, acceptedAt, priority, score, reasons, nextAction, attribution, lead, platform: 'vercel' };
   if (process.env.LEAD_WEBHOOK_URL) {
     const headers = { 'content-type': 'application/json' };
     if (process.env.LEAD_WEBHOOK_TOKEN) headers.authorization = `Bearer ${process.env.LEAD_WEBHOOK_TOKEN}`;

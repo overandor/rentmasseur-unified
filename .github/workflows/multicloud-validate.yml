@@ -1,0 +1,32 @@
+name: Multicloud Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate production bundle
+        run: npm test
+      - name: Check JavaScript syntax
+        run: |
+          node --check api/intake.js
+          node --check api/health.js
+          node --check netlify/functions/intake.js
+          node --check netlify/functions/health.js
+          node --check functions/api/intake.js
+          node --check functions/api/health.js
