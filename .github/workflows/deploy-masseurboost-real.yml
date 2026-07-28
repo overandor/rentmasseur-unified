@@ -5,13 +5,12 @@ on:
     branches: [feature/masseurboost-real]
     paths:
       - integrations/hf-source/dashboard/index.html
-      - integrations/hf-source/optimizer/cpp_os_server.cpp
       - integrations/masseurboost/**
       - .github/workflows/deploy-masseurboost-real.yml
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: deploy-real-masseurboost
@@ -20,7 +19,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 18
     env:
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
       DASHBOARD_SPACE: josephrw/rentmasseur-dashboard
@@ -92,21 +91,44 @@ jobs:
           set -euo pipefail
           optimizer_ok=0
           dashboard_ok=0
-          for attempt in $(seq 1 12); do
-            echo "Verification attempt ${attempt}/12"
-            if curl -fsS --max-time 30 "${OPTIMIZER_URL}/api/health" | tee /tmp/health.json | grep -Eq 'GREEN_REAL|"status":"ok"'; then
-              if curl -fsS --max-time 30 "${OPTIMIZER_URL}/api/trials" | tee /tmp/trials.json | grep -q 'trial_count'; then
+          for attempt in $(seq 1 8); do
+            echo "Verification attempt ${attempt}/8"
+            if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/health" | tee /tmp/health.json | grep -Eq 'GREEN_REAL|"status":"ok"'; then
+              if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/trials" | tee /tmp/trials.json | grep -q 'trial_count'; then
                 optimizer_ok=1
               fi
             fi
-            if curl -fsS --max-time 30 "${DASHBOARD_URL}/" | tee /tmp/dashboard.html | grep -q 'proof instead of theater'; then
+            if curl -fsS --max-time 25 "${DASHBOARD_URL}/" | tee /tmp/dashboard.html | grep -q 'proof instead of theater'; then
               dashboard_ok=1
             fi
             if [[ "$optimizer_ok" == 1 && "$dashboard_ok" == 1 ]]; then
               echo 'Optimizer and dashboard verified live'
               exit 0
             fi
-            sleep 30
+            sleep 25
           done
           echo "optimizer_ok=${optimizer_ok} dashboard_ok=${dashboard_ok}"
           exit 1
+
+      - name: Commit deployment receipt
+        if: always()
+        env:
+          DEPLOY_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p receipts
+          cat > receipts/masseurboost-deploy.json <<EOF
+          {
+            "workflow": "Deploy Real MasseurBoost",
+            "status": "${DEPLOY_STATUS}",
+            "source_commit": "${GITHUB_SHA}",
+            "dashboard_space": "${DASHBOARD_SPACE}",
+            "optimizer_space": "${OPTIMIZER_SPACE}",
+            "recorded_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add receipts/masseurboost-deploy.json
+          git commit -m "Record MasseurBoost deployment ${DEPLOY_STATUS}" || exit 0
+          git push origin HEAD:feature/masseurboost-real
