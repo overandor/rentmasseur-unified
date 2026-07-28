@@ -21,12 +21,26 @@ jobs:
         with:
           node-version: 20
       - name: Validate production bundle
-        run: npm test
+        shell: bash
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee validation.log
+      - name: Upload validation log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: multicloud-validation-${{ github.sha }}
+          path: validation.log
+          if-no-files-found: warn
+          retention-days: 7
       - name: Check JavaScript syntax
         run: |
           node --check api/intake.js
+          node --check api/trials.js
           node --check api/health.js
           node --check netlify/functions/intake.js
+          node --check netlify/functions/trials.js
           node --check netlify/functions/health.js
           node --check functions/api/intake.js
+          node --check functions/api/trials.js
           node --check functions/api/health.js
