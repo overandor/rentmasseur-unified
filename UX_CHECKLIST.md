@@ -1,0 +1,5 @@
+- [ ] Replace root landing page
+- [ ] Preserve intake contract
+- [ ] Verify responsive behavior
+- [ ] Verify keyboard navigation
+- [ ] Open review PR
