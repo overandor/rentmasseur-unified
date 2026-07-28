@@ -1,0 +1,86 @@
+name: Apply MasseurBoost Real Functionality
+
+on:
+  push:
+    branches: [feature/masseurboost-real]
+    paths:
+      - integrations/masseurboost/**
+      - integrations/hf-source/dashboard/index.html
+      - integrations/hf-source/optimizer/cpp_os_server.cpp
+      - .github/workflows/apply-masseurboost-real.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: masseurboost-real-patch
+  cancel-in-progress: true
+
+jobs:
+  patch-and-validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/masseurboost-real
+          fetch-depth: 0
+          lfs: false
+
+      - name: Apply idempotent patches
+        run: |
+          set -euo pipefail
+          python integrations/masseurboost/patch_optimizer.py integrations/hf-source/optimizer/cpp_os_server.cpp
+          python integrations/masseurboost/patch_dashboard.py integrations/hf-source/dashboard/index.html
+
+      - name: Compile-check optimizer server
+        run: |
+          set -euo pipefail
+          g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only integrations/hf-source/optimizer/cpp_os_server.cpp
+
+      - name: Validate dashboard JavaScript and claims
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class Scripts(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.in_script = False
+                  self.chunks = []
+              def handle_starttag(self, tag, attrs):
+                  if tag == 'script': self.in_script = True
+              def handle_endtag(self, tag):
+                  if tag == 'script': self.in_script = False
+              def handle_data(self, data):
+                  if self.in_script: self.chunks.append(data)
+
+          html = Path('integrations/hf-source/dashboard/index.html').read_text()
+          parser = Scripts(); parser.feed(html)
+          Path('/tmp/masseurboost.js').write_text('\n'.join(parser.chunks))
+          forbidden = ['1,334', 'ZK-proof', 'All systems operational', 'using demo values', 'href="#"']
+          found = [item for item in forbidden if item in html]
+          if found: raise SystemExit(f'forbidden mock claims remain: {found}')
+          required = ['/api/health', '/api/report', '/api/funnel/daily', '/api/kpis', '/api/candidates', '/api/receipts', '/api/trials']
+          missing = [item for item in required if item not in html]
+          if missing: raise SystemExit(f'missing live endpoints: {missing}')
+          print('dashboard contract validated')
+          PY
+          node --check /tmp/masseurboost.js
+
+      - name: Commit patched sources
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add integrations/hf-source/dashboard/index.html integrations/hf-source/optimizer/cpp_os_server.cpp
+          if git diff --cached --quiet; then
+            echo 'Sources already patched'
+            exit 0
+          fi
+          git commit -m 'Wire MasseurBoost dashboard to dedicated real trial endpoint'
+          git push origin HEAD:feature/masseurboost-real
