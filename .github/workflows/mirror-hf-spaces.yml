@@ -2,22 +2,12 @@ name: Mirror Hugging Face Spaces
 
 on:
   workflow_dispatch:
-  push:
-    branches: [feature/masseurboost-real]
-    paths:
-      - .github/workflows/mirror-hf-spaces.yml
-  pull_request:
-    branches: [main]
-    paths:
-      - .github/workflows/mirror-hf-spaces.yml
-      - integrations/hf-source/**
 
 permissions:
   contents: write
 
 jobs:
   mirror:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
