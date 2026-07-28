@@ -1,0 +1,8 @@
+{
+  "workflow": "Deploy Real MasseurBoost",
+  "status": "failure",
+  "source_commit": "7d9d2f4547231b045d11f4a63eb607a34c64ca9b",
+  "dashboard_space": "josephrw/rentmasseur-dashboard",
+  "optimizer_space": "josephrw/rentmasseur-optimizer",
+  "recorded_at": "2026-07-28T11:41:22Z"
+}
