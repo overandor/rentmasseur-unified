@@ -8,6 +8,12 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+  force = true
+
 # Preserve access to the existing Hugging Face service pipeline.
 [[redirects]]
   from = "/api/engine/*"
