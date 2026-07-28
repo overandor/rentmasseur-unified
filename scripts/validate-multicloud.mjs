@@ -19,14 +19,15 @@ const required = [
   'netlify/functions/intake.js',
   'netlify/functions/trials.js',
   'netlify/functions/health.js',
-  'integrations/hf-source/dashboard/index.html'
+  'integrations/hf-source/dashboard/index.html',
+  'masseurboost/index.html'
 ];
 
 for (const file of required) await access(file, constants.R_OK);
 
 const html = await readFile('index.html', 'utf8');
-for (const token of ['RentMasseur Unified', '/api/intake', 'Cloudflare', 'Vercel', 'Netlify']) {
-  if (!html.includes(token)) throw new Error(`index.html missing required token: ${token}`);
+for (const token of ['RentMasseur Unified', '/api/intake', 'leadForm', 'Request a session']) {
+  if (!html.includes(token)) throw new Error(`index.html missing required interface contract: ${token}`);
 }
 
 const dashboard = await readFile('integrations/hf-source/dashboard/index.html', 'utf8');
@@ -36,6 +37,9 @@ for (const token of ['/api/health', '/api/funnel/daily', '/api/kpis', '/api/cand
 for (const forbidden of ['using demo values', '1,334', 'ZK-proof', 'href="#"']) {
   if (dashboard.includes(forbidden)) throw new Error(`MasseurBoost dashboard still contains mock content: ${forbidden}`);
 }
+
+const entry = await readFile('masseurboost/index.html', 'utf8');
+if (!entry.includes('/integrations/hf-source/dashboard/')) throw new Error('MasseurBoost entry path does not target the live dashboard');
 
 const vercel = JSON.parse(await readFile('vercel.json', 'utf8'));
 if (!Array.isArray(vercel.rewrites)) throw new Error('vercel.json must define rewrites');
@@ -68,11 +72,11 @@ const trialPayload = {
 function assertTrial(body, provider) {
   if (!body?.ok) throw new Error(`${provider} trial was not accepted`);
   if (!String(body.receiptId || '').startsWith('MB-TRIAL-')) throw new Error(`${provider} trial receipt format is invalid`);
+  if (body.receipt !== body.receiptId || body.trial_id !== body.receiptId) throw new Error(`${provider} trial receipt aliases are inconsistent`);
   if (body.trialDays !== 7) throw new Error(`${provider} trial duration is invalid`);
   if (body.activation !== 'manual_review_required') throw new Error(`${provider} activation boundary is missing`);
 }
 
-// Cloudflare Pages Function contract.
 const cloudflare = await import('../functions/api/trials.js');
 const kvWrites = [];
 const cloudflareResponse = await cloudflare.onRequestPost({
@@ -103,7 +107,6 @@ const cloudflareRejected = await cloudflare.onRequestPost({
 });
 if (cloudflareRejected.status !== 400) throw new Error('cloudflare trial accepted a password field');
 
-// Vercel Function contract.
 const { default: vercelTrials } = await import('../api/trials.js');
 const vercelReq = { method: 'POST', body: trialPayload };
 const vercelRes = {
@@ -119,7 +122,6 @@ assertTrial(vercelRes.body, 'vercel');
 if (vercelRes.headers['access-control-allow-origin'] !== '*') throw new Error('vercel trial CORS is missing');
 if (vercelRes.body.stored !== false) throw new Error('vercel trial falsely claims local persistence');
 
-// Netlify Function contract, loaded in a CommonJS sandbox because Netlify bundles functions independently.
 const netlifySource = await readFile('netlify/functions/trials.js', 'utf8');
 const netlifyModule = { exports: {} };
 vm.runInNewContext(netlifySource, {
@@ -149,6 +151,6 @@ console.log(JSON.stringify({
   providers: ['cloudflare', 'vercel', 'netlify'],
   checkedFiles: required.length,
   intakeContract: ['receiptId', 'score', 'priority', 'nextAction'],
-  trialContract: ['receiptId', 'trialDays', 'activation', 'stored', 'forwarded'],
+  trialContract: ['receiptId', 'receipt', 'trial_id', 'trialDays', 'activation', 'stored', 'forwarded'],
   liveDashboard: true
 }, null, 2));
