@@ -57,7 +57,9 @@ rentmasseur_scraper
 rotator_engine
 cpp_os_server
 variants/rm-optimizer/rm_pri/cpp/rm_pri
+variants/rm-optimizer/rm_pri/cpp/rm_pri_built
 variants/daemon/rm_pri/cpp/rm_pri
+variants/daemon/rm_pri/cpp/rm_pri_built
 
 # Large data files
 *.db
