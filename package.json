@@ -1,0 +1,13 @@
+{
+  "name": "rentmasseur-unified-multicloud",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/validate-multicloud.mjs",
+    "test": "node scripts/validate-multicloud.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
