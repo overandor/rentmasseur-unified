@@ -9,6 +9,12 @@
   force = true
 
 [[redirects]]
+  from = "/api/trials"
+  to = "/.netlify/functions/trials"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/health"
   to = "/.netlify/functions/health"
   status = 200
