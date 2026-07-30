@@ -158,18 +158,23 @@ def scrape_profile_stats() -> dict:
             return {}
 
         ad_stats = api.get_ad_statistics()
-        profile_stats = ad_stats.get("profileStatistics", {}) if isinstance(ad_stats, dict) else {}
+        logger.info("Raw ad_statistics response: %s", json.dumps(ad_stats)[:500] if ad_stats else "None")
+
+        profile_stats = ad_stats.get("profileStatistics") if isinstance(ad_stats, dict) else None
+        if not isinstance(profile_stats, dict):
+            profile_stats = {}
 
         stats = {
             "scraped_at": datetime.now(timezone.utc).isoformat(),
-            "views": profile_stats.get("totalPageViews", 0),
-            "email_clicks": profile_stats.get("totalContactClicks", 0),
-            "phone_clicks": profile_stats.get("totalContactClicks", 0),
-            "booking_inquiries": profile_stats.get("newEmails", 0),
-            "favorites": profile_stats.get("favorites", 0),
-            "messages": profile_stats.get("newEmails", 0),
-            "new_visits": profile_stats.get("newVisits", 0),
+            "views": profile_stats.get("totalPageViews", 0) or profile_stats.get("pageViews", 0) or 0,
+            "email_clicks": profile_stats.get("totalContactClicks", 0) or profile_stats.get("contactClicks", 0) or 0,
+            "phone_clicks": profile_stats.get("totalContactClicks", 0) or profile_stats.get("phoneClicks", 0) or 0,
+            "booking_inquiries": profile_stats.get("newEmails", 0) or profile_stats.get("emails", 0) or 0,
+            "favorites": profile_stats.get("favorites", 0) or 0,
+            "messages": profile_stats.get("newEmails", 0) or profile_stats.get("messages", 0) or 0,
+            "new_visits": profile_stats.get("newVisits", 0) or profile_stats.get("visits", 0) or 0,
             "source": "api",
+            "raw_available": bool(profile_stats),
         }
 
         logger.info("API stats: %s", json.dumps(stats))

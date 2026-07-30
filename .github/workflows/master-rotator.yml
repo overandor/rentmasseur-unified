@@ -61,7 +61,7 @@ jobs:
 
       - name: Generate fresh content
         run: |
-          python3 content_generator.py --bios-only || true
+          python3 content_generator.py --bios-only
           python3 interview_rotator.py || true
           python3 blog_rotator.py || true
 

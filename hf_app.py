@@ -603,8 +603,10 @@ async def api_os_competitors():
     return JSONResponse({"competitors": competitors[:50]})
 
 
-@app.get("/api/os/train")
-async def api_os_train(background_tasks: BackgroundTasks):
+@app.post("/api/os/train")
+async def api_os_train(background_tasks: BackgroundTasks, request: Request):
+    if not _check_auth(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
     def run():
         subprocess.run(["python3", "bio_ab_tester.py", "--competitors-only"], cwd=os.path.dirname(__file__), capture_output=True, timeout=600)
         subprocess.run(["python3", "content_generator.py", "--bios-only"], cwd=os.path.dirname(__file__), capture_output=True, timeout=900)

@@ -219,16 +219,19 @@ def extract_kpis(api: RentMasseurAPI) -> dict:
     # ── Ad Statistics (page views, contact clicks, etc.) ──
     try:
         stats = api.get_ad_statistics()
-        profile_stats = stats.get("profileStatistics", {}) if isinstance(stats, dict) else {}
+        profile_stats = stats.get("profileStatistics") if isinstance(stats, dict) else None
+        if not isinstance(profile_stats, dict):
+            profile_stats = {}
         kpis["ad_statistics"] = {
-            "total_page_views": profile_stats.get("totalPageViews", 0),
-            "total_contact_clicks": profile_stats.get("totalContactClicks", 0),
-            "new_visits": profile_stats.get("newVisits", 0),
-            "new_emails": profile_stats.get("newEmails", 0),
-            "profile_views_today": profile_stats.get("profileViewsToday", 0),
-            "contact_clicks_today": profile_stats.get("contactClicksToday", 0),
-            "favorites": profile_stats.get("favorites", 0),
-            "reviews": profile_stats.get("reviews", 0),
+            "total_page_views": profile_stats.get("totalPageViews", 0) or profile_stats.get("pageViews", 0) or 0,
+            "total_contact_clicks": profile_stats.get("totalContactClicks", 0) or profile_stats.get("contactClicks", 0) or 0,
+            "new_visits": profile_stats.get("newVisits", 0) or profile_stats.get("visits", 0) or 0,
+            "new_emails": profile_stats.get("newEmails", 0) or profile_stats.get("emails", 0) or 0,
+            "profile_views_today": profile_stats.get("profileViewsToday", 0) or 0,
+            "contact_clicks_today": profile_stats.get("contactClicksToday", 0) or 0,
+            "favorites": profile_stats.get("favorites", 0) or 0,
+            "reviews": profile_stats.get("reviews", 0) or 0,
+            "raw_available": bool(profile_stats),
         }
         print(f"  Total page views: {kpis['ad_statistics']['total_page_views']}")
         print(f"  Total contact clicks: {kpis['ad_statistics']['total_contact_clicks']}")

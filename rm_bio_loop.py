@@ -43,7 +43,7 @@ ARTIFACTS = BASE_DIR / "artifacts" / "engagement"
 ARTIFACTS.mkdir(parents=True, exist_ok=True)
 BIO_CACHE = ARTIFACTS / "current_bio.json"
 BIO_DB = ARTIFACTS / "bio_experiments.db"
-BIOS_DIR = ARTIFACTS / "bios"
+BIOS_DIR = BASE_DIR / "content" / "bios"
 BIOS_DIR.mkdir(parents=True, exist_ok=True)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
