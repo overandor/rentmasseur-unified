@@ -23,6 +23,7 @@ jobs:
       RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME }}
       RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD }}
       REBRANDLY_LINK: ${{ secrets.REBRANDLY_LINK }}
+      REBRANDLY_API_KEY: ${{ secrets.REBRANDLY_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: llama-3.3-70b-versatile
     steps:
