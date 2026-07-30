@@ -1,0 +1,189 @@
+name: Daily Operations — Selenium + API Full Run
+
+on:
+  schedule:
+    - cron: '0 8,20 * * *'  # Twice daily — 08:00 and 20:00 UTC
+  workflow_dispatch:
+    inputs:
+      skip_visits:
+        description: 'Skip reciprocal visits'
+        required: false
+        default: 'false'
+      skip_bio:
+        description: 'Skip bio push'
+        required: false
+        default: 'false'
+      skip_kpis:
+        description: 'Skip KPI extraction'
+        required: false
+        default: 'false'
+      skip_telemetry:
+        description: 'Skip telemetry polling'
+        required: false
+        default: 'false'
+      visit_limit:
+        description: 'Max reciprocal visits (0=all)'
+        required: false
+        default: '0'
+      telemetry_duration:
+        description: 'Telemetry duration in seconds'
+        required: false
+        default: '300'
+
+concurrency:
+  group: daily-ops
+  cancel-in-progress: false
+
+jobs:
+  daily-ops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    env:
+      RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME }}
+      RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD }}
+      REBRANDLY_API_KEY: ${{ secrets.REBRANDLY_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: llama-3.3-70b-versatile
+      BOOKING_URL: https://calendly.com/carpathianwolf/clone?back=1&month=2024-08
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Install Google Chrome
+        run: |
+          sudo mkdir -p /etc/apt/keyrings
+          wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
+            | sudo gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
+            | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends google-chrome-stable
+          google-chrome --version
+
+      - name: Restore engagement database
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: bio-experiments-db
+          path: artifacts/engagement/
+
+      - name: Run Daily Operations
+        id: ops
+        continue-on-error: true
+        run: |
+          set +e
+
+          ARGS=""
+
+          if [ "${{ github.event.inputs.skip_visits || 'false' }}" = "true" ]; then
+            ARGS="$ARGS --skip-visits"
+          fi
+          if [ "${{ github.event.inputs.skip_bio || 'false' }}" = "true" ]; then
+            ARGS="$ARGS --skip-bio"
+          fi
+          if [ "${{ github.event.inputs.skip_kpis || 'false' }}" = "true" ]; then
+            ARGS="$ARGS --skip-kpis"
+          fi
+          if [ "${{ github.event.inputs.skip_telemetry || 'false' }}" = "true" ]; then
+            ARGS="$ARGS --skip-telemetry"
+          fi
+
+          VISIT_LIMIT="${{ github.event.inputs.visit_limit || '0' }}"
+          TELEMETRY_DUR="${{ github.event.inputs.telemetry_duration || '300' }}"
+
+          python3 daily_ops.py \
+            --visit-limit "$VISIT_LIMIT" \
+            --telemetry-duration "$TELEMETRY_DUR" \
+            $ARGS \
+            2>&1 | tee daily_ops.log
+
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Show KPI snapshot
+        if: always()
+        run: |
+          if [ -f content/daily_kpis.json ]; then
+            echo "=== Daily KPIs ==="
+            cat content/daily_kpis.json | python3 -m json.tool | head -80
+          else
+            echo "No KPI snapshot found"
+          fi
+
+      - name: Show latest telemetry
+        if: always()
+        run: |
+          if [ -f content/telemetry_latest.json ]; then
+            echo "=== Latest Telemetry ==="
+            cat content/telemetry_latest.json | python3 -m json.tool
+          else
+            echo "No telemetry snapshot found"
+          fi
+
+      - name: Commit artifacts + state
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            content/daily_kpis.json \
+            content/kpi_history.jsonl \
+            content/telemetry_latest.json \
+            content/telemetry.jsonl \
+            content/experiment_ledger.json \
+            artifacts/engagement/engagement.db \
+            artifacts/engagement/bio_experiments.db \
+            receipts/daily_ops_*.json \
+            2>/dev/null || true
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "daily-ops: KPIs + telemetry + visits $(date -u +%Y-%m-%d-%H:%M) [skip-ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+
+      - name: Upload engagement database
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bio-experiments-db
+          path: artifacts/engagement/bio_experiments.db
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Upload daily ops artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-ops-${{ github.run_id }}
+          path: |
+            content/daily_kpis.json
+            content/kpi_history.jsonl
+            content/telemetry_latest.json
+            content/telemetry.jsonl
+            receipts/daily_ops_*.json
+            daily_ops.log
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Fail on error
+        if: steps.ops.outputs.exit_code != '0' && steps.ops.outputs.exit_code != ''
+        run: |
+          echo "daily_ops.py failed with exit code ${{ steps.ops.outputs.exit_code }}"
+          exit 1
