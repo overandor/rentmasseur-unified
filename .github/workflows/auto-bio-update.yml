@@ -32,7 +32,7 @@ jobs:
 
       - name: Push approved bio via direct API
         run: |
-          python3 push_bio.py --bio-id controlled_wolf_v1 --no-rebrandly
+          python3 push_bio.py B
         env:
           RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME }}
           RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD }}

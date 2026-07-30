@@ -8,7 +8,7 @@ on:
       dry_run:
         description: 'Dry run (no profile changes)'
         required: false
-        default: 'true'
+        default: 'false'
       components:
         description: 'Comma-separated: bio,photo,price,interview,blog,all'
         required: false
@@ -60,13 +60,14 @@ jobs:
 
       - name: Generate fresh content
         run: |
+          python3 content_generator.py --bios-only || true
           python3 interview_rotator.py || true
           python3 blog_rotator.py || true
 
       - name: Run full rotation in proof mode
         run: |
           set -euo pipefail
-          if [ "${{ github.event.inputs.dry_run || 'true' }}" = "true" ]; then
+          if [ "${{ github.event.inputs.dry_run || 'false' }}" = "true" ]; then
             python3 orchestrator.py --all --dry-run || true
           else
             python3 orchestrator.py --all
@@ -89,7 +90,7 @@ jobs:
             "status": "blocked_missing_real_inputs",
             "reason": "Real first-party metrics and candidate TSV are required before a live profile decision.",
             "live_update_allowed": false,
-            "dry_run": "${{ github.event.inputs.dry_run || 'true' }}",
+            "dry_run": "${{ github.event.inputs.dry_run || 'false' }}",
             "run_id": "${{ github.run_id }}"
           }
           DECISION

@@ -95,6 +95,12 @@ jobs:
         run: |
           python3 kpis.py
 
+      - name: RL feedback loop
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          python3 rl_feedback.py || echo "RL feedback skipped"
+
       - name: GA+RL optimizer (hourly auto or manual trigger)
         continue-on-error: true
         timeout-minutes: 10
