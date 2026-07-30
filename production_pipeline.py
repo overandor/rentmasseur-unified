@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 # Paths
 SCRIPT_DIR = Path(__file__).resolve().parent
-WINDSURF_DIR = Path("/Users/alep/Downloads/windsurf-smoke")
+WINDSURF_DIR = SCRIPT_DIR
 AGI_BINARY = WINDSURF_DIR / "rm_agi" / "rm_agi"
 REAL_BIOS = WINDSURF_DIR / "rm_traffic" / "data" / "real_bios.jsonl"
 AGI_DATA = WINDSURF_DIR / "rm_agi" / "data"

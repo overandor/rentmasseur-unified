@@ -83,7 +83,7 @@ jobs:
         continue-on-error: true
         run: |
           mkdir -p content
-          curl -s "${HF_URL:-https://josephrw-rentmasseur-optimizer.hf.space}/api/report" \
+          curl -s "${HF_URL:-https://josephrw-rentmasseur-optimizer.hf.space}/api/os/report" \
             -o content/hf_report.json --max-time 30 || echo "{}" > content/hf_report.json
           echo "HF Space metrics fetched."
 

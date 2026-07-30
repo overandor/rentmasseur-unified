@@ -9,6 +9,6 @@ for size in [16, 48, 128]:
     cx, cy = size // 2, size // 2
     r = size // 5
     d.ellipse([cx-r, cy-r, cx+r, cy+r], fill=(255, 255, 255, 255))
-    img.save(f'/Users/alep/Downloads/02_AI_Agents/rentmasseur-extension/icon{size}.png')
+    img.save(f'icon{size}.png')
 
 print('Icons generated')

@@ -34,7 +34,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Optional
 
-sys.path.insert(0, str(Path("/Users/alep/Downloads/rentmasseur-optimizer/rm_pri/py")))
+sys.path.insert(0, str(Path(__file__).parent / "rm_pri" / "py"))
 from api_client import RentMasseurAPI
 
 from dotenv import load_dotenv
@@ -46,8 +46,8 @@ BIOS_DIR = CONTENT_DIR / "bios"
 RECEIPTS_DIR = EXT_DIR / "receipts"
 LEDGER_PATH = CONTENT_DIR / "experiment_ledger.json"
 EVIDENCE_DIR = CONTENT_DIR / "evidence"
-TRAFFIC_DB = Path("/Users/alep/Downloads/windsurf-smoke/rm_traffic/traffic.db")
-SNAPSHOTS_DIR = Path("/Users/alep/Downloads/windsurf-smoke/rm_traffic/data/profile_snapshots")
+TRAFFIC_DB = Path(__file__).parent / "rm_traffic" / "traffic.db"
+SNAPSHOTS_DIR = Path(__file__).parent / "rm_traffic" / "data" / "profile_snapshots"
 
 # 3 approved test variants only
 TEST_VARIANTS = {

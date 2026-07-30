@@ -114,7 +114,7 @@ jobs:
             "GROQ_MODEL=llama-3.3-70b-versatile" \
             "HF_SPACE_NAME=${HF_SPACE_NAME}" \
             "GH_TOKEN=${{ secrets.GH_PAT }}" \
-            "GH_REPO=overandor/rentmasseur-extension"; do
+            "GH_REPO=overandor/rentmasseur-unified"; do
             KEY="${KEY_VAL%%=*}"
             VAL="${KEY_VAL#*=}"
             echo "Setting HF Space secret: $KEY"

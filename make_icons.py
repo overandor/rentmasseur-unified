@@ -27,7 +27,7 @@ def make_png(size, color, filename):
     with open(filename, 'wb') as f:
         f.write(sig + ihdr + idat + iend)
 
-base = '/Users/alep/Downloads/02_AI_Agents/rentmasseur-extension'
+base = os.path.dirname(os.path.abspath(__file__))
 # Dark bg (#1a1a1f = 26,26,31), accent (#cc8b4a = 204,139,74), white center
 make_png(16,  (204, 139, 74, 255), os.path.join(base, 'icon16.png'))
 make_png(48,  (204, 139, 74, 255), os.path.join(base, 'icon48.png'))

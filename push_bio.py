@@ -18,7 +18,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-sys.path.insert(0, str(Path("/Users/alep/Downloads/rentmasseur-optimizer/rm_pri/py")))
+sys.path.insert(0, str(Path(__file__).parent / "rm_pri" / "py"))
 from api_client import RentMasseurAPI
 
 from dotenv import load_dotenv
@@ -113,7 +113,7 @@ def main():
     print(f"\nLogging in as {username}...")
     api = RentMasseurAPI(min_request_interval=2.0)
 
-    session_path = Path("/Users/alep/Downloads/windsurf-smoke/rm_traffic/session.json")
+    session_path = Path(__file__).parent / "rm_traffic" / "session.json"
     if session_path.exists():
         print("Found saved session, loading cookies...")
         session_data = json.loads(session_path.read_text())
