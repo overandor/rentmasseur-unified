@@ -1,0 +1,78 @@
+{
+  "aggregate_type": "cumulative_4x25_logical",
+  "provider": "UnsafeHostProvider (logical simulation, NOT real VMs)",
+  "scope": "single host, logical provider, no real VM lifecycle",
+  "total_migrations": 100,
+  "successful": 100,
+  "failed": 0,
+  "success_rate": 1.0,
+  "wilson_95_lower_bound": 0.963005192523998,
+  "failures_injected": 41,
+  "failure_types": {},
+  "assertion_failures": 0,
+  "infrastructure_exceptions": 0,
+  "expected_injected_rejections": 41,
+  "leaked_runtimes": 0,
+  "all_vm_a_absent": true,
+  "all_vm_b_absent": false,
+  "total_checks_passed": 1831,
+  "total_checks_failed": 0,
+  "duration_ms": {
+    "mean": 0,
+    "median": 0,
+    "stdev": 0,
+    "min": 0,
+    "max": 0,
+    "p95": 0
+  },
+  "batches": [
+    {
+      "batch_num": 1,
+      "successful": 25,
+      "failed": 0,
+      "total": 25,
+      "success_rate": 1.0,
+      "wilson_95_lower_bound": 0.8668035060468212,
+      "output_file": "sandbox/battle_test_batch_1.json",
+      "run_id": ""
+    },
+    {
+      "batch_num": 2,
+      "successful": 25,
+      "failed": 0,
+      "total": 25,
+      "success_rate": 1.0,
+      "wilson_95_lower_bound": 0.8668035060468212,
+      "output_file": "sandbox/battle_test_batch_2.json",
+      "run_id": ""
+    },
+    {
+      "batch_num": 3,
+      "successful": 25,
+      "failed": 0,
+      "total": 25,
+      "success_rate": 1.0,
+      "wilson_95_lower_bound": 0.8668035060468212,
+      "output_file": "sandbox/battle_test_batch_3.json",
+      "run_id": ""
+    },
+    {
+      "batch_num": 4,
+      "successful": 25,
+      "failed": 0,
+      "total": 25,
+      "success_rate": 1.0,
+      "wilson_95_lower_bound": 0.8668035060468212,
+      "output_file": "sandbox/battle_test_batch_4.json",
+      "run_id": ""
+    }
+  ],
+  "timestamp": 1784362997.135791,
+  "provenance": {
+    "git_sha": "bb230bfa2b50008d29373430be0bc58b2728a754",
+    "harness": "real_vm_harness.py",
+    "failure_injection_rate": 0.4,
+    "batch_size": 25,
+    "num_batches": 4
+  }
+}

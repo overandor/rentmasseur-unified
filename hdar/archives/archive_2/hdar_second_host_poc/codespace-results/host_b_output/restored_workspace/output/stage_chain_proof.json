@@ -1,0 +1,37 @@
+{
+  "chain_valid": true,
+  "pipeline": "multi_stage_analysis_pipeline",
+  "root_hash": "ee26758899bc1a340840720812913e9161bbf23431565750ed2473403b9a6c8b",
+  "stages": [
+    {
+      "hash": "979f8dcc670bf280220e7f99ca3accdfeca079d71132c8a1892852c79a1dd8a0",
+      "index": 1,
+      "parent_hash": null,
+      "stage": "parse"
+    },
+    {
+      "hash": "ff56505817613471fc1b403935e41c72ca6ec9acda4f50c74d8f0693db5d9046",
+      "index": 2,
+      "parent_hash": "979f8dcc670bf280220e7f99ca3accdfeca079d71132c8a1892852c79a1dd8a0",
+      "stage": "filter"
+    },
+    {
+      "hash": "c9bcb1dba6a02317343490130e8a52780ac7227110144ed80048959e68bdf290",
+      "index": 3,
+      "parent_hash": "ff56505817613471fc1b403935e41c72ca6ec9acda4f50c74d8f0693db5d9046",
+      "stage": "aggregate"
+    },
+    {
+      "hash": "da62a9e5a50d615edeb81aead237dc3759af725f1cbe34612397de2cdcc66547",
+      "index": 4,
+      "parent_hash": "c9bcb1dba6a02317343490130e8a52780ac7227110144ed80048959e68bdf290",
+      "stage": "classify"
+    },
+    {
+      "hash": "ee26758899bc1a340840720812913e9161bbf23431565750ed2473403b9a6c8b",
+      "index": 5,
+      "parent_hash": "da62a9e5a50d615edeb81aead237dc3759af725f1cbe34612397de2cdcc66547",
+      "stage": "report"
+    }
+  ]
+}

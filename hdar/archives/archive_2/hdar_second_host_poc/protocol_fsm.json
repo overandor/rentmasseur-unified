@@ -1,0 +1,92 @@
+{
+  "schema": "hdar.protocol-fsm/v0.1",
+  "description": "The protocol is expressed as a finite state machine. No state transition occurs without evidence.",
+  "states": [
+    {
+      "state": "CREATED",
+      "description": "Workspace assembled with files, task ledger, and metadata",
+      "evidence_required": ["workspace_root_hash"],
+      "transitions_to": ["SIGNED"]
+    },
+    {
+      "state": "SIGNED",
+      "description": "Owner Ed25519 signature applied to manifest",
+      "evidence_required": ["owner_signature", "owner_public_key", "manifest_hash"],
+      "transitions_to": ["PACKAGED"]
+    },
+    {
+      "state": "PACKAGED",
+      "description": "Capsule sealed into transport bundle (tar.gz)",
+      "evidence_required": ["transport_capsule_tar.sha256", "receipt.json"],
+      "transitions_to": ["TRANSFERRED"]
+    },
+    {
+      "state": "TRANSFERRED",
+      "description": "Bundle moved to Host B via network, storage, or physical media",
+      "evidence_required": ["bundle_hash_verified_on_receipt"],
+      "transitions_to": ["AUTHENTICATED"]
+    },
+    {
+      "state": "AUTHENTICATED",
+      "description": "Host B verifies owner signature, bundle hash, and runner hash",
+      "evidence_required": ["owner_signature_verified", "external_bundle_hash_match", "runner_sha256_verified"],
+      "transitions_to": ["EXECUTED", "REJECTED"]
+    },
+    {
+      "state": "EXECUTED",
+      "description": "Deterministic continuation task runs on restored workspace",
+      "evidence_required": ["task_result.ok", "computed_result"],
+      "transitions_to": ["CONTINUED", "FAILED"]
+    },
+    {
+      "state": "CONTINUED",
+      "description": "State updated, progress logged, agent_state.json modified",
+      "evidence_required": ["state_changed", "progress_log_updated"],
+      "transitions_to": ["SUCCESSOR_CREATED"]
+    },
+    {
+      "state": "SUCCESSOR_CREATED",
+      "description": "Successor capsule (E2) sealed with parent lineage hash",
+      "evidence_required": ["successor_manifest_hash", "parent_manifest_hash", "epoch_incremented"],
+      "transitions_to": ["VERIFIED"]
+    },
+    {
+      "state": "VERIFIED",
+      "description": "Third-party verifier confirms all 11 checks",
+      "evidence_required": ["verifier_output_11_of_11", "host_b_signature_valid", "evidence_packet_signature_valid"],
+      "transitions_to": ["ACCEPTED"]
+    },
+    {
+      "state": "ACCEPTED",
+      "description": "Customer or operator accepts the evidence packet",
+      "evidence_required": ["acceptance_record"],
+      "transitions_to": ["ARCHIVED"]
+    },
+    {
+      "state": "ARCHIVED",
+      "description": "Evidence packet and all artifacts stored for audit",
+      "evidence_required": ["archive_hash", "archive_timestamp"],
+      "transitions_to": []
+    },
+    {
+      "state": "REJECTED",
+      "description": "Authentication failed — owner signature invalid, bundle hash mismatch, or runner hash mismatch",
+      "evidence_required": ["rejection_reason"],
+      "transitions_to": []
+    },
+    {
+      "state": "FAILED",
+      "description": "Continuation task failed — deterministic result does not match expected",
+      "evidence_required": ["failure_reason", "task_exit_code"],
+      "transitions_to": []
+    }
+  ],
+  "invariants": [
+    "Every transition produces a receipt",
+    "Every receipt has a hash",
+    "Every hash is content-addressed",
+    "Every signature is Ed25519",
+    "No state can skip SIGNED -> AUTHENTICATED",
+    "REJECTED and FAILED are terminal states"
+  ]
+}

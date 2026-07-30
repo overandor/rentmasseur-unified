@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0005",
+  "source_files": ["host_b_report.json"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["External reviewer Linux x86_64 execution confirmed cross-platform restoration (older hash-only runner)"],
+  "runtime_logs": ["Cross-platform restoration verified on Linux x86_64 by external reviewer"],
+  "generation_tool": "run_on_host_b.py (v1 hash-only runner)",
+  "schema_version": "hdar.evidence/v0.1"
+}

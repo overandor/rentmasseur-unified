@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0014",
+  "source_files": ["test_seed_criterion.py"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["10/11 checks pass locally (platforms_differ requires independent host)", "11/11 on Codespaces"],
+  "runtime_logs": [],
+  "generation_tool": "test_seed_criterion.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

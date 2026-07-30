@@ -1,0 +1,10 @@
+{
+  "session_id": "276e08606f50",
+  "action": "message_visitor",
+  "status": "fail",
+  "timestamp": "2026-07-20T20:17:01.761893+00:00",
+  "elapsed_s": 227.18,
+  "username": "mikeandrew",
+  "reason": "no_message_field",
+  "receipt_hash": "9e3b7565b233a5d8"
+}

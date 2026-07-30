@@ -1,0 +1,47 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "created_at": 1784613885.762133,
+  "epoch": 1,
+  "file_count": 5,
+  "manifest_hash": "032e47aba2233c5023a305bc56e63425eeee8fe6a57727c6e8ab2b578ca100ce",
+  "owner_public_key": "c63343327fab0471071f622a9928b5f09224af8d1d720911adee4f321a18f05f",
+  "owner_signature": "7cbee1c5f123fa3ec4d08081f4c93ed58357787f1034a7eb559841b8f1fde6bb409864bc75708d9168086cef311ef8f3aefe3964de210ee95abf0146c7deaf0e",
+  "owner_signature_algorithm": "ed25519",
+  "schema": "hdar.transport-capsule/v0.1",
+  "workspace_manifest": {
+    "files": [
+      {
+        "mode": 420,
+        "rel_path": "agent_state.json",
+        "sha256": "0311580aa154684b1d6bccaaeb81f9b16d1c5294b679d3bc0da872321849f25f",
+        "size": 374
+      },
+      {
+        "mode": 420,
+        "rel_path": "data/input_records.jsonl",
+        "sha256": "cefc1c255a67a3c52ed5ef19974ebb87edd1def50fb7045adef2390238d5fcd3",
+        "size": 4162
+      },
+      {
+        "mode": 420,
+        "rel_path": "progress.log",
+        "sha256": "074d784e3d04b947eb4592dba40b0f35cf4189c0644fd62d63386a0c83d7689b",
+        "size": 169
+      },
+      {
+        "mode": 420,
+        "rel_path": "src/worker.py",
+        "sha256": "64ee4dfc8b73ba3805bc854633003602be7c94c6316d589ff554f8e44f782b25",
+        "size": 4429
+      },
+      {
+        "mode": 420,
+        "rel_path": "todo.md",
+        "sha256": "36a1743fd2b4c003a581775fd333cd028e7674aaf9356b81d4a6f0e78f9eee95",
+        "size": 145
+      }
+    ],
+    "root_hash": "ba2e20d4a316ac77c12e8b618f32e0ca5853ccb43bed45657919bfea5ee96039",
+    "total_size": 9279
+  }
+}

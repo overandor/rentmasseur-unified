@@ -1,0 +1,3 @@
+name: migration-26
+version: 8.4
+enabled: True

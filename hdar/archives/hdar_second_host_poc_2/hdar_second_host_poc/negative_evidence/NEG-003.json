@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-003",
+  "test": "Incorrect owner signature — replace owner_signature with random bytes",
+  "expected": "Reject — Ed25519 signature verification fails",
+  "observed": "Rejected (InvalidSignature exception, owner_signature_verified.ok=false)",
+  "status": "PASS",
+  "evidence": "run_on_host_b.py: verify_owner_signature returns ok=false on tampered signature"
+}

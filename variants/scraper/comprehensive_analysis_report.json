@@ -1,0 +1,899 @@
+{
+  "total_profiles": 248,
+  "service_category_distribution": {
+    "traditional": 120,
+    "sensual": 128,
+    "specialty": 19,
+    "wellness": 27,
+    "therapeutic": 16,
+    "medical": 3,
+    "combined": 5
+  },
+  "bio_complexity_stats": {
+    "avg_word_count": 140.9516129032258,
+    "median_word_count": 137.5,
+    "min_word_count": 2,
+    "max_word_count": 389,
+    "avg_sentence_count": 9.116935483870968,
+    "avg_vocab_richness": 0.767758107596759
+  },
+  "pricing_analysis": {
+    "profiles_with_pricing": 22,
+    "percentage_with_pricing": 8.870967741935484,
+    "avg_hourly_rate": 73.18746438746439,
+    "median_hourly_rate": 45.0,
+    "rate_range": [
+      20.584615384615383,
+      293.3333333333333
+    ]
+  },
+  "completeness_distribution": {
+    "avg_completeness": 53.83064516129032,
+    "median_completeness": 62.5,
+    "high_quality_profiles": 4,
+    "medium_quality_profiles": 173,
+    "low_quality_profiles": 71
+  },
+  "marketing_language_usage": {
+    "emotional": 176,
+    "professional": 93,
+    "urgency": 119,
+    "exclusivity": 24,
+    "guarantee": 37,
+    "social_proof": 23
+  },
+  "certification_stats": {
+    "profiles_with_certifications": 44,
+    "certification_types": 5
+  },
+  "session_features": {
+    "environment": 71,
+    "location_type": 116,
+    "amenities": 49,
+    "duration": 36
+  },
+  "top_profiles_by_completeness": [
+    {
+      "username": "SensualMale",
+      "phone": "+61 411144538",
+      "services": {
+        "traditional": [],
+        "specialty": [],
+        "sensual": [
+          "sensual"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 306,
+        "sentence_count": 11,
+        "paragraph_count": 1,
+        "avg_sentence_length": 27.818181818181817,
+        "avg_word_length": 6.003267973856209,
+        "vocab_richness": 0.5915032679738562,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [],
+        "standalone_prices": [
+          100,
+          170,
+          250,
+          240
+        ],
+        "price_mentions": 4,
+        "avg_hourly_rate": null,
+        "min_price": 100,
+        "max_price": 250
+      },
+      "certifications": {
+        "registered": [
+          "rmt"
+        ]
+      },
+      "marketing": {
+        "emotional": 1,
+        "professional": 1
+      },
+      "session_details": {
+        "duration": [
+          "60 min",
+          "90 min",
+          "30 min"
+        ],
+        "environment": [
+          "shower",
+          "towel"
+        ],
+        "amenities": [
+          "parking",
+          "towels"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 87.5,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "Mark_Gordon",
+      "phone": "+1 6475886886",
+      "services": {
+        "traditional": [
+          "swedish",
+          "deep tissue"
+        ],
+        "specialty": [
+          "aromatherapy"
+        ],
+        "sensual": [],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 233,
+        "sentence_count": 18,
+        "paragraph_count": 1,
+        "avg_sentence_length": 12.944444444444445,
+        "avg_word_length": 6.008583690987124,
+        "vocab_richness": 0.7639484978540773,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [],
+        "standalone_prices": [
+          140,
+          190,
+          200
+        ],
+        "price_mentions": 3,
+        "avg_hourly_rate": null,
+        "min_price": 140,
+        "max_price": 200
+      },
+      "certifications": {
+        "years": [
+          "13"
+        ]
+      },
+      "marketing": {
+        "urgency": 1,
+        "professional": 2
+      },
+      "session_details": {
+        "duration": [
+          "60 min",
+          "90 min"
+        ],
+        "environment": [
+          "shower",
+          "music",
+          "candles",
+          "aromatherapy"
+        ],
+        "amenities": [
+          "parking"
+        ],
+        "location_type": [
+          "home",
+          "hotel"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 87.5,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "Will_Xavier",
+      "phone": "+1 9177538435",
+      "services": {
+        "traditional": [
+          "swedish",
+          "deep tissue"
+        ],
+        "specialty": [
+          "hot stone"
+        ],
+        "sensual": [
+          "sensual",
+          "nuru"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [
+          "stretching"
+        ],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 184,
+        "sentence_count": 7,
+        "paragraph_count": 1,
+        "avg_sentence_length": 26.285714285714285,
+        "avg_word_length": 6.798913043478261,
+        "vocab_richness": 0.8097826086956522,
+        "emoji_count": 6,
+        "has_emojis": true,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [],
+        "standalone_prices": [
+          120,
+          120,
+          300
+        ],
+        "price_mentions": 3,
+        "avg_hourly_rate": null,
+        "min_price": 120,
+        "max_price": 300
+      },
+      "certifications": {
+        "years": [
+          "20"
+        ]
+      },
+      "marketing": {
+        "urgency": 3,
+        "emotional": 1
+      },
+      "session_details": {
+        "environment": [
+          "heated table",
+          "towel"
+        ],
+        "amenities": [
+          "towels"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 87.5,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "MassageRob",
+      "phone": "+1 5628965445",
+      "services": {
+        "traditional": [
+          "swedish",
+          "deep tissue",
+          "sports",
+          "reflexology"
+        ],
+        "specialty": [
+          "hot stone"
+        ],
+        "sensual": [],
+        "therapeutic": [
+          "trigger point"
+        ],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 228,
+        "sentence_count": 18,
+        "paragraph_count": 1,
+        "avg_sentence_length": 12.666666666666666,
+        "avg_word_length": 4.815789473684211,
+        "vocab_richness": 0.6929824561403509,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [],
+        "standalone_prices": [
+          120,
+          150,
+          175,
+          230,
+          180,
+          205,
+          270
+        ],
+        "price_mentions": 7,
+        "avg_hourly_rate": null,
+        "min_price": 120,
+        "max_price": 270
+      },
+      "certifications": {
+        "certified": [
+          "CMT"
+        ],
+        "years": [
+          "15"
+        ]
+      },
+      "marketing": {
+        "urgency": 1,
+        "emotional": 1
+      },
+      "session_details": {
+        "duration": [
+          "60 min",
+          "90 min",
+          "120 min"
+        ],
+        "environment": [
+          "shower",
+          "music",
+          "heated table"
+        ],
+        "amenities": [
+          "parking"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 87.5,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "Paulvazo",
+      "phone": "+1 9176486249",
+      "services": {
+        "traditional": [
+          "swedish",
+          "deep tissue",
+          "thai"
+        ],
+        "specialty": [
+          "aromatherapy"
+        ],
+        "sensual": [
+          "sensual",
+          "nuru"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [
+          "stretching",
+          "yoga"
+        ],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 207,
+        "sentence_count": 9,
+        "paragraph_count": 1,
+        "avg_sentence_length": 23.0,
+        "avg_word_length": 5.758454106280193,
+        "vocab_richness": 0.6763285024154589,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": false,
+        "time_based_pricing": [],
+        "standalone_prices": [],
+        "price_mentions": 0,
+        "avg_hourly_rate": null,
+        "min_price": null,
+        "max_price": null
+      },
+      "certifications": {
+        "licensed": [
+          "licensed massage therapist"
+        ],
+        "university": [
+          "the University State of New York, with advanced training in body work"
+        ]
+      },
+      "marketing": {
+        "emotional": 2,
+        "professional": 2
+      },
+      "session_details": {
+        "environment": [
+          "aromatherapy"
+        ],
+        "location_type": [
+          "studio",
+          "home",
+          "spa"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 75.0,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": false,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "AtYourService",
+      "phone": "+61 415205866",
+      "services": {
+        "traditional": [
+          "deep tissue",
+          "sports"
+        ],
+        "specialty": [],
+        "sensual": [
+          "sensual"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 181,
+        "sentence_count": 11,
+        "paragraph_count": 1,
+        "avg_sentence_length": 16.454545454545453,
+        "avg_word_length": 7.077348066298343,
+        "vocab_richness": 0.7458563535911602,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [
+          {
+            "time": 60,
+            "price": 120,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 75,
+            "price": 150,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 90,
+            "price": 180,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 105,
+            "price": 210,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 120,
+            "price": 230,
+            "unit": "per_minute",
+            "hourly_rate": 115.0
+          },
+          {
+            "time": 60,
+            "price": 120,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 75,
+            "price": 150,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 90,
+            "price": 180,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 105,
+            "price": 210,
+            "unit": "per_minute",
+            "hourly_rate": 120.0
+          },
+          {
+            "time": 120,
+            "price": 230,
+            "unit": "per_minute",
+            "hourly_rate": 115.0
+          }
+        ],
+        "standalone_prices": [
+          120,
+          150,
+          180,
+          210,
+          230
+        ],
+        "price_mentions": 15,
+        "avg_hourly_rate": 119.0,
+        "min_price": 120,
+        "max_price": 230
+      },
+      "certifications": {},
+      "marketing": {
+        "urgency": 1,
+        "guarantee": 1,
+        "professional": 1
+      },
+      "session_details": {
+        "environment": [
+          "shower",
+          "towel"
+        ],
+        "amenities": [
+          "towels"
+        ],
+        "location_type": [
+          "studio"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 75.0,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": false,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "EBONYnIVORYHANDS",
+      "phone": "+1 9286428123",
+      "services": {
+        "traditional": [],
+        "specialty": [],
+        "sensual": [
+          "sensual",
+          "nuru"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 294,
+        "sentence_count": 16,
+        "paragraph_count": 1,
+        "avg_sentence_length": 18.375,
+        "avg_word_length": 6.894557823129252,
+        "vocab_richness": 0.6564625850340136,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [
+          {
+            "time": 20,
+            "price": 20,
+            "unit": "per_minute",
+            "hourly_rate": 60.0
+          }
+        ],
+        "standalone_prices": [
+          140,
+          160,
+          20,
+          115,
+          135,
+          20
+        ],
+        "price_mentions": 7,
+        "avg_hourly_rate": 60.0,
+        "min_price": 20,
+        "max_price": 160
+      },
+      "certifications": {},
+      "marketing": {
+        "social_proof": 1,
+        "emotional": 3,
+        "professional": 1
+      },
+      "session_details": {
+        "environment": [
+          "shower",
+          "music"
+        ],
+        "amenities": [
+          "oils"
+        ],
+        "location_type": [
+          "studio",
+          "home",
+          "spa"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 75.0,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": false,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "BradyAllen",
+      "phone": "+1 7472484944",
+      "services": {
+        "traditional": [
+          "deep tissue"
+        ],
+        "specialty": [],
+        "sensual": [
+          "sensual"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 151,
+        "sentence_count": 11,
+        "paragraph_count": 1,
+        "avg_sentence_length": 13.727272727272727,
+        "avg_word_length": 6.516556291390729,
+        "vocab_richness": 0.7483443708609272,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": true,
+        "time_based_pricing": [],
+        "standalone_prices": [
+          50,
+          180,
+          240,
+          300,
+          350,
+          400
+        ],
+        "price_mentions": 6,
+        "avg_hourly_rate": null,
+        "min_price": 50,
+        "max_price": 400
+      },
+      "certifications": {},
+      "marketing": {
+        "emotional": 1
+      },
+      "session_details": {
+        "duration": [
+          "60 min",
+          "90 min",
+          "120 min",
+          "90 minute"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 75.0,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": true,
+          "has_certification": false,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "TrainedMassage",
+      "phone": "+1 2063546363",
+      "services": {
+        "traditional": [
+          "swedish",
+          "deep tissue",
+          "sports"
+        ],
+        "specialty": [],
+        "sensual": [],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 241,
+        "sentence_count": 12,
+        "paragraph_count": 1,
+        "avg_sentence_length": 20.083333333333332,
+        "avg_word_length": 6.020746887966805,
+        "vocab_richness": 0.6970954356846473,
+        "emoji_count": 6,
+        "has_emojis": true,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": false,
+        "time_based_pricing": [],
+        "standalone_prices": [],
+        "price_mentions": 0,
+        "avg_hourly_rate": null,
+        "min_price": null,
+        "max_price": null
+      },
+      "certifications": {
+        "years": [
+          "8"
+        ]
+      },
+      "marketing": {
+        "guarantee": 1,
+        "emotional": 3,
+        "professional": 1
+      },
+      "session_details": {
+        "location_type": [
+          "studio"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 75.0,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": false,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    },
+    {
+      "username": "SportsMassageNYC",
+      "phone": "+1 2138409372",
+      "services": {
+        "traditional": [
+          "swedish",
+          "deep tissue",
+          "sports",
+          "shiatsu",
+          "thai"
+        ],
+        "specialty": [],
+        "sensual": [
+          "sensual"
+        ],
+        "therapeutic": [],
+        "medical": [],
+        "wellness": [
+          "stretching",
+          "reiki"
+        ],
+        "combined": []
+      },
+      "complexity": {
+        "word_count": 223,
+        "sentence_count": 17,
+        "paragraph_count": 1,
+        "avg_sentence_length": 13.117647058823529,
+        "avg_word_length": 5.3408071748878925,
+        "vocab_richness": 0.6860986547085202,
+        "emoji_count": 0,
+        "has_emojis": false,
+        "has_paragraphs": false
+      },
+      "pricing": {
+        "has_pricing": false,
+        "time_based_pricing": [],
+        "standalone_prices": [],
+        "price_mentions": 0,
+        "avg_hourly_rate": null,
+        "min_price": null,
+        "max_price": null
+      },
+      "certifications": {
+        "licensed": [
+          "Licensed Massage Therapist"
+        ]
+      },
+      "marketing": {
+        "urgency": 2,
+        "emotional": 1
+      },
+      "session_details": {
+        "duration": [
+          "60 min",
+          "90 min",
+          "90 minute"
+        ],
+        "environment": [
+          "shower"
+        ],
+        "location_type": [
+          "spa",
+          "gym",
+          "hotel"
+        ]
+      },
+      "completeness": {
+        "completeness_score": 75.0,
+        "factors": {
+          "has_bio": true,
+          "has_phone": true,
+          "bio_length": true,
+          "has_services": true,
+          "has_pricing": false,
+          "has_certification": true,
+          "has_availability": true,
+          "structured_bio": false
+        }
+      }
+    }
+  ]
+}

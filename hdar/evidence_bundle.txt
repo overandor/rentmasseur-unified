@@ -1,0 +1,52 @@
+=== HDAR EVIDENCE BUNDLE ===
+Generated: 2026-07-17T22:16:30Z
+Git SHA: b8c01b90566f93a0b3d2439a32fdad2cc2369bc0
+Git branch: main
+Git clean: 1 untracked/modified files
+
+=== ENVIRONMENT ===
+macOS: 26.5.2
+Darwin: 25.5.0
+Arch: arm64
+Python: Python 3.13.12
+Compiler: Apple clang version 21.0.0 (clang-2100.1.1.101)
+OpenSSL: OpenSSL 3.5.5 27 Jan 2026 (Library: OpenSSL 3.5.5 27 Jan 2026)
+
+=== APPLE CONTAINERIZATION ===
+container CLI: container CLI version 1.1.0 (build: release, commit: unspeci)
+container path: /opt/homebrew/bin/container
+container SHA-256: 9fb1e387868ab01822a5efbac267161b8860af96ff9560cc8b60841840dea3f3
+
+=== SOURCE HASHES ===
+  36b4fb1a560358c389d4e13ef1e95d0be693fb50172a3e5b1de43973e3d5e302  native/main.cpp
+  13daed5b1eacf950e4211fc6244f8d37ccb257f58a9736cad43499faa4058e66  native/hdar_provider.cpp
+  b2e571b6fab741fc50bd8afdbfc822b34425d7f24d1bbaefef4002b266849dd4  native/hdar_provider.h
+  897b17dedf2e56968508aecd5cac961afcd574d7983b0116c71f4a06b392bc05  native/hdar_crypto.cpp
+  0972fd0695dbae6a1f30073c06d085cc2eb3f606ef75f9b934990ee47bb2f8d3  native/hdar_crypto.h
+  107ad2bf7ec2154d40a80655c1319a6ae7c3397fc6ce89a4818dc91c8776303e  native/hdar_lease.cpp
+  7e9d6ba3b81fac761cb6156b1062ac7630c8997dceb3391a9a115e68d74f8a56  native/hdar_lease.h
+  34c2bcb456350c489d3e5e4c39c321cffce689ab2a40c8d85bcefd510218dd2e  native/hdar_continuity.cpp
+  3b02f705723881d5b4b9236b915b3cc1e26bd9f81c73dee4fcdcc621a67d2c8b  native/hdar_continuity.h
+  b110ca672ed6f4ffa89984f124d92465d1b35d46057396312b8a5e807b618f64  native/hdar_gateway.cpp
+  ad97ba683639f4cec5f22d4dd1c0e09d60964d93527ba7a04425080052b4f771  native/hdar_gateway.h
+  9cba549ff454061675435a06ef402efd884c90c980df4e232275d111fc2bedfb  native/hdar_store.cpp
+  40cef6f15420b5c972287735c4ecd46b5fa19f6b77823dcf014059e9551f5848  native/hdar_store.h
+  95cc6cfa5b9444fb21798595708982d3d91e83e1766d721ae6cd2247b8d7625e  native/Makefile
+  1bf34b75e73a40560f497bdca43d4f03921934f9eefc0c29c8720a4086ba3044  real_vm_harness.py
+  17d49fa08097a2f60384cdf29e1494c744b57c4cfd81f5147c49df64519f2141  .github/workflows/ci.yml
+
+=== NATIVE BINARY ===
+Binary SHA-256: 7edabdd4dfef15d022965315a7d013236ce7c00181e8bf0586071804ce6e0d66
+Binary size: 208136 bytes
+
+=== NATIVE TEST RESULT ===
+  NATIVE HDAR DECISIVE LOOP — C++ on Apple Silicon
+  ✓ offline verification passed
+    Checks: 15 passed, 0 failed
+  RESULT
+  55 passed, 0 failed
+  THE NATIVE C++ DECISIVE LOOP IS REAL.
+
+=== EVIDENCE BUNDLE SELF-HASH ===
+Bundle SHA-256: 26599590d823cc3aa327274de99614831c8bb7a964bc4ced8501173451f98f91
+

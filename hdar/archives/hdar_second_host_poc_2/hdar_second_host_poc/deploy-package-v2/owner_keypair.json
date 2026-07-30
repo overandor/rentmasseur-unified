@@ -1,0 +1,6 @@
+{
+  "algorithm": "ed25519",
+  "private_key_hex": "50520856b3db3a2b9e4b119286646f3d34b88b943d0e280984aa2683655cfe60",
+  "production_grade": true,
+  "public_key_hex": "0df3d9f2b054048518525d82a4b1c33f09084babc28dbdfb33dee0458638313e"
+}

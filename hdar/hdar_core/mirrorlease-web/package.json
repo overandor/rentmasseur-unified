@@ -1,0 +1,15 @@
+{
+  "name": "mirrorlease-web",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "npm run build && node --test tests/site.test.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "type": "module"
+}

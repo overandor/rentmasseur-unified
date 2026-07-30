@@ -1,0 +1,15 @@
+[Unit]
+Description=RentMasseur Optimizer Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=alep
+WorkingDirectory=/Users/alep/Downloads/rentmasseur-optimizer
+EnvironmentFile=/Users/alep/Downloads/rentmasseur-optimizer/.env
+ExecStart=/usr/bin/env python3 /Users/alep/Downloads/rentmasseur-optimizer/daemon.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

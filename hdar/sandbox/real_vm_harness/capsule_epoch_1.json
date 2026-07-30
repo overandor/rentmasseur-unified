@@ -1,0 +1,123 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-vm-0024",
+  "agent_name": "agent-24",
+  "epoch": {
+    "epoch_id": "633e49a11eab4f629e8af99333015c13",
+    "agent_id": "agent-vm-0024",
+    "sequence": 1,
+    "parent_epoch": "08b7ac66f9ab4edd94fa1456f1809a5d",
+    "created_at": 1784362996.983582
+  },
+  "parent_capsule_hash": "78e30844a9e2e170514a544cb18fa9c56effdb264893fb7fee90ce5a82ea92fe",
+  "objective": "task 24 complete",
+  "continuation_point": "all steps done",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "b58218ef039614956933c275516fbcdbabfea4cd94caab18b4e2f79600957a78",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "77626c8da64fb5a9fe14bfe4aab928d336893a00fdf0a2ccaa70336d3b178767",
+        "size": 73,
+        "mode": 420
+      },
+      {
+        "rel_path": "task.sh",
+        "content_hash": "d6e845524cb319154dd0c766cb185da9653d0452276db29b6a36b576ba551cc8",
+        "size": 242,
+        "mode": 420
+      },
+      {
+        "rel_path": "task_id.txt",
+        "content_hash": "13ef87cb0662f5874be84d6fc3f8b2e51de3e797bcdb267540a02f1361cd287e",
+        "size": 15,
+        "mode": 420
+      }
+    ],
+    "total_size": 330
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority preserved after cross-host migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-vm-0024",
+      "epoch_id": "08b7ac66f9ab4edd94fa1456f1809a5d",
+      "timestamp": 1784362985.667099,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "73be416144689d4ae0d06781f2af053051a8f562de0f99f1662f654fb1e20bd1",
+        "file_count": 3,
+        "total_size": 371,
+        "objective": "compute sum task 24",
+        "fencing_token": "b5d536dd9e494b7c9431b9ec1b234a94"
+      },
+      "state_root": "73be416144689d4ae0d06781f2af053051a8f562de0f99f1662f654fb1e20bd1",
+      "signer_fingerprint": "4ff9355863896494",
+      "signer_role": "owner",
+      "receipt_hash": "604c545d442ed189cb67077df52722a2345338bb1a9fb5a136348a6da2f6aac5",
+      "signature": "f5b3c522a2357a3337fa8b9a623b512554adcb52c7c70ea87cb782b3b7aa94fddcb0b7f795a35e53c801738bd265cbf931dbd456940cb61ef7f3e25d39a48b0a"
+    },
+    {
+      "receipt_type": "WITNESS",
+      "agent_id": "agent-vm-0024",
+      "epoch_id": "633e49a11eab4f629e8af99333015c13",
+      "timestamp": 1784362991.746252,
+      "prior_receipt_hash": "604c545d442ed189cb67077df52722a2345338bb1a9fb5a136348a6da2f6aac5",
+      "action": "host_execution_witnessed",
+      "action_payload": {
+        "host_os": "Linux",
+        "host_arch": "x86_64",
+        "runtime_id": "rt-75895b67",
+        "operations_count": 1,
+        "test_results_count": 1,
+        "output_workspace_root_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "delta_hash": "5be7d258470d1a41ccd5db1c8e23b24c3af7a3cff4b488f56d1629366367ab23"
+      },
+      "state_root": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "signer_fingerprint": "9211f4f434202d8f",
+      "signer_role": "host",
+      "receipt_hash": "7e3bffcab508d1b6bc20a756ad705e820c496f4f2673d83b821437b15ee25c73",
+      "signature": "caaa85d4a830af9a734f10ac8d0a9f71e6817f23a35b37259eeb55db8e2309c5ac816cc5c0c81e46871420ae2a4bf04d55d7d02a9820f76c0b109375a1f18901"
+    },
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-vm-0024",
+      "epoch_id": "633e49a11eab4f629e8af99333015c13",
+      "timestamp": 1784362996.986612,
+      "prior_receipt_hash": "7e3bffcab508d1b6bc20a756ad705e820c496f4f2673d83b821437b15ee25c73",
+      "action": "capsule_resealed_after_migration",
+      "action_payload": {
+        "workspace_root_hash": "b58218ef039614956933c275516fbcdbabfea4cd94caab18b4e2f79600957a78",
+        "file_count": 3,
+        "total_size": 330,
+        "witness_hash": "7e3bffcab508d1b6bc20a756ad705e820c496f4f2673d83b821437b15ee25c73",
+        "parent_epoch": 0
+      },
+      "state_root": "b58218ef039614956933c275516fbcdbabfea4cd94caab18b4e2f79600957a78",
+      "signer_fingerprint": "4ff9355863896494",
+      "signer_role": "owner",
+      "receipt_hash": "e0adc771e4961d96d1e23e199359fd421c06c2b46426d49a09ec87a5a608ddb6",
+      "signature": "50e07b9968a560d88710a39f95f40e86d19619b1a2f24ed7de493a4a51fd027db32361eddea2057c1030f181964750305577a47d3e8de574e32bc0ba94653e0b"
+    }
+  ],
+  "manifest_hash": "6e3dfb1d965af707bbc93a4e0d435adc72de2ed08ff6a4d25d04b18bfc1cd836",
+  "signer_fingerprint": "4ff9355863896494",
+  "signature": "f3125981433c5da35dc82b613db17409fd9e491e46053aa29bd1c5c7274260e79f7f28dd37d57c2780b9d78d11bac83a544912d7964cd9ae3d0c0dfb3f2be902",
+  "sealed_at": 1784362996.98667
+}

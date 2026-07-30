@@ -1,0 +1,20 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "authority": {
+    "filesystem": "demo workspace only",
+    "network": "none required",
+    "secrets": "none embedded"
+  },
+  "host_b_label": "host-b-local-simulation-not-seed-proof",
+  "last_event": {
+    "epoch_from": 1,
+    "epoch_to": 2,
+    "event": "continued_on_host_b",
+    "host_label": "host-b-local-simulation-not-seed-proof",
+    "host_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "timestamp": 1784585002.725162
+  },
+  "next_action": "return successor capsule to Host A or another provider and verify lineage.",
+  "objective": "Continue unfinished work after Host A runtime destruction.",
+  "status": "continued_on_host_b"
+}

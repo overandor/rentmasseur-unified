@@ -1,0 +1,12 @@
+{
+  "evidence_id": "EVP-0017",
+  "source_files": ["run_on_host_b.py"],
+  "hashes": {
+    "runner_sha256": "938a47c7db2d7fcf31849cc970bb6f6fd8a10b05a59378ee3905d6f00493d508"
+  },
+  "signatures": [],
+  "verifier_outputs": ["runner_sha256_verified: true"],
+  "runtime_logs": ["Runner SHA-256 verified"],
+  "generation_tool": "n/a (self-verification in runner)",
+  "schema_version": "hdar.evidence/v0.1"
+}

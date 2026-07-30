@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-004",
+  "test": "Path traversal — capsule contains ../../../etc/passwd",
+  "expected": "Reject — safe_extract_tar blocks path traversal",
+  "observed": "Rejected (safe_extract_tar raises ValueError on path traversal attempt)",
+  "status": "PASS",
+  "evidence": "test_audit_fixes.py: test_path_traversal_protection"
+}

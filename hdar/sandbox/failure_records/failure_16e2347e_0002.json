@@ -1,0 +1,18 @@
+{
+  "migration_id": 2,
+  "run_id": "16e2347e",
+  "failure_type": "exception",
+  "failure_detail": "blob not found: 753dc3082e3bf753ec28dd36a985e61db4eb289a5b2a1c43c3ae893a63d692e8",
+  "last_phase": "restore_vm_b",
+  "vm_a_id": "hdar-16e2347e-A-0002",
+  "vm_b_id": "",
+  "vm_a_absent": true,
+  "vm_b_absent": false,
+  "capsule_hash": "d1b0902d80ef5b7f",
+  "epoch": "LineageEpoch(epoch_id='c162485e5c204c8c8815f3dad82486f7', agent_id='agent-vm-0002', sequence=0, parent_epoch=None, created_at=1784349042.0153642)",
+  "lease_state": "lease query failed",
+  "inject_failure": "duplicate_wake",
+  "duration_ms": 5838.3469581604,
+  "cleanup_errors": [],
+  "timestamp": 1784349047.8535428
+}

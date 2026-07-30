@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HDAR — $3M Seed Progress Dashboard</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #14141f;
+      --border: #2a2a3a;
+      --text: #e0e0e8;
+      --muted: #8888a0;
+      --green: #00d68f;
+      --yellow: #ffcc00;
+      --red: #ff4757;
+      --blue: #00b8d4;
+      --purple: #b388ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, 'SF Mono', 'Fira Code', monospace;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h2 {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .big-number {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .big-number.green {
+      color: var(--green);
+    }
+
+    .big-number.yellow {
+      color: var(--yellow);
+    }
+
+    .big-number.red {
+      color: var(--red);
+    }
+
+    .big-number.blue {
+      color: var(--blue);
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .gate-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .gate-table th,
+    .gate-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .gate-table th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status-passed {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .status-pending {
+      color: var(--yellow);
+      font-weight: 600;
+    }
+
+    .status-failed {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .status-na {
+      color: var(--muted);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+    }
+
+    .evidence-list {
+      list-style: none;
+    }
+
+    .evidence-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .evidence-list li:last-child {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge.passed {
+      background: rgba(0, 214, 143, 0.15);
+      color: var(--green);
+    }
+
+    .badge.pending {
+      background: rgba(255, 204, 0, 0.15);
+      color: var(--yellow);
+    }
+
+    .badge.native {
+      background: rgba(0, 184, 212, 0.15);
+      color: var(--blue);
+    }
+
+    .badge.real {
+      background: rgba(179, 136, 255, 0.15);
+      color: var(--purple);
+    }
+
+    .claim-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .claim-box .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat .num {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .stat .lbl {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>HDAR — Hardware-Detached Agent Runtime</h1>
+  <p class="subtitle">$3M Seed Progress Dashboard · Updated July 17, 2026 · Apple Silicon · Apple Containerization 1.x
+  </p>
+
+  <!-- Claim -->
+  <div class="claim-box">
+    <div class="label">SUPPORTED CLAIM</div>
+    HDAR has demonstrated cryptographically governed semantic continuation across repeatedly materialized and destroyed
+    Linux VM-backed runtimes on one Apple-silicon host. A native C++ implementation (OpenSSL Ed25519, SQLite, real
+    container CLI) passes 55/55 checks including SSH gateway routing. A 25-migration battle test passed 25/25 with
+    457 checks and 11 injected faults contained. This is a <strong>repeatable local VM-backed continuity
+      prototype</strong>,
+    not a production system. Cross-physical-host migration, cross-provider continuity, real SSH entry,
+    and external reproduction remain unproved.
+  </div>
+
+  <!-- Top metrics -->
+  <div class="grid">
+    <div class="card">
+      <h2>Technical Prototype</h2>
+      <div class="big-number green">72%</div>
+      <div class="label">of decisive demonstration complete</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:72%;background:var(--green)"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>$1M Pre-Seed Case</h2>
+      <div class="big-number blue">78%</div>
+      <div class="label">assembled</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:78%;background:var(--blue)"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>$3M Seed Case</h2>
+      <div class="big-number yellow">55%</div>
+      <div class="label">complete (technical 67%, commercial 40%)</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:55%;background:var(--yellow)"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Production Readiness</h2>
+      <div class="big-number" style="color:var(--purple)">35%</div>
+      <div class="label">Layer 1 — local VM-backed</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:35%;background:var(--purple)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evidence metrics -->
+  <div class="card" style="margin-bottom:24px">
+    <h2>Evidence Metrics</h2>
+    <div class="stats-row" style="margin-top:12px">
+      <div class="stat">
+        <div class="num green">55/55</div>
+        <div class="lbl">Native C++ decisive loop</div>
+      </div>
+      <div class="stat">
+        <div class="num green">25/25</div>
+        <div class="lbl">Python battle test (100% clean run)</div>
+      </div>
+      <div class="stat">
+        <div class="num green">457</div>
+        <div class="lbl">Checks passed (battle test)</div>
+      </div>
+      <div class="stat">
+        <div class="num green">11</div>
+        <div class="lbl">Injected faults contained</div>
+      </div>
+      <div class="stat">
+        <div class="num green">0</div>
+        <div class="lbl">Checks failed</div>
+      </div>
+      <div class="stat">
+        <div class="num blue">14.0s</div>
+        <div class="lbl">Mean migration duration</div>
+      </div>
+      <div class="stat">
+        <div class="num blue">18.4s</div>
+        <div class="lbl">P95 migration duration</div>
+      </div>
+      <div class="stat">
+        <div class="num green">8</div>
+        <div class="lbl">Native C++ modules</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gate table -->
+  <div class="section-title">Gate Status</div>
+  <div class="card">
+    <table class="gate-table">
+      <thead>
+        <tr>
+          <th>Gate</th>
+          <th>Status</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Content-addressed capsule lifecycle</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">55/55 native</span></td>
+        </tr>
+        <tr>
+          <td>Ed25519 owner signatures</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">OpenSSL 3.x</span> <span class="badge native">C++</span></td>
+        </tr>
+        <tr>
+          <td>Real isolated runtime execution</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge real">Apple Containerization</span></td>
+        </tr>
+        <tr>
+          <td>Named runtime destruction</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge real">container stop + rm</span></td>
+        </tr>
+        <tr>
+          <td>Post-destruction absence proof</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge real">container inspect → not found</span></td>
+        </tr>
+        <tr>
+          <td>Quiescence and effect reconciliation</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">demonstrated path</span></td>
+        </tr>
+        <tr>
+          <td>Fencing-token invalidation</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">SQLite-backed</span></td>
+        </tr>
+        <tr>
+          <td>Capability attenuation</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">no expansion enforced</span></td>
+        </tr>
+        <tr>
+          <td>Host witness receipt</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">ephemeral Ed25519</span></td>
+        </tr>
+        <tr>
+          <td>Owner-controlled lineage advancement</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">owner-only reseal</span></td>
+        </tr>
+        <tr>
+          <td>Offline tamper verification</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">15 checks, 0 failures</span></td>
+        </tr>
+        <tr>
+          <td>Rollback rejection</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">epoch monotonicity</span></td>
+        </tr>
+        <tr>
+          <td>Stale-fence rejection</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">invalidated tokens rejected</span></td>
+        </tr>
+        <tr>
+          <td>A→B continuation across two real VMs</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge real">one physical Mac</span></td>
+        </tr>
+        <tr>
+          <td>SSH ForceCommand gateway</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge native">C++ gateway</span> <span class="badge passed">VM lifecycle</span></td>
+        </tr>
+        <tr>
+          <td>Failure-injected migration (25 runs)</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">25/25, 457 checks</span></td>
+        </tr>
+        <tr>
+          <td>Stale-resource recovery</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge passed">unique IDs, signal handlers</span></td>
+        </tr>
+        <tr>
+          <td>Native C++ implementation</td>
+          <td class="status-passed">PASSED</td>
+          <td><span class="badge native">8 modules, pure C++</span></td>
+        </tr>
+        <tr>
+          <td>Genuine independent-host migration</td>
+          <td class="status-pending">PENDING</td>
+          <td><span class="badge pending">needs remote Host B</span></td>
+        </tr>
+        <tr>
+          <td>100-run reliability harness</td>
+          <td class="status-pending">IN PROGRESS</td>
+          <td><span class="badge pending">running now</span></td>
+        </tr>
+        <tr>
+          <td>Cross-provider continuity</td>
+          <td class="status-pending">PENDING</td>
+          <td><span class="badge pending">needs second provider</span></td>
+        </tr>
+        <tr>
+          <td>External developer reproduction</td>
+          <td class="status-pending">PENDING</td>
+          <td><span class="badge pending">0/3 developers</span></td>
+        </tr>
+        <tr>
+          <td>Design partners</td>
+          <td class="status-pending">PENDING</td>
+          <td><span class="badge pending">0/2 partners</span></td>
+        </tr>
+        <tr>
+          <td>Published capsule spec/SDK</td>
+          <td class="status-pending">PENDING</td>
+          <td><span class="badge pending">not yet published</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Native C++ modules -->
+  <div class="section-title">Native C++ Implementation</div>
+  <div class="card">
+    <ul class="evidence-list">
+      <li><span class="badge native">crypto</span> Ed25519 via OpenSSL 3.x — keygen, sign, verify, SHA-256</li>
+      <li><span class="badge native">store</span> Content-addressed blocks, workspace ingest/restore, capsule
+        serialization</li>
+      <li><span class="badge native">provider</span> Apple Container CLI via popen — real VM create/exec/stop/rm/inspect
+      </li>
+      <li><span class="badge native">lease</span> SQLite-backed fencing tokens, lease
+        acquisition/validation/invalidation</li>
+      <li><span class="badge native">continuity</span> Seal, destroy, restore, witness, reseal, offline verification
+      </li>
+      <li><span class="badge native">gateway</span> SSH ForceCommand — agent resolution, VM lifecycle, witness, cleanup
+      </li>
+      <li><span class="badge native">main</span> 18-step decisive loop driver — 55/55 checks on real VMs</li>
+      <li><span class="badge native">Makefile</span> clang++ -std=c++17, OpenSSL, SQLite3</li>
+    </ul>
+  </div>
+
+  <!-- What's not proven -->
+  <div class="section-title">Limitations (honestly stated)</div>
+  <div class="card">
+    <ul class="evidence-list">
+      <li><span class="badge pending">SCOPE</span> Single physical Mac, single Apple Container daemon, single storage
+        substrate</li>
+      <li><span class="badge pending">HOST</span> Both VMs orchestrated by same macOS host — not genuine cross-host</li>
+      <li><span class="badge pending">PROVIDER</span> Single provider (Apple Containerization) — no cross-provider proof
+      </li>
+      <li><span class="badge pending">SCALE</span> 25 clean migrations — Wilson 95% lower bound ~86.7%</li>
+      <li><span class="badge pending">ADOPTION</span> Zero external developers, zero design partners</li>
+      <li><span class="badge pending">SSH</span> Gateway tested in-process — not yet wired to real sshd ForceCommand
+      </li>
+    </ul>
+  </div>
+
+  <!-- Next steps -->
+  <div class="section-title">Next Steps</div>
+  <div class="card">
+    <ul class="evidence-list">
+      <li><span class="badge pending">1</span> 100-migration battle test with interrupt recovery (running)</li>
+      <li><span class="badge pending">2</span> Wire SSH gateway to real sshd ForceCommand</li>
+      <li><span class="badge pending">3</span> Cross-host migration to remote Linux server</li>
+      <li><span class="badge pending">4</span> Cross-provider migration (Apple Container → OCI runtime)</li>
+      <li><span class="badge pending">5</span> External developer reproduction package</li>
+      <li><span class="badge pending">6</span> Published capsule spec and SDK</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    HDAR — Hardware-Detached Agent Runtime · The authoritative continuity layer for persistent AI agents.<br>
+    One kernel. One control plane. One inspection console. No ketchup.
+  </div>
+
+</body>
+
+</html>

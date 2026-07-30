@@ -1,0 +1,921 @@
+{
+  "total_migrations": 100,
+  "successful": 100,
+  "failed": 0,
+  "success_rate": 1.0,
+  "failures_injected": 14,
+  "failure_types": {},
+  "duration_ms": {
+    "mean": 13.711514472961426,
+    "median": 13.036608695983887,
+    "stdev": 2.6388064694396993,
+    "min": 10.46609878540039,
+    "max": 31.40091896057129,
+    "p95": 17.840147018432617
+  },
+  "total_checks_passed": 1809,
+  "total_checks_failed": 0,
+  "timestamp": 1784299377.186008,
+  "results": [
+    {
+      "migration_id": 0,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.066789627075195,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 1,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.207290649414062,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 2,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.451192855834961,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 3,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.380786895751953,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 4,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 31.40091896057129,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 5,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 19.995927810668945,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 6,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 17.840147018432617,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 7,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 18.341064453125,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 8,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.7410888671875,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 9,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.628005981445312,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 10,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.835025787353516,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 11,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.906002044677734,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 12,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.401031494140625,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 13,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.905908584594727,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 14,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.950824737548828,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 15,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.707015991210938,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 16,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.565851211547852,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 17,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.14401626586914,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 18,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.991905212402344,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 19,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 14.126777648925781,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 20,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.578176498413086,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 21,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.359857559204102,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 22,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 14.236927032470703,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 23,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 14.325857162475586,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 24,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.751174926757812,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 25,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.70206069946289,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 26,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.433839797973633,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 27,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.795997619628906,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 28,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 10.848045349121094,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 29,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.103796005249023,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 30,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.24207878112793,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 31,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 14.412164688110352,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 32,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.55996322631836,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 33,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 10.46609878540039,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 34,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.527299880981445,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 35,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.038946151733398,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 36,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.778997421264648,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 37,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.349843978881836,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 38,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.41922378540039,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 39,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.194084167480469,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 40,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.660980224609375,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 41,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.504173278808594,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 42,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.351036071777344,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 43,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.122941970825195,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 44,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.295007705688477,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 45,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.684822082519531,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 46,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.44807243347168,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 47,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 14.158010482788086,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 48,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.661052703857422,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 49,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.42320442199707,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 50,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.621879577636719,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 51,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.29405403137207,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 52,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.23733139038086,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 53,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.682914733886719,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 54,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.374898910522461,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 55,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.978097915649414,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 56,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.13020896911621,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 57,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.877775192260742,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 58,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.608766555786133,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 59,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.612985610961914,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 60,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.535831451416016,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 61,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.416072845458984,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 62,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.585111618041992,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 63,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 17.600059509277344,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 64,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.206979751586914,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 65,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.484975814819336,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 66,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.408992767333984,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 67,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.489961624145508,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 68,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.61591911315918,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 69,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.163089752197266,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 70,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.169672012329102,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 71,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.858867645263672,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 72,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.145923614501953,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 73,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.574029922485352,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 74,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.307954788208008,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 75,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.17198371887207,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 76,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.044118881225586,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 77,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.893987655639648,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 78,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.016773223876953,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 79,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.656045913696289,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 80,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.031099319458008,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 81,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.190984725952148,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 82,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 10.943889617919922,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 83,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.932134628295898,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 84,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.029098510742188,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 85,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.09404182434082,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 86,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.831998825073242,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 87,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 15.215158462524414,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 88,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 17.719030380249023,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 89,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 16.79515838623047,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 90,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 17.910003662109375,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 91,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.629913330078125,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 92,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 14.394760131835938,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 93,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.236190795898438,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 94,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.361215591430664,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 95,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.824058532714844,
+      "checks_passed": 19,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 96,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 12.970209121704102,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 97,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.542890548706055,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 98,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 11.649131774902344,
+      "checks_passed": 18,
+      "checks_failed": 0
+    },
+    {
+      "migration_id": 99,
+      "success": true,
+      "failure_type": "",
+      "failure_detail": "",
+      "duration_ms": 13.063907623291016,
+      "checks_passed": 19,
+      "checks_failed": 0
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "completed_at": "2026-07-21T07:07:27.863953+00:00",
+  "console_transcript": [
+    "Host B keypair: algorithm=ed25519, production_grade=True",
+    "Runner SHA-256 verified: edc021b85ff9a26d41a2a3451bc59859c09ea2c726bd4d28444d216b3f06d0e8",
+    "Loaded external bundle: /Users/alep/Downloads/hdar_second_host_poc/_colab_build/transport_capsule_epoch_1_signed.tar.gz (sha256=35b185c4b136101b7896d11eea8df1576cfe8901f59d9ab7de5173e7c399b169)",
+    "Transport bundle SHA-256 verified against external Host A report: 35b185c4b136101b7896d11eea8df1576cfe8901f59d9ab7de5173e7c399b169",
+    "Transport capsule extracted (safe member validation)",
+    "Capsule directory detected: capsule_epoch_1",
+    "Input capsule verified: ok=True, epoch=1",
+    "Owner signature: ok=True, reason=owner Ed25519 signature verified",
+    "Host A report verified: manifest_hash_match=True, platforms_differ=False",
+    "Workspace restored: exact=True, files=5",
+    "Task continuation: ok=True, result=N/A"
+  ],
+  "evidence_packet_sha256": "b7f33156a6048102f9bb305fa2dd574fb260d0209e9b083e681cf7c295193fcc",
+  "evidence_packet_signature": "17b5e3896cd49bdfa2315578905c7f37ed431e41e9aa0d8d7db37e16f1c1eebdc635c83e2213a850720316a1de63c3b160317fc2a40e00840440f01bd75df506",
+  "exit_codes": [
+    {
+      "exit_code": 0,
+      "step": "complete"
+    }
+  ],
+  "expected_tree_hash": "85088f946496aa2992b092346d4607fb5feae7ccd1667f8ba0e36c483f10ce1e",
+  "host_a_agent_runtime_accessible": {
+    "evidence_type": "operator_declared",
+    "note": "Not technically measured by runner; asserted by operator.",
+    "value": false
+  },
+  "host_a_filesystem_accessible": {
+    "evidence_type": "operator_declared",
+    "note": "Not technically measured by runner; asserted by operator.",
+    "value": false
+  },
+  "host_b_public_key": "7110f4ec80200b05bd26d410daeb05cb31b7d5ddac6e973cac2784389eaa5c1d",
+  "host_b_report_sha256": "7769c8631e8cf0797883b5361fc111a9c67cde2ef9536980e1a2aae234f246ce",
+  "host_fingerprint": {
+    "machine_hostname": "Mac.lan",
+    "machine_nonce": "369112fb1db686472a1b87ad58d77e75",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python_version": "3.13.12 | packaged by Anaconda, Inc. | (main, Feb 24 2026, 16:07:20) [Clang 20.1.8 ]"
+  },
+  "host_label": "colab-linux-simulation",
+  "lifecycle_events": [
+    {
+      "detail": "Runner started on macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "event": "host_b_provisioned",
+      "timestamp": "2026-07-21T07:07:27.800428+00:00"
+    },
+    {
+      "detail": "E1 capsule restored, exact=True",
+      "event": "capsule_restored",
+      "timestamp": "2026-07-21T07:07:27.800428+00:00"
+    },
+    {
+      "detail": "5-stage pipeline completed, passed=True",
+      "event": "task_executed",
+      "timestamp": "2026-07-21T07:07:27.863953+00:00"
+    },
+    {
+      "detail": "E2 capsule sealed, epoch=2",
+      "event": "successor_sealed",
+      "timestamp": "2026-07-21T07:07:27.863953+00:00"
+    },
+    {
+      "detail": "Report and evidence packet signed and written",
+      "event": "evidence_archived",
+      "timestamp": "2026-07-21T07:07:27.863953+00:00"
+    }
+  ],
+  "lineage_advanced": true,
+  "network_source": "",
+  "operator_identity_or_pseudonym": "google-colab-simulated",
+  "proof_version": "hdar-host-b-v1",
+  "restore_exact": true,
+  "restored_tree_hash": "85088f946496aa2992b092346d4607fb5feae7ccd1667f8ba0e36c483f10ce1e",
+  "runner_sha256": "edc021b85ff9a26d41a2a3451bc59859c09ea2c726bd4d28444d216b3f06d0e8",
+  "runner_sha256_verified": true,
+  "signature_algorithm": "ed25519",
+  "source_capsule_sha256": "35b185c4b136101b7896d11eea8df1576cfe8901f59d9ab7de5173e7c399b169",
+  "source_epoch": 1,
+  "started_at": "2026-07-21T07:07:27.800428+00:00",
+  "successor_capsule_sha256": "193bfff7280c6b5e6a84dd2cef77e8ba8cc1255072cd8449906c5807057bf581",
+  "successor_epoch": 2,
+  "task_continuation_passed": true,
+  "task_result": {
+    "computed_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+    "expected_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+    "ok": true,
+    "passed": true,
+    "stage_chain": {
+      "stages": [
+        {
+          "hash": "979f8dcc670bf280220e7f99ca3accdfeca079d71132c8a1892852c79a1dd8a0",
+          "parent_hash": null,
+          "stage": "parse"
+        },
+        {
+          "hash": "ff56505817613471fc1b403935e41c72ca6ec9acda4f50c74d8f0693db5d9046",
+          "parent_hash": "979f8dcc670bf280220e7f99ca3accdfeca079d71132c8a1892852c79a1dd8a0",
+          "stage": "filter"
+        },
+        {
+          "hash": "c9bcb1dba6a02317343490130e8a52780ac7227110144ed80048959e68bdf290",
+          "parent_hash": "ff56505817613471fc1b403935e41c72ca6ec9acda4f50c74d8f0693db5d9046",
+          "stage": "aggregate"
+        },
+        {
+          "hash": "da62a9e5a50d615edeb81aead237dc3759af725f1cbe34612397de2cdcc66547",
+          "parent_hash": "c9bcb1dba6a02317343490130e8a52780ac7227110144ed80048959e68bdf290",
+          "stage": "classify"
+        },
+        {
+          "hash": "ee26758899bc1a340840720812913e9161bbf23431565750ed2473403b9a6c8b",
+          "parent_hash": "da62a9e5a50d615edeb81aead237dc3759af725f1cbe34612397de2cdcc66547",
+          "stage": "report"
+        }
+      ],
+      "valid": true
+    },
+    "stages_completed": 5,
+    "task": "multi_stage_analysis_pipeline"
+  },
+  "verification_commands": [
+    "shasum -a 256 -c <<< 'edc021b85ff9a26d41a2a3451bc59859c09ea2c726bd4d28444d216b3f06d0e8  run_on_host_b.py'",
+    "python3 -c \"import json; r=json.load(open('host_b_report.json')); assert r['restore']['exact']; assert r['lineage_advanced']; assert r['successor_capsule']['ok']\""
+  ]
+}

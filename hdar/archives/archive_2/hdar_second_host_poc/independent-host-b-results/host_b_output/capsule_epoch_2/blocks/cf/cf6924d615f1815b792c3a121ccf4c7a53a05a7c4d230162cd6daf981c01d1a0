@@ -1,0 +1,2 @@
+{"event": "created_on_host_a", "host_label": "host-a-local-mac", "next_action": "seal capsule and destroy host A runtime", "timestamp": 1784586627.75711}
+{"epoch_from": 1, "epoch_to": 2, "event": "continued_on_host_b", "host_label": "codespace-host-b", "host_platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.39", "machine_hostname": "codespaces-b50b7e", "task_result": {"computed_result": 1060, "expected_result": 1060, "input_n": 100, "ok": true, "passed": true, "task": "sum_of_primes_below_N"}, "timestamp": 1784601512.7110097}

@@ -1,0 +1,2 @@
+{"event": "created_on_host_a", "host_label": "host-a-local-mac", "next_action": "seal capsule and destroy host A runtime", "timestamp": 1784585069.4878778}
+{"epoch_from": 1, "epoch_to": 2, "event": "continued_on_host_b", "host_label": "review-linux-host-b", "host_platform": "Linux-4.4.0-x86_64-with-glibc2.41", "timestamp": 1784588094.994337}

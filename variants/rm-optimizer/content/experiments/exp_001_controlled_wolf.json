@@ -1,0 +1,66 @@
+{
+  "experiment_id": "exp_001_controlled_wolf",
+  "baseline_bio_id": "karpathianwolf_live_20260625",
+  "test_bio_id": "bio_001_controlled_wolf",
+  "change_scope": "headline_and_bio_only",
+  "status": "ready",
+  "started_at": null,
+  "ended_at": null,
+  "freeze": {
+    "photos": true,
+    "prices": true,
+    "services": true,
+    "interview": true,
+    "blog": true,
+    "availability_behavior": "truthful_only"
+  },
+  "minimum_exposure": {
+    "new_profile_views": 100,
+    "minimum_hours": 24,
+    "maximum_hours_initial": 48
+  },
+  "primary_metric": "contact_click_rate",
+  "secondary_metrics": [
+    "booking_requests",
+    "phone_clicks",
+    "email_clicks",
+    "new_visits",
+    "profile_views"
+  ],
+  "baseline": {
+    "profile_views": 2802,
+    "contact_clicks": 135,
+    "contact_click_rate": 0.0482,
+    "source": "profileops.db traffic_snapshot"
+  },
+  "public_benchmark": {
+    "lifetime_visits": 78062,
+    "days_online": 964,
+    "views_per_day": 81.0,
+    "rank_among_enriched": 45,
+    "enriched_profiles_count": 125,
+    "source": "real_bios_with_views.jsonl"
+  },
+  "win_condition": {
+    "after_ctr_threshold": 0.0554,
+    "relative_lift_required": 0.15,
+    "minimum_new_views": 100,
+    "description": "15% relative lift from 4.82% baseline = 5.54% after CTR with 100+ new views"
+  },
+  "decision_states": [
+    "BLOCK_NO_SIGNAL",
+    "BLOCK_LOW_EXPOSURE",
+    "BLOCK_BAD_ACCOUNT_STATE",
+    "BLOCK_ATTRIBUTION_DIRTY",
+    "KEEP_CURRENT",
+    "TEST_NEXT_BIO",
+    "WINNER_FOUND",
+    "REVERT_TO_BASELINE",
+    "NEEDS_HUMAN_REVIEW"
+  ],
+  "safety": {
+    "contains_secret": false,
+    "uses_session_token": false,
+    "manual_approval_required": true
+  }
+}

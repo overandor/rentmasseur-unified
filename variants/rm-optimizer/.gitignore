@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+jobs.sqlite
+revenue_ops.db
+.env
+*.env
+*.sqlite
+*.db
+cookies*.json
+session*.json
+.DS_Store
+__MACOSX/
+rm_traffic/
+content/daily_evidence_packet.json
+private_secrets_quarantine/
+api_map.json
+*.secret.json

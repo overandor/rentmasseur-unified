@@ -1,0 +1,14 @@
+claim_id: CLM-0004
+statement: "Successor capsules are cryptographically linked to their parent through lineage hashes."
+evidence_ids:
+  - EVP-0009
+  - EVP-0010
+independent_verification_procedure: |
+  1. Extract E2 manifest.json
+  2. Verify parent_manifest_hash equals E1 manifest_hash
+  3. Verify epoch = parent_epoch + 1
+  4. Verify parent_manifest_hash is not empty or zero
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: lineage

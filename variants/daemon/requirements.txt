@@ -1,0 +1,5 @@
+fastapi>=0.104.0
+uvicorn>=0.24.0
+requests>=2.31.0
+selenium>=4.15.0
+python-crontab>=3.0.0

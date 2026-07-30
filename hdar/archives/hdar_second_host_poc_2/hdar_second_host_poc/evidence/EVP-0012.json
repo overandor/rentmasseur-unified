@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0012",
+  "source_files": ["third_party_verifier.py"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["host_b_signature verified independently by third_party_verifier.py"],
+  "runtime_logs": [],
+  "generation_tool": "n/a (verifier script)",
+  "schema_version": "hdar.evidence/v0.1"
+}

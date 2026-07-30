@@ -1,0 +1,71 @@
+{
+  "completed_at": "2026-07-21T06:04:53.585578+00:00",
+  "console_transcript": [
+    "Host B keypair: algorithm=ed25519, production_grade=True",
+    "Runner SHA-256 verified: a2c99f2744516c1d606f3b1a2c115f3e035a6a151fbda11a43e65a1e7b896637",
+    "Loaded external bundle: /home/codespace/hdar-demo/transport_capsule_epoch_1_signed.tar.gz (sha256=c0bd9ac536275959abbab22228c5ffbc1fa7777f1ba04371ce845d0f71f9b90b)",
+    "Transport bundle SHA-256 verified against external Host A report: c0bd9ac536275959abbab22228c5ffbc1fa7777f1ba04371ce845d0f71f9b90b",
+    "Transport capsule extracted (safe member validation)",
+    "Capsule directory detected: capsule_epoch_1",
+    "Input capsule verified: ok=True, epoch=1",
+    "Owner signature: ok=True, reason=owner Ed25519 signature verified",
+    "Host A report verified: manifest_hash_match=True, platforms_differ=True",
+    "Workspace restored: exact=True, files=5",
+    "Task continuation: ok=True, result=N/A"
+  ],
+  "evidence_packet_sha256": "c18122f07b4defaceb2bc76c5b011891edbd711e9a3fd52d0b5a37b0203f46da",
+  "evidence_packet_signature": "bdfa838d5abe1193b941f6f4d2fb237670d71b174c9c489842522f7654ec5a21ebb587a234d794b8538c5d5157645f9dde192f95436b832a097a2a7e04b7330f",
+  "exit_codes": [
+    {
+      "exit_code": 0,
+      "step": "complete"
+    }
+  ],
+  "expected_tree_hash": "3e1fb9cf5e64dde46a017fee5f044aaa63227973d9fddadc21b7c32bfd1812ac",
+  "host_a_agent_runtime_accessible": {
+    "evidence_type": "operator_declared",
+    "note": "Not technically measured by runner; asserted by operator.",
+    "value": false
+  },
+  "host_a_filesystem_accessible": {
+    "evidence_type": "operator_declared",
+    "note": "Not technically measured by runner; asserted by operator.",
+    "value": false
+  },
+  "host_b_public_key": "5472063717151d40fe5bd0bf2def63e8415fee687073b0cf97eef9ba4e1b3715",
+  "host_b_report_sha256": "1e3cb4b037097e29d341979370eddaf5423bf6b7f3e7b1ef9dccc84930abce0a",
+  "host_fingerprint": {
+    "machine_hostname": "codespaces-ad33bf",
+    "machine_nonce": "e5694c7b3561566a8642728c4a8f1e0e",
+    "platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.39",
+    "python_version": "3.12.1 (main, Mar 11 2026, 12:17:56) [GCC 13.3.0]"
+  },
+  "host_label": "codespace-host-b",
+  "lineage_advanced": true,
+  "network_source": "",
+  "operator_identity_or_pseudonym": "github-codespaces-ubuntu-2404",
+  "proof_version": "hdar-host-b-v1",
+  "restore_exact": true,
+  "restored_tree_hash": "3e1fb9cf5e64dde46a017fee5f044aaa63227973d9fddadc21b7c32bfd1812ac",
+  "runner_sha256": "a2c99f2744516c1d606f3b1a2c115f3e035a6a151fbda11a43e65a1e7b896637",
+  "runner_sha256_verified": true,
+  "signature_algorithm": "ed25519",
+  "source_capsule_sha256": "c0bd9ac536275959abbab22228c5ffbc1fa7777f1ba04371ce845d0f71f9b90b",
+  "source_epoch": 1,
+  "started_at": "2026-07-21T06:04:53.361952+00:00",
+  "successor_capsule_sha256": "ed52e5d43afc52b4583c800629dc63a4d04672c476b67a85e3cf2d9a2efcb16e",
+  "successor_epoch": 2,
+  "task_continuation_passed": true,
+  "task_result": {
+    "computed_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+    "expected_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+    "ok": true,
+    "passed": true,
+    "stages_completed": 5,
+    "task": "multi_stage_analysis_pipeline"
+  },
+  "verification_commands": [
+    "shasum -a 256 -c <<< 'a2c99f2744516c1d606f3b1a2c115f3e035a6a151fbda11a43e65a1e7b896637  run_on_host_b.py'",
+    "python3 -c \"import json; r=json.load(open('host_b_report.json')); assert r['restore']['exact']; assert r['lineage_advanced']; assert r['successor_capsule']['ok']\""
+  ]
+}

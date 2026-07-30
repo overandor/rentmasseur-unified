@@ -1,0 +1,75 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-mig-0099",
+  "agent_name": "agent-99",
+  "epoch": {
+    "epoch_id": "d4596d7fe04e4ff4975ff12bcd84d22f",
+    "agent_id": "agent-mig-0099",
+    "sequence": 0,
+    "parent_epoch": null,
+    "created_at": 1784299403.412883
+  },
+  "parent_capsule_hash": null,
+  "objective": "task 99",
+  "continuation_point": "step 2: pending",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "fa667946f8d3a640b103fc17cb090f985ca97bccd5e6432754f508a29e2cbf3f",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "31534cc2d60a0b9c87ed176961efe71755d94e8acc66c444e704aa604046bdbe",
+        "size": 107,
+        "mode": 420
+      },
+      {
+        "rel_path": "config.yaml",
+        "content_hash": "880514ffa968d2dd79277c77642485c5d2ca915ef8bdefef24d812833869dc8a",
+        "size": 46,
+        "mode": 420
+      }
+    ],
+    "total_size": 153
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority never expands on migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-mig-0099",
+      "epoch_id": "d4596d7fe04e4ff4975ff12bcd84d22f",
+      "timestamp": 1784299403.414811,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "fa667946f8d3a640b103fc17cb090f985ca97bccd5e6432754f508a29e2cbf3f",
+        "file_count": 2,
+        "total_size": 153,
+        "objective": "task 99",
+        "fencing_token": "e9e43a89fc1e4423b800825a00b531b4"
+      },
+      "state_root": "fa667946f8d3a640b103fc17cb090f985ca97bccd5e6432754f508a29e2cbf3f",
+      "signer_fingerprint": "a680db801ca85227",
+      "signer_role": "owner",
+      "receipt_hash": "f04f8c04ddf6072f8d93e1a4c1eebd8278ee5da4ee9881def6afcdcf28a19c4f",
+      "signature": "a670043a1e0646c203517b8f7fbec70596269e0375ccc6e850681f1d3af009946b199f0bc9b3a9abb0fa244ced48fa1db4698ac0580964517e4f8ca805933a07"
+    }
+  ],
+  "manifest_hash": "4b63bf8be0458bde96037980593664b2c13681688f250569a7d569532253c6e9",
+  "signer_fingerprint": "a680db801ca85227",
+  "signature": "247d849a71eca974daba93b9b030985ba8fdb39508b385890d7a01e91c1dbce7b6073b5812f326328e8c66824266682a4d72c698b8226e0f97097f2c1a65f105",
+  "sealed_at": 1784299403.414861
+}

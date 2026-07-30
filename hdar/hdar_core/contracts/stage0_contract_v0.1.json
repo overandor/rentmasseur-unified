@@ -1,0 +1,82 @@
+{
+  "contract_version": "0.1.0",
+  "status": "frozen",
+  "promise": "Suspend an agent into a signed capsule, destroy its runtime, and restore it through the same logical SSH identity with unfinished work, authority, workspace, and evidence intact.",
+  "restoration_classes": {
+    "exact": {
+      "durable_state": "verified_byte_identical",
+      "volatile_state": "preserved_as_declared",
+      "approval_required": false
+    },
+    "semantic": {
+      "durable_state": "verified_byte_identical",
+      "volatile_state": "reconstructed_or_discarded_and_disclosed",
+      "approval_required": true
+    },
+    "degraded": {
+      "durable_state": "one_or_more_requested_components_unavailable",
+      "volatile_state": "reconstructed_or_discarded_and_disclosed",
+      "approval_required": true
+    }
+  },
+  "integrity_failures_are_never_degraded": [
+    "missing_required_block",
+    "invalid_owner_signature",
+    "broken_receipt_chain",
+    "unauthorized_rollback",
+    "ambiguous_agent_identity"
+  ],
+  "capability_rules": {
+    "default": "deny",
+    "destination_may": ["preserve", "attenuate"],
+    "destination_may_not": ["broaden_scope", "increase_budget", "add_capability", "embed_secret_value"],
+    "broader_authority_requires": "new_owner_signed_grant"
+  },
+  "required_documents": [
+    "contracts/HDAR_PRODUCT_CONTRACT_V0_1.md",
+    "contracts/THREAT_MODEL_V0_1.md",
+    "contracts/ACCEPTANCE_TESTS_V0_1.md",
+    "contracts/UNSUPPORTED_FEATURES_V0_1.md"
+  ],
+  "acceptance_ids": [
+    "S0-CONTRACT-001",
+    "CAP-ROUNDTRIP-001",
+    "CAP-TAMPER-001",
+    "CAP-INCOMPLETE-001",
+    "CAP-ROLLBACK-001",
+    "CAP-DEDUP-001",
+    "RESTORE-CLASS-001",
+    "AUTH-ATTENUATE-001",
+    "EFFECT-ONCE-001",
+    "LEASE-SPLIT-001",
+    "DESTROY-RUNTIME-001",
+    "MIGRATE-SAMEHOST-001",
+    "SSH-STABLE-001",
+    "MIGRATE-SECONDHOST-001"
+  ],
+  "unsupported_ids": [
+    "UNSUP-001",
+    "UNSUP-002",
+    "UNSUP-003",
+    "UNSUP-004",
+    "UNSUP-005",
+    "UNSUP-006",
+    "UNSUP-007",
+    "UNSUP-008",
+    "UNSUP-009",
+    "UNSUP-010",
+    "UNSUP-011",
+    "UNSUP-012",
+    "UNSUP-013",
+    "UNSUP-014",
+    "UNSUP-015"
+  ],
+  "current_evidence_boundary": {
+    "accepted": "same_host_vm_backed_semantic_continuation",
+    "not_accepted": [
+      "physical_second_host_restoration",
+      "stable_public_ssh_restoration",
+      "exact_live_process_restoration"
+    ]
+  }
+}

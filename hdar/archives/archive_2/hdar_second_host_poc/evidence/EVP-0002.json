@@ -1,0 +1,13 @@
+{
+  "evidence_id": "EVP-0002",
+  "source_files": ["capsule_epoch_1/manifest.json"],
+  "hashes": {
+    "manifest_hash": "228dff4fb4d59b271caf31c265e308bd5fc1017cc9498b4fd74fd310fd62ac6c",
+    "workspace_root_hash": "45d811a423318d5ca553c4d27c88916e8ef25fd4017771ffe99d8bf6a1a2bbfa"
+  },
+  "signatures": ["owner Ed25519 signature on manifest"],
+  "verifier_outputs": ["owner_signature: PASS"],
+  "runtime_logs": ["Owner signature: ok=true, reason=owner Ed25519 signature verified"],
+  "generation_tool": "owner_sign_capsule.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

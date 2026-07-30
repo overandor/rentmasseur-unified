@@ -1,0 +1,15 @@
+claim_id: CLM-0002
+statement: "Host B can exactly restore a capsule workspace created on a different platform."
+evidence_ids:
+  - EVP-0004
+  - EVP-0005
+  - EVP-0006
+independent_verification_procedure: |
+  1. Run run_on_host_b.py on independent host
+  2. Compare restored workspace_root_hash against host_a_build_report.json
+  3. Verify restore.exact == true in host_b_report.json
+  4. File count and per-file SHA-256 must match manifest
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: e1_integrity, e2_integrity

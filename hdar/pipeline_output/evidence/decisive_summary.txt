@@ -1,0 +1,35 @@
+  ✓ Runtime A is a real VM
+  ✓ Runtime A OS is Linux
+  ✓ Runtime A arch is arm64
+  ✓ Runtime A lease acquired
+    Capsule hash: afba67134f5c8026...
+  [6/18] FENCE: invalidate Runtime A's fencing token
+  [8/18] ABSENCE: provider confirms Runtime A no longer exists
+  ✓ Runtime A not in listing
+  ✓ Runtime B is a real VM
+  ✓ Runtime B OS is Linux
+    Runtime B: hdar-restore-36b86925
+  ✓ Runtime B destroyed
+  ✓ Runtime B not in listing
+  ✓ gateway produces output
+  ✓ gateway identifies agent
+  ✓ gateway creates VM
+  ✓ gateway destroys VM
+  ✓ gateway signs witness
+  ✓ gateway releases lease
+  ✓ gateway session completes
+  Command: echo 'SSH gateway test'
+  Capsule: epoch 1 hash abedcf483e8b119b...
+  Fencing token: 9566991a-94fc-4c0b-9499-899208360015
+SSH gateway test
+  Witness signed: c9d0951a8b9ec529...
+  RESULT
+  EVIDENCE SUMMARY:
+    Runtime A: real Linux VM (arm64), destroyed, absence proven
+    Runtime B: real Linux VM (arm64), destroyed, absence proven
+    Capsule 0: epoch 0, sealed on A, hash afba67134f5c8026...
+    Capsule 1: epoch 1, resealed by owner, hash abedcf483e8b119b...
+    Fencing: token invalidated, stale token rejected
+    Witness: signed by host B ephemeral key, verified by owner
+    Offline: 15 checks, 0 failures
+    Task: solve(10)=55, solve(100)=5050 — completed across 2 real VMs

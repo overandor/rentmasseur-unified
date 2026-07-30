@@ -1,0 +1,64 @@
+{
+  "total_profiles": 248,
+  "business_models": {
+    "unspecified": 149,
+    "both": 39,
+    "outcall": 34,
+    "incall": 26
+  },
+  "payment_methods": {
+    "cash": 28,
+    "zelle": 11,
+    "venmo": 11,
+    "paypal": 10,
+    "credit_card": 8,
+    "bank_transfer": 2
+  },
+  "languages": {
+    "swedish": 72,
+    "english": 20,
+    "thai": 18,
+    "spanish": 10,
+    "french": 8,
+    "russian": 4,
+    "portuguese": 4,
+    "italian": 3,
+    "polish": 2,
+    "japanese": 1
+  },
+  "tone_distribution": {
+    "professional": 95,
+    "sensual": 65,
+    "neutral": 40,
+    "casual": 27,
+    "medical": 21
+  },
+  "top_specializations": {
+    "sensual": 118,
+    "deep tissue": 100,
+    "relaxation": 78,
+    "tantric": 26,
+    "sports massage": 22,
+    "wellness": 10,
+    "stress relief": 10,
+    "trigger point": 9,
+    "corporate": 8,
+    "myofascial": 6
+  },
+  "pricing_stats": {
+    "profiles_with_pricing": 25,
+    "avg_price": 168.46581453634084,
+    "price_range": [
+      20.0,
+      556.5714285714286
+    ]
+  },
+  "phone_availability": {
+    "with_phone": 222,
+    "without_phone": 26
+  },
+  "availability_stats": {
+    "24_7_available": 5,
+    "booking_required": 58
+  }
+}

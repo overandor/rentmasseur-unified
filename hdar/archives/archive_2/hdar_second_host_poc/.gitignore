@@ -1,0 +1,5 @@
+_e2b_build/
+e2b-results/
+owner_keypair.json
+*.pem
+__pycache__/

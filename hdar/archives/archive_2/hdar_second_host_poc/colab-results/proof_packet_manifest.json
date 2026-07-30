@@ -1,0 +1,15 @@
+{
+  "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "host_b_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "note": "Simulated Colab execution. For real Colab, open hdar_host_b_colab.ipynb in Google Colab.",
+  "owner_public_key": "b39945ae207837a4410254a5850a1a4d448598a67bacec897e69ffcfb8d84031",
+  "runner_sha256": "edc021b85ff9a26d41a2a3451bc59859c09ea2c726bd4d28444d216b3f06d0e8",
+  "schema": "hdar.proof-packet/v0.2",
+  "stages_completed": 5,
+  "substrate": "google-colab-simulation",
+  "task": "multi_stage_analysis_pipeline",
+  "verifier_all_passed": false,
+  "verifier_location": "host_a",
+  "verifier_passed": 12,
+  "verifier_total": 13
+}

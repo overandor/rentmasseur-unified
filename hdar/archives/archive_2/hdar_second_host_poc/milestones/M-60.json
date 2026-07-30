@@ -1,0 +1,15 @@
+{
+  "milestone_id": "M-60",
+  "title": "Multiple independent environments verified",
+  "type": "predicate",
+  "pass_conditions": [
+    {"check": "independent_environments", "predicate": ">= 3 independent environments have produced valid host_b_report.json"},
+    {"check": "continuation_success_rate", "predicate": ">= 95% of continuation attempts succeed"},
+    {"check": "no_private_key_leakage", "predicate": "0 private keys leaked in any capsule or report"},
+    {"check": "verifier_agreement", "predicate": "100% of verifier runs agree on all 11 checks"},
+    {"check": "schema_compatibility", "predicate": "All reports use compatible schema versions"}
+  ],
+  "status": "PENDING",
+  "evidence": [],
+  "last_verified": null
+}

@@ -1,0 +1,10 @@
+{
+  "session_id": "0d4cab24f8c4",
+  "action": "message_visitor",
+  "status": "error",
+  "timestamp": "2026-07-21T05:02:34.447838+00:00",
+  "elapsed_s": 135.16,
+  "username": "BaronArtz",
+  "error": "Message: no such window: target window already closed\nfrom unknown error: web view not found\n  (Session info: chrome=150.0.7871.129)\nStacktrace:\n0   undetected_chromedriver             0x00000001013d86fa undetected_chromedriver + 7001850\n1   undetected_chromedriver             0x0000000100da0365 undetected_chromedriver + 480101\n2   undetected_chromedriver             0x0000000100d739f8 undetected_chromedriver + 297464\n3   undetected_chromedriver             0x0000000100e23d68 undetected_chromedriver + 1019240\n4   undetected_chromedriver             0x0000000100e3e598 undetected_chromedriver + 1127832\n5   undetected_chromedriver             0x0000000100de8944 undetected_chromedriver + 776516\n6   undetected_chromedriver             0x0000000100de9711 undetected_chromedriver + 780049\n7   undetected_chromedriver             0x0000000101398097 undetected_chromedriver + 6738071\n8   undetected_chromedriver             0x000000010139c596 undetected_chromedriver + 6755734\n9   undetected_chromedriver             0x0000000101378b14 undetected_chromedriver + 6609684\n10  undetected_chromedriver             0x000000010139d012 undetected_chromedriver + 6758418\n11  undetected_chromedriver             0x00000001013687f0 undetected_chromedriver + 6543344\n12  undetected_chromedriver             0x00000001013c47a8 undetected_chromedriver + 6920104\n13  undetected_chromedriver             0x00000001013c493c undetected_chromedriver + 6920508\n14  undetected_chromedriver             0x00000001013d8311 undetected_chromedriver + 7000849\n15  libsystem_pthread.dylib             0x00007ff815307d49 _pthread_start + 115\n16  libsystem_pthread.dylib             0x00007ff81530382f thread_start + 15\n",
+  "receipt_hash": "e822007c2c523965"
+}

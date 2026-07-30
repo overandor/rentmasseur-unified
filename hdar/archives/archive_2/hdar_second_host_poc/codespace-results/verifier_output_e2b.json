@@ -1,0 +1,221 @@
+{
+  "all_checks_passed": true,
+  "boolean_predicates": {
+    "environment_manifest_valid": false,
+    "epoch_advanced_exactly_once": true,
+    "evidence_packet_signature_valid": true,
+    "host_b_signature_valid": true,
+    "overall_accept": false,
+    "platforms_differ": true,
+    "report_e1_cross_check": true,
+    "report_e2_cross_check": true,
+    "sandbox_terminated": true,
+    "semantic_correctness_valid": true,
+    "source_manifest_hash_valid": true,
+    "source_owner_signature_valid": true,
+    "stage_chain_valid": true,
+    "state_transition_valid": true,
+    "successor_manifest_hash_valid": true,
+    "successor_parent_matches_source": true,
+    "task_result_valid": true
+  },
+  "checks": [
+    {
+      "check": "owner_signature",
+      "ok": true,
+      "public_key": "b39945ae207837a4410254a5850a1a4d448598a67bacec897e69ffcfb8d84031",
+      "reason": "Host A owner Ed25519 signature verified"
+    },
+    {
+      "check": "e1_integrity",
+      "epoch": 1,
+      "manifest_hash": "444ddcef0c50b720f5fc561f15fe3e3c2681a53fd7c881fed7681ae238543b12",
+      "ok": true,
+      "parent_manifest_hash": null,
+      "reason": "all content blocks and receipt verified",
+      "workspace_root_hash": "01da9458cdc4db79380eba24e55f3b33d797d890e739f4538e4230d6f27e6939"
+    },
+    {
+      "check": "e2_integrity",
+      "epoch": 2,
+      "manifest_hash": "183959107e2e8aabbbbddd468494f52f63743015b3ddcf528575c85e506c944e",
+      "ok": true,
+      "parent_manifest_hash": "444ddcef0c50b720f5fc561f15fe3e3c2681a53fd7c881fed7681ae238543b12",
+      "reason": "all content blocks and receipt verified",
+      "workspace_root_hash": "c54a7a08e31fa27424edd0e675f53cba2e52f057702c0ce1ac1e2f304580388d"
+    },
+    {
+      "check": "lineage",
+      "e1_epoch": 1,
+      "e1_manifest_hash": "444ddcef0c50b720f5fc561f15fe3e3c2681a53fd7c881fed7681ae238543b12",
+      "e2_epoch": 2,
+      "e2_parent_manifest_hash": "444ddcef0c50b720f5fc561f15fe3e3c2681a53fd7c881fed7681ae238543b12",
+      "ok": true,
+      "reason": "lineage chain verified"
+    },
+    {
+      "check": "state_advanced",
+      "e1_root": "01da9458cdc4db79380eba24e55f3b33d797d890e739f4538e4230d6f27e6939",
+      "e2_root": "c54a7a08e31fa27424edd0e675f53cba2e52f057702c0ce1ac1e2f304580388d",
+      "ok": true,
+      "reason": "workspace root hash changed \u2014 state advanced"
+    },
+    {
+      "check": "host_b_signature",
+      "ok": true,
+      "public_key": "e610cbd898eba26f398a0e3a4a7a6dceb4b919af0045bee103ad409f422f8398",
+      "reason": "Host B Ed25519 signature verified"
+    },
+    {
+      "check": "task_continuation",
+      "computed_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+      "expected_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+      "ok": true,
+      "reason": "task passed: multi_stage_analysis_pipeline \u2014 stages=5, output_hash=bd47317bec2e1974...",
+      "stages_completed": 5,
+      "task": "multi_stage_analysis_pipeline"
+    },
+    {
+      "check": "platforms_differ",
+      "host_a_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "host_b_platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.39",
+      "ok": true,
+      "reason": "platforms differ \u2014 consistent with cross-platform continuation"
+    },
+    {
+      "check": "report_e1_cross_check",
+      "ok": true,
+      "reason": "Host B report input_capsule manifest_hash matches E1"
+    },
+    {
+      "check": "report_e2_cross_check",
+      "ok": true,
+      "reason": "Host B report successor_capsule manifest_hash matches E2"
+    },
+    {
+      "check": "evidence_packet_signature",
+      "ok": true,
+      "reason": "evidence packet has independent Ed25519 signature (distinct from report signature)"
+    },
+    {
+      "check": "semantic_correctness",
+      "independently_computed": {
+        "categories": [
+          "alpha",
+          "beta",
+          "delta",
+          "gamma"
+        ],
+        "category_counts": {
+          "alpha": 13,
+          "beta": 13,
+          "delta": 12,
+          "gamma": 12
+        },
+        "category_sums": {
+          "alpha": 1311.45,
+          "beta": 2382.9,
+          "delta": 3652.33,
+          "gamma": 610.85
+        },
+        "rejected_ids": [
+          "rec-bad-01",
+          "rec-bad-02"
+        ],
+        "rejected_records": 2,
+        "tier_counts": {
+          "critical": 0,
+          "high": 0,
+          "low": 1,
+          "medium": 49
+        },
+        "total_records": 52,
+        "valid_records": 50
+      },
+      "ok": true,
+      "predicates_checked": 5,
+      "reason": "semantic predicates verified (5 predicates)"
+    },
+    {
+      "check": "stage_chain",
+      "ok": true,
+      "reason": "stage chain valid (5 stages)",
+      "stages_verified": 5
+    },
+    {
+      "check": "sandbox_terminated",
+      "ok": true,
+      "reason": "sandbox github-codespace-refactored-train confirmed terminated before verifier execution",
+      "sandbox_id": "github-codespace-refactored-train"
+    }
+  ],
+  "failed": 0,
+  "passed": 14,
+  "predicate_details": {
+    "environment_manifest_valid": {
+      "passed": false
+    },
+    "epoch_advanced_exactly_once": {
+      "passed": true
+    },
+    "evidence_packet_signature_valid": {
+      "passed": true
+    },
+    "host_b_signature_valid": {
+      "passed": true
+    },
+    "overall_accept": {
+      "passed": false
+    },
+    "platforms_differ": {
+      "passed": true
+    },
+    "report_e1_cross_check": {
+      "passed": true
+    },
+    "report_e2_cross_check": {
+      "passed": true
+    },
+    "sandbox_terminated": {
+      "passed": true
+    },
+    "semantic_correctness_valid": {
+      "passed": true
+    },
+    "source_manifest_hash_valid": {
+      "passed": true
+    },
+    "source_owner_signature_valid": {
+      "passed": true
+    },
+    "stage_chain_valid": {
+      "passed": true
+    },
+    "state_transition_valid": {
+      "passed": true
+    },
+    "successor_manifest_hash_valid": {
+      "passed": true
+    },
+    "successor_parent_matches_source": {
+      "passed": true
+    },
+    "task_result_valid": {
+      "passed": true
+    }
+  },
+  "schema": "hdar.third-party-verification/v0.3",
+  "total_checks": 14,
+  "verifier": "neither-host-a-nor-host-b",
+  "verifier_location": "host_a (separate from E2B sandbox)",
+  "verifier_ruleset": "seed-criterion-v2",
+  "verifier_sha256": "fb32737132ca16a3af4c095820dd27069b94798ac7816595b792cc566bb329c8",
+  "verifier_version": "0.3",
+  "version_binding": {
+    "environment_manifest_hash": "not_provided",
+    "protocol_version": "hdar.transport-capsule/v0.1",
+    "ruleset_version": "seed-criterion-v2",
+    "verifier_version": "0.3",
+    "worker_version": "1.1"
+  }
+}

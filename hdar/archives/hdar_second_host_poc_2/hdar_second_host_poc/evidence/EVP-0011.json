@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0011",
+  "source_files": ["host_b_report.json"],
+  "hashes": {},
+  "signatures": ["host_b Ed25519 signature on report"],
+  "verifier_outputs": ["host_b_signature: PASS"],
+  "runtime_logs": [],
+  "generation_tool": "run_on_host_b.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

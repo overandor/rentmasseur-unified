@@ -1,0 +1,49 @@
+{
+  "claim_boundary": "Hash-only portable Host B proof. Real seed proof still requires production Ed25519 verification and a genuinely independent host run.",
+  "continuation_event": {
+    "epoch_from": 1,
+    "epoch_to": 2,
+    "event": "continued_on_host_b",
+    "host_label": "host-b-local-simulation-not-seed-proof",
+    "host_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "timestamp": 1784585002.725162
+  },
+  "host_b_label": "host-b-local-simulation-not-seed-proof",
+  "host_b_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "input_capsule": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 1,
+    "file_count": 4,
+    "manifest_hash": "2065a1f2dd4a5da947a65b64f7c534e2dcb61e6f0a1e6750d9421fbf867d80eb",
+    "ok": true,
+    "problems": [],
+    "total_size": 798,
+    "workspace_root_hash": "480e9d2781d12fc11f565209acc50b412d99c3ba9ed2a1c6388b43e04a9f94b9"
+  },
+  "lineage_advanced": true,
+  "output_dir": "/Users/alep/Downloads/hdar_second_host_poc/run-2026-07-20/local_host_b_simulation",
+  "restore": {
+    "exact": true,
+    "expected_root_hash": "480e9d2781d12fc11f565209acc50b412d99c3ba9ed2a1c6388b43e04a9f94b9",
+    "file_count": 4,
+    "restored_root_hash": "480e9d2781d12fc11f565209acc50b412d99c3ba9ed2a1c6388b43e04a9f94b9",
+    "total_size": 798
+  },
+  "schema": "hdar.second-host-proof-report/v0.1",
+  "successor_capsule": {
+    "agent_id": "hdar-seed-poc-agent",
+    "epoch": 2,
+    "file_count": 4,
+    "manifest_hash": "895525cfc074bfde56d1a74877b66ba6431255f90cd80ffb84a37aac6b2e0324",
+    "ok": true,
+    "problems": [],
+    "total_size": 1346,
+    "workspace_root_hash": "8f7b2c816d203115a7ab751d7aa0cbdc78c7a976f7b12d66dd8e6a53afc4deb7"
+  },
+  "successor_tar": {
+    "bytes": 1931,
+    "path": "/Users/alep/Downloads/hdar_second_host_poc/run-2026-07-20/local_host_b_simulation/successor_capsule_epoch_2.tar.gz",
+    "sha256": "3d3a3391f61bb00417e1985d964ac7596160c3e4fc3468472d17be094e8e8874"
+  },
+  "transport_bundle_sha256": "0b42adb390b9107f47690e75cc32377592fa683bdea3dc3f3a62c939842aabde"
+}

@@ -1,0 +1,11 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "authority": {
+    "filesystem": "demo workspace only",
+    "network": "none required",
+    "secrets": "none embedded"
+  },
+  "next_action": "restore on Host B and append a continuation event",
+  "objective": "Continue unfinished work after Host A runtime destruction.",
+  "status": "suspended_on_host_a"
+}

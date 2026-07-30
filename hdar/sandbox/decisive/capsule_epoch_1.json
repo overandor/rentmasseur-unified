@@ -1,0 +1,135 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-decisive",
+  "agent_name": "decisive-agent",
+  "epoch": {
+    "epoch_id": "bbd98af933014807a164f7ca1cb908c5",
+    "agent_id": "agent-decisive",
+    "sequence": 1,
+    "parent_epoch": "82220235879f4c3dae66f96f226d3aad",
+    "created_at": 1784301752.108368
+  },
+  "parent_capsule_hash": "cd05dd2edcf0a9bdf6598a281caedf40a7df983a79e305dbcc8eefd4d5ede699",
+  "objective": "Implement and verify solve(n) = sum(1..n)",
+  "continuation_point": "task complete \u2014 all 3 steps done across 2 real VMs",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "993dd7b4a7864b8dbb9709bacb9898e755fe3ec55786f1337c240a78d249b1c2",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "28a84124796b19e973d906fe5b4631d4cdec7bd1cc674a549da7ede058f7c18c",
+        "size": 192,
+        "mode": 420
+      },
+      {
+        "rel_path": "__pycache__/solve.cpython-312.pyc",
+        "content_hash": "e2bfdb7cb3ac94f7cb1626a08aa876fb3fcdc8a9712df9eb9974c639c9211f2b",
+        "size": 292,
+        "mode": 420
+      },
+      {
+        "rel_path": "solve.py",
+        "content_hash": "d7ac291b1e0e3a2e2d68b0c8142028fba4b7e0285927b1d661ad539c28361f15",
+        "size": 46,
+        "mode": 420
+      },
+      {
+        "rel_path": "test_solve.py",
+        "content_hash": "0ec073a9ec14d85c2cf55e0aab9271351e15bd4bc81524a868b846d790b784bd",
+        "size": 123,
+        "mode": 420
+      }
+    ],
+    "total_size": 653
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace",
+        "granted": true,
+        "constraints": {}
+      },
+      {
+        "name": "shell.exec",
+        "scope": "python3",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority preserved after cross-host migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-decisive",
+      "epoch_id": "82220235879f4c3dae66f96f226d3aad",
+      "timestamp": 1784301729.418727,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "d1fc16a3661bc4afc1884496c9b2e6d59ce6f861fc6dcbfb3306846b3c61bb97",
+        "file_count": 4,
+        "total_size": 658,
+        "objective": "Implement and verify solve(n) = sum(1..n)",
+        "fencing_token": "fbaf6be5ee4a4d2ab76fc863c090ebc4"
+      },
+      "state_root": "d1fc16a3661bc4afc1884496c9b2e6d59ce6f861fc6dcbfb3306846b3c61bb97",
+      "signer_fingerprint": "f6a892680e7aa3bb",
+      "signer_role": "owner",
+      "receipt_hash": "ad2d0057bcc7d9a29785208424d55411c5a0d77e157ff4a4d201ba2367a85dcf",
+      "signature": "6732286d836033c43d781e63293a59a3366e1e86ff27686c35ef974b78ab525d4b198f1b0fc13a33f52599cbec194de0438fd1e937b33fa6f8f9cfee9357d609"
+    },
+    {
+      "receipt_type": "WITNESS",
+      "agent_id": "agent-decisive",
+      "epoch_id": "bbd98af933014807a164f7ca1cb908c5",
+      "timestamp": 1784301746.6840792,
+      "prior_receipt_hash": "ad2d0057bcc7d9a29785208424d55411c5a0d77e157ff4a4d201ba2367a85dcf",
+      "action": "host_execution_witnessed",
+      "action_payload": {
+        "host_os": "Linux",
+        "host_arch": "x86_64",
+        "runtime_id": "rt-b54515a3",
+        "operations_count": 2,
+        "test_results_count": 1,
+        "output_workspace_root_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "delta_hash": "76bd074a681c8795be513f4836f202d63459ef2ee6f5e03240490d35116b708e"
+      },
+      "state_root": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "signer_fingerprint": "e58c87207416ae6f",
+      "signer_role": "host",
+      "receipt_hash": "3eb16b256c0e13260d593fae9df3c42714200b43fefd6615a093a0387daae4c9",
+      "signature": "9d98ef51f3c65c7661bca12405f1d296fe4cfbc91c036262b393487fae808cb68fa0021dc6487dbbeda9b0318cb5974e08181e4d26f6bbcc677480a4e200a000"
+    },
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-decisive",
+      "epoch_id": "bbd98af933014807a164f7ca1cb908c5",
+      "timestamp": 1784301752.109478,
+      "prior_receipt_hash": "3eb16b256c0e13260d593fae9df3c42714200b43fefd6615a093a0387daae4c9",
+      "action": "capsule_resealed_after_migration",
+      "action_payload": {
+        "workspace_root_hash": "993dd7b4a7864b8dbb9709bacb9898e755fe3ec55786f1337c240a78d249b1c2",
+        "file_count": 4,
+        "total_size": 653,
+        "witness_hash": "3eb16b256c0e13260d593fae9df3c42714200b43fefd6615a093a0387daae4c9",
+        "parent_epoch": 0
+      },
+      "state_root": "993dd7b4a7864b8dbb9709bacb9898e755fe3ec55786f1337c240a78d249b1c2",
+      "signer_fingerprint": "f6a892680e7aa3bb",
+      "signer_role": "owner",
+      "receipt_hash": "a3586746b5c3c957d2eef8f2076bfb1b8ebe0d14fc7247129a49fb2e2e923a29",
+      "signature": "4b8d67aaa3bd014ec6f1fab176630dbddd1d54e2f782971aa125842cc62d14712c2a1d1e69576ec0e27e30e2e5f8be9a36ce0afc435c30f431a3db9c3dd85e03"
+    }
+  ],
+  "manifest_hash": "d2a9d4ce4cf0141d4619edcdfb1a57ef2aa2316af76a7c1a955462af3c8736bc",
+  "signer_fingerprint": "f6a892680e7aa3bb",
+  "signature": "1a312e34916c3d54044810b0492f7eb763896cef20474a2d1ff409182ec894e90c507d1cc47af5e39c4c531258903390787c26ea23d68baa2da9edde6d339a08",
+  "sealed_at": 1784301752.109531
+}

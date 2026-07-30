@@ -1,0 +1,635 @@
+{
+  "props": {
+    "initialProps": {
+      "pageProps": {
+        "searchCity": {},
+        "isSearchEngine": false,
+        "isBlurredPhotos": false,
+        "isVisibleCookieToast": true,
+        "isGlobalLocations": true
+      }
+    },
+    "initialState": {
+      "utilsSlice": {
+        "isServer": true,
+        "isMobile": false,
+        "isTablet": false,
+        "isIOS": false,
+        "isAndroid": false,
+        "browser": "",
+        "buildStream": null,
+        "authDialogView": 0,
+        "isSearchEngine": false,
+        "isBlurredPhotos": false
+      },
+      "userSlice": {
+        "isServer": false,
+        "isLogged": false,
+        "isMasseur": false,
+        "username": "",
+        "stageName": "",
+        "userId": "",
+        "locationId": 0,
+        "isFrozen": 0,
+        "basicInfo": {
+          "email": "",
+          "phone": 0,
+          "phoneCodeId": 0
+        },
+        "membership": {
+          "expiredAt": "",
+          "isRecurring": 0,
+          "name": "",
+          "nextBilling": "",
+          "period": ""
+        },
+        "statistics": {
+          "createdAd": "",
+          "lestLoginAt": "",
+          "visits": 0
+        },
+        "status": "",
+        "userCard": {
+          "isGold": 0,
+          "location": "",
+          "searchCity": "",
+          "status": {
+            "isOnline": false,
+            "message": ""
+          },
+          "userId": 0,
+          "userPhoto": "",
+          "username": ""
+        },
+        "keepOnline": {
+          "isFrozen": 0,
+          "issues": {
+            "alerts": [],
+            "totalItems": 0
+          },
+          "newEmails": 0,
+          "newVisits": 0,
+          "smsCounter": 0,
+          "expiry": 0
+        }
+      },
+      "avrtSlice": {
+        "isServer": false,
+        "masseurOfTheDayData": {},
+        "featuredInterviewData": {},
+        "topSponsorsData": [],
+        "liveCamsData": [],
+        "searchState": {},
+        "reviewsState": {},
+        "interviewsState": {},
+        "blogsState": {},
+        "homeState": {}
+      }
+    },
+    "__N_SSP": true,
+    "pageProps": {
+      "breadcrumbs": [
+        {
+          "href": "/",
+          "as": "",
+          "label": "Home"
+        },
+        {
+          "href": "/gay-massage",
+          "as": "/gay-massage/",
+          "label": "Gay Massage"
+        },
+        {
+          "href": "/gay-massage/[search]",
+          "as": "/gay-massage/manhattan-ny/",
+          "label": "Male Massage in  Manhattan, NY"
+        },
+        {
+          "href": "/[username]",
+          "as": "/Karpathianwolf",
+          "label": "Karpathianwolf"
+        }
+      ],
+      "userMedia": [
+        {
+          "id": 943428,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/ad/30/ad30ca06-f92a-450f-8b0c-54469363a68a--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/ad/30/ad30ca06-f92a-450f-8b0c-54469363a68a--h100.jpg",
+          "type": 1,
+          "width": 233.33333333333334,
+          "height": 600,
+          "heightCf": "1.50"
+        },
+        {
+          "id": 790245,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/7c/78/7c78fd96-2b3b-430c-ba34-b78e69ae5079--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/7c/78/7c78fd96-2b3b-430c-ba34-b78e69ae5079--h100.jpg",
+          "type": 1,
+          "width": 280.5833333333333,
+          "height": 600,
+          "heightCf": "1.25"
+        },
+        {
+          "id": 1179926,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/df/f8/dff84408-87b1-43f6-a181-05190f3cc0fe--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/df/f8/dff84408-87b1-43f6-a181-05190f3cc0fe--h100.jpg",
+          "type": 1,
+          "width": 233.33333333333334,
+          "height": 600,
+          "heightCf": "1.50"
+        },
+        {
+          "id": 1183255,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/7e/e7/7ee74c6d-b04a-4b35-810b-a08a58d69ff7--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/7e/e7/7ee74c6d-b04a-4b35-810b-a08a58d69ff7--h100.jpg",
+          "type": 1,
+          "width": 262.5,
+          "height": 600,
+          "heightCf": "1.33"
+        },
+        {
+          "id": 941888,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/f4/63/f463254a-4a48-46f9-975d-444ee1697bbc--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/f4/63/f463254a-4a48-46f9-975d-444ee1697bbc--h100.jpg",
+          "type": 1,
+          "width": 466.6666666666667,
+          "height": 600,
+          "heightCf": "0.75"
+        },
+        {
+          "id": 809866,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/21/bd/21bde280-a4e2-4c5e-aa4c-75efaad81b94--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/21/bd/21bde280-a4e2-4c5e-aa4c-75efaad81b94--h100.jpg",
+          "type": 1,
+          "width": 262.5,
+          "height": 600,
+          "heightCf": "1.33"
+        },
+        {
+          "id": 809541,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/c7/c4/c7c41144-3b2b-4963-96d7-814a2c0cc971--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/c7/c4/c7c41144-3b2b-4963-96d7-814a2c0cc971--h100.jpg",
+          "type": 1,
+          "width": 225.75,
+          "height": 600,
+          "heightCf": "1.55"
+        },
+        {
+          "id": 943430,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/04/67/0467f960-e559-44a1-b2db-4e4ad8fe658f--h600.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/04/67/0467f960-e559-44a1-b2db-4e4ad8fe658f--h100.jpg",
+          "type": 1,
+          "width": 233.33333333333334,
+          "height": 600,
+          "heightCf": "1.50"
+        },
+        {
+          "id": 1183254,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/cc/c8/ccc8fbd1-bebf-4e13-9661-58ee08e4653f--h100.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/cc/c8/ccc8fbd1-bebf-4e13-9661-58ee08e4653f--h100.jpg",
+          "type": 2,
+          "width": 262.5,
+          "height": 600,
+          "heightCf": "1.33"
+        },
+        {
+          "id": 900202,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/c6/7f/c67f1423-05f8-4adc-bcc1-847033548043--h100.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/c6/7f/c67f1423-05f8-4adc-bcc1-847033548043--h100.jpg",
+          "type": 2,
+          "width": 196.58333333333334,
+          "height": 600,
+          "heightCf": "1.78"
+        },
+        {
+          "id": 934258,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/00/5e/005ee773-7d33-450e-8d86-4ea57957df42--h100.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/00/5e/005ee773-7d33-450e-8d86-4ea57957df42--h100.jpg",
+          "type": 2,
+          "width": 196.58333333333334,
+          "height": 600,
+          "heightCf": "1.78"
+        },
+        {
+          "id": 840656,
+          "photoUrl": "https://cdn.rentmasseur.com/rmass/photos/12/3d/123d12a7-43e6-453f-a3fd-06f560124d8c--h100.jpg",
+          "thumbUrl": "https://cdn.rentmasseur.com/rmass/photos/12/3d/123d12a7-43e6-453f-a3fd-06f560124d8c--h100.jpg",
+          "type": 2,
+          "width": 311.5,
+          "height": 600,
+          "heightCf": "1.12"
+        }
+      ],
+      "imagesWidth": 3165.166666666667,
+      "userPageData": {
+        "accountStatus": {
+          "isExpired": false,
+          "isFrozen": false
+        },
+        "coords": {
+          "lat": 40.80454691,
+          "lng": -73.93614736
+        },
+        "aboutMe": {
+          "title": "You bring the Smile , i bring the Wolf\u2026",
+          "description": "Welcome to CarpathianWolf territory \u2014 deep pressure, athletic bodywork, and serious muscle recalibration for humans who are tired, tense, overworked, overstimulated, and pretending they\u2019re \u201cfine\u201d while their shoulders are actively trying to become earrings.<br />\n<br />\nThis is not a soft spa fantasy where someone gently oils your back while whale music plays and your problems remain fully employed. This is focused, intense, hands-on bodywork for people who want pressure that actually does something.<br />\n<br />\nExpect extra deep pressure, hands, forearms, elbows, knees, body weight, instinct, and the calm determination of a wolf who has located the exact knot your body tried to hide behind three layers of denial and one terrible chair.<br />\n<br />\nPerfect for gym warriors, desk prisoners, stress collectors, travelers, nightlife survivors, lower-back drama queens, chronic overthinkers, and anyone whose hips move like they were installed during a government shutdown.<br />\n<br />\nYou may laugh. You may groan. You may question your relationship with chairs. All normal Earth responses.<br />\n<br />\nThe goal is simple: you arrive tense, crunchy, folded, and full of bad decisions. You leave looser, lighter, calmer, and slightly suspicious that your body has been lying to you for years.<br />\n<br />\nThis is not violence.<br />\n<br />\nThis is diplomacy.<br />\n<br />\nAggressive diplomacy.<br />\n<br />\nCome to the Wolf now.<br />\n<br />\nYour muscles have had enough unsupervised time to ruin your life.<br />\n<br />\nAvailable 24/7<br />\nCall or text today before your back starts a rebellion.<br />\n<br />\n\ud83d\udc49 Book here:<br />\n<br />\n\ud83d\udc49 Or click this if your thumbs still function:"
+        },
+        "userCard": {
+          "userId": 248479,
+          "username": "Karpathianwolf",
+          "status": {
+            "available": 1,
+            "message": "Available Now"
+          },
+          "locationId": 1036,
+          "location": "Manhattan, NY",
+          "searchCity": "manhattan-ny",
+          "userPhoto": "https://cdn.rentmasseur.com/rmass/photos/ad/30/ad30ca06-f92a-450f-8b0c-54469363a68a--w300.jpg",
+          "isGold": 1,
+          "isMasseur": 1
+        },
+        "myLocation": {
+          "searchCity": "manhattan-ny",
+          "city": "Manhattan",
+          "state": "NY",
+          "country": "USA",
+          "gps": "Manhattan, NY",
+          "home": "Manhattan, NY"
+        },
+        "photos": {
+          "free": {
+            "main": [
+              {
+                "id": 943428,
+                "width": 400,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/ad/30/ad30ca06-f92a-450f-8b0c-54469363a68a--h600.jpg"
+              },
+              {
+                "id": 790245,
+                "width": 481,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/7c/78/7c78fd96-2b3b-430c-ba34-b78e69ae5079--h600.jpg"
+              },
+              {
+                "id": 1179926,
+                "width": 400,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/df/f8/dff84408-87b1-43f6-a181-05190f3cc0fe--h600.jpg"
+              },
+              {
+                "id": 1183255,
+                "width": 450,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/7e/e7/7ee74c6d-b04a-4b35-810b-a08a58d69ff7--h600.jpg"
+              },
+              {
+                "id": 941888,
+                "width": 800,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/f4/63/f463254a-4a48-46f9-975d-444ee1697bbc--h600.jpg"
+              },
+              {
+                "id": 809866,
+                "width": 450,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/21/bd/21bde280-a4e2-4c5e-aa4c-75efaad81b94--h600.jpg"
+              },
+              {
+                "id": 809541,
+                "width": 387,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/c7/c4/c7c41144-3b2b-4963-96d7-814a2c0cc971--h600.jpg"
+              },
+              {
+                "id": 943430,
+                "width": 400,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/04/67/0467f960-e559-44a1-b2db-4e4ad8fe658f--h600.jpg"
+              }
+            ],
+            "thumb": [
+              {
+                "id": 943428,
+                "width": 400,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/ad/30/ad30ca06-f92a-450f-8b0c-54469363a68a--h100.jpg"
+              },
+              {
+                "id": 790245,
+                "width": 481,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/7c/78/7c78fd96-2b3b-430c-ba34-b78e69ae5079--h100.jpg"
+              },
+              {
+                "id": 1179926,
+                "width": 400,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/df/f8/dff84408-87b1-43f6-a181-05190f3cc0fe--h100.jpg"
+              },
+              {
+                "id": 1183255,
+                "width": 450,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/7e/e7/7ee74c6d-b04a-4b35-810b-a08a58d69ff7--h100.jpg"
+              },
+              {
+                "id": 941888,
+                "width": 800,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/f4/63/f463254a-4a48-46f9-975d-444ee1697bbc--h100.jpg"
+              },
+              {
+                "id": 809866,
+                "width": 450,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/21/bd/21bde280-a4e2-4c5e-aa4c-75efaad81b94--h100.jpg"
+              },
+              {
+                "id": 809541,
+                "width": 387,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/c7/c4/c7c41144-3b2b-4963-96d7-814a2c0cc971--h100.jpg"
+              },
+              {
+                "id": 943430,
+                "width": 400,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/04/67/0467f960-e559-44a1-b2db-4e4ad8fe658f--h100.jpg"
+              }
+            ]
+          },
+          "private": {
+            "main": [
+              {
+                "id": 1183254,
+                "width": 450,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/cc/c8/ccc8fbd1-bebf-4e13-9661-58ee08e4653f--h100.jpg"
+              },
+              {
+                "id": 900202,
+                "width": 337,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/c6/7f/c67f1423-05f8-4adc-bcc1-847033548043--h100.jpg"
+              },
+              {
+                "id": 934258,
+                "width": 337,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/00/5e/005ee773-7d33-450e-8d86-4ea57957df42--h100.jpg"
+              },
+              {
+                "id": 840656,
+                "width": 534,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/12/3d/123d12a7-43e6-453f-a3fd-06f560124d8c--h100.jpg"
+              }
+            ],
+            "thumb": [
+              {
+                "id": 1183254,
+                "width": 450,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/cc/c8/ccc8fbd1-bebf-4e13-9661-58ee08e4653f--h100.jpg"
+              },
+              {
+                "id": 900202,
+                "width": 337,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/c6/7f/c67f1423-05f8-4adc-bcc1-847033548043--h100.jpg"
+              },
+              {
+                "id": 934258,
+                "width": 337,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/00/5e/005ee773-7d33-450e-8d86-4ea57957df42--h100.jpg"
+              },
+              {
+                "id": 840656,
+                "width": 534,
+                "height": 600,
+                "url": "https://cdn.rentmasseur.com/rmass/photos/12/3d/123d12a7-43e6-453f-a3fd-06f560124d8c--h100.jpg"
+              }
+            ]
+          },
+          "galleryUnlocked": 0
+        },
+        "isSentPGNotification": 0,
+        "contactMe": {
+          "alias": "Joseph",
+          "emailVisibility": 1,
+          "phoneVisibility": 1,
+          "mapVisibility": 1,
+          "imVisibility": 0,
+          "isMasseur": true,
+          "phones": {
+            "mobile": "+1 9176648069"
+          }
+        },
+        "reviews": {
+          "total": 26,
+          "ratingAverage": 5,
+          "data": [
+            {
+              "reviewedId": 360218,
+              "review": {
+                "id": 150092,
+                "rating": 5,
+                "text": "I expected a good massage. Got something way more precise.<br />\n<br />\nJoseph doesn\u2019t guess\u2014he knows where the tension is and actually fixes it.<br />\n<br />\nLeft feeling looser than I have in a long time.<br />\nNow everything else feels kind of average.<br />\n<br />\nWould book again.",
+                "reviewedBy": "Drimosh",
+                "reviewedUser": "Drimosh",
+                "createdAt": "Apr 13",
+                "userIsDeleted": 0
+              }
+            },
+            {
+              "reviewedId": 309586,
+              "review": {
+                "id": 123909,
+                "rating": 5,
+                "text": "I consider myself strong. I lift. I do cardio. I handle my own. But whatever Joseph did? Different league. His technique was like a high-stakes action movie\u2014except instead of explosions, it was knots in my back getting annihilated with surgical precision. My muscles didn\u2019t stand a chance. They surrendered....",
+                "reviewedBy": "japurich",
+                "reviewedUser": "japurich",
+                "createdAt": "Mar 21, 2025",
+                "userIsDeleted": 0
+              },
+              "comment": {
+                "createdAt": "Apr 04, 2025",
+                "text": "you handled the session like a GOAT.Thanks for your interest >"
+              }
+            },
+            {
+              "reviewedId": 308527,
+              "review": {
+                "id": 123437,
+                "rating": 5,
+                "text": "Didn\u2019t even get to settle in before my body started unraveling. I thought I was tense from today\u2014turns out, this was tension from years ago. Pressure hit just right, and suddenly I was remembering things I forgot. Like, was that deep tissue or time travel? Either way, something got reset.",
+                "reviewedBy": "alexisom",
+                "reviewedUser": "alexisom",
+                "createdAt": "Mar 13, 2025",
+                "userIsDeleted": 0
+              },
+              "comment": {
+                "createdAt": "Apr 04, 2025",
+                "text": "haha. true poet , Thank you"
+              }
+            }
+          ]
+        },
+        "socials": {
+          "instagram": "",
+          "telegram": "Carpathianwolf",
+          "twitter": "",
+          "website": "https://rebrand.ly/carpathianwolf",
+          "isExternal": 1
+        },
+        "massageTypes": {
+          "therapeutic": {
+            "activated": true,
+            "price": {
+              "incall": 199,
+              "outcall": 269,
+              "currency": "US$"
+            },
+            "label": "Therapeutic"
+          },
+          "sensual": {
+            "activated": true,
+            "price": {
+              "incall": 199,
+              "outcall": 269,
+              "currency": "US$"
+            },
+            "label": "Sensual"
+          },
+          "swedish": {
+            "activated": true,
+            "price": {
+              "incall": 199,
+              "outcall": 269,
+              "currency": "US$"
+            },
+            "label": "Swedish"
+          },
+          "hotStone": {
+            "activated": true,
+            "price": {
+              "incall": "Ask",
+              "outcall": "Ask",
+              "currency": "US$"
+            },
+            "label": "Hot Stone"
+          },
+          "deepTissue": {
+            "activated": true,
+            "price": {
+              "incall": 199,
+              "outcall": 269,
+              "currency": "US$"
+            },
+            "label": "Deep Tissue"
+          }
+        },
+        "socialShareVisibility": 1,
+        "badges": {
+          "isCertified": false,
+          "isPhotoVerified": false,
+          "isSponsor": false,
+          "isDayMasseur": false
+        },
+        "statistics": {
+          "experience": 7,
+          "visits": 75348,
+          "lastLogin": "9 min ago",
+          "memberSince": "Nov 05, 2023"
+        },
+        "health": {
+          "HIV": "Negative"
+        },
+        "travels": {
+          "nearLocations": [
+            {
+              "travelId": 105323,
+              "searchCity": "newyork",
+              "label": "New York City, NY"
+            },
+            {
+              "travelId": 105324,
+              "searchCity": "bronx-ny",
+              "label": "Bronx, NY"
+            }
+          ],
+          "locations": []
+        },
+        "appearance": {
+          "age": 29,
+          "ethnicity": "Caucasian",
+          "bodyType": "Muscular",
+          "height": "5'8\" - 170 cm",
+          "weight": "190lbs - 85 kg",
+          "style": "Daddy",
+          "bodyHair": "Hairy",
+          "pressure": "Extra Deep"
+        },
+        "blog": {
+          "countItems": 66,
+          "posts": [
+            {
+              "id": 126672,
+              "title": "The Crunchy Human Crisis: A CarpathianWolf Field R",
+              "message": "There comes a moment in every adult human\u2019s life when the body begins making noises it absolutely did not make during youth.<br />\n<br />\nA crack when standing.<br />\n<br />\nA pop when turning.<br />\n<br />\nA groan when bending.<br />\n<br />\nA mysterious lower-back warning signal after doing something extremely dangerous, like sleeping slightly wrong or picking up one sock with confidence.<br />\n<br />\nThis is not aging.<br />\n<br />\nThis is your body submitting a formal complaint.<br />\n<br />\nFor years, you have treated your muscles like unpaid interns. You made them carry stress, bad posture, gym damage, desk trauma, emotional tension, poor sleep, dehydration, and whatever happened during that one leg day you never properly recovered from.<br />\n<br />\nThen, when they finally start screaming, you act surprised.<br />\n<br />\nAmazing.<br />\n<br />\nThe human body is patient, but not stupid. It remembers every hour you spent hunched over a screen like a financially stressed shrimp. It remembers the workouts with no stretching. It remembers the flights, the bad mattresses, the \u201cI\u2019ll foam roll later\u201d lies, the caffeine-for-breakfast decisions, and the way you sit in chairs as if personally trying to become furniture.<br />\n<br />\nEventually, the body stops a",
+              "created": "May 21"
+            },
+            {
+              "id": 126671,
+              "title": "Emergency Muscle Intervention: Your Body Has Start",
+              "message": "If your body has started making sound effects when you stand up, sit down, bend over, turn your neck, breathe too deeply, or simply exist near a chair, this is your official warning.<br />\n<br />\nSomething has gone terribly wrong in the human operating system.<br />\n<br />\nYour shoulders are trying to become earrings. Your lower back has developed a personality disorder. Your hips open like a rusty garage door in a horror movie. Your neck sounds like someone stepping on dry spaghetti. And yet somehow, you continue walking around saying things like, \u201cI\u2019m fine.\u201d<br />\n<br />\nAdorable.<br />\n<br />\nIncorrect, but adorable.<br />\n<br />\nWelcome to the modern human condition: overworked, under-stretched, overstimulated, poorly hydrated, emotionally caffeinated, and shaped like whatever chair harmed you most recently.<br />\n<br />\nMost people do not wake up one day suddenly tense. No. Tension is a long-term investment. It builds quietly while you sit at a desk, lift heavy things with questionable form, scroll like a goblin, sleep in the shape of a collapsed lawn chair, and tell you",
+              "created": "May 21"
+            },
+            {
+              "id": 126393,
+              "title": "The Carpathian Alien\u2019s Guide to Surviving Earth",
+              "message": "The Carpathian alien had been on Earth long enough to understand one thing with absolute certainty:<br />\n<br />\nHumans do not need enemies.<br />\n<br />\nThey have already invented alarm clocks, group chats, unpaid invoices, and customer service portals.<br />\n<br />\nThis species is clearly capable of harming itself without outside interference.<br />\n<br />\nWhen he first arrived from the cold ridges beyond the Carpathian star belt, he expected primitive settlements, fire rituals, and maybe a few suspicious goats. Instead, he found cities full of glowing rectangles, emotional exhaustion, and people willingly drinking beverages that cost nine dollars because someone poured foam on them in the shape of a leaf.<br />\n<br />\nNaturally, he assumed this was a religious ceremony.<br />\n<br />\nHe was wrong.<br />\n<br />\nIt was brunch.<br />\n<br />\nBrunch, he learned, is where humans gather to discuss healing while consuming enough butter to sedate a military horse. They speak of boundaries, growth, energy, intention, and trauma, then immediately text the same person they swore they were done with last Tuesday.<br />\n<br />\nThe alien wrote in his field notes:<br />\n<br />\n\u201cHuman self-awareness is advanced. Human follow-th",
+              "created": "May 17"
+            }
+          ]
+        },
+        "interview": {
+          "countItems": 13,
+          "value": [
+            {
+              "id": 41328,
+              "question": "How often do you travel? Do you prefer to travel or are you more of a homebody?",
+              "answer": "I really prefer to host but I can travel for the right price and if needed!!",
+              "createdAt": "May 21"
+            },
+            {
+              "id": 41249,
+              "question": "Why did you become a Masseur?",
+              "answer": "The art of massage called to me like a distant howl across the mountains. A chance to weave relaxation like a spell, connecting with the inner wolf spirit in ea.",
+              "createdAt": "May 14"
+            },
+            {
+              "id": 41248,
+              "question": "What are your hobbies, what do you like to do in your spare time?",
+              "answer": "In the moonlit interludes between massages, I, the Carpathian Wolf, embrace the call of the wild. Chase shadows, decipher ancient scents, and occasionally, engage in a moonlit dance beneath the trees.",
+              "createdAt": "May 21"
+            }
+          ]
+        }
+      },
+      "galleryUnlocked": 0
+    }
+  },
+  "page": "/[username]",
+  "query": {
+    "username": "Karpathianwolf"
+  },
+  "buildId": "buildId-1778766027837",
+  "isFallback": false,
+  "isExperimentalCompile": false,
+  "gssp": true,
+  "appGip": true,
+  "scriptLoader": []
+}

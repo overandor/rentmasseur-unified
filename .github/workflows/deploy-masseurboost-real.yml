@@ -1,0 +1,95 @@
+name: Deploy Real MasseurBoost to Hugging Face
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-real-masseurboost-hf
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_USERNAME: josephrw
+      DASHBOARD_SPACE: josephrw/rentmasseur-dashboard
+      OPTIMIZER_SPACE: josephrw/rentmasseur-optimizer
+      DASHBOARD_URL: https://josephrw-rentmasseur-dashboard.hf.space
+      OPTIMIZER_URL: https://josephrw-rentmasseur-optimizer.hf.space
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Require a current write token
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo 'Replace the HF_TOKEN repository secret with a current write token.'; exit 1; }
+
+      - name: Clone target Spaces
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
+        run: |
+          set -euo pipefail
+          git config --global user.name github-actions[bot]
+          git config --global user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git clone "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${OPTIMIZER_SPACE}" /tmp/rm-optimizer
+          git clone "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${DASHBOARD_SPACE}" /tmp/rm-dashboard
+
+      - name: Patch and validate optimizer
+        run: |
+          set -euo pipefail
+          python integrations/masseurboost/patch_optimizer.py /tmp/rm-optimizer/cpp_os_server.cpp
+          g++ -std=c++17 -Wall -Wextra -pedantic -fsyntax-only /tmp/rm-optimizer/cpp_os_server.cpp
+
+      - name: Install dashboard
+        run: |
+          set -euo pipefail
+          python integrations/masseurboost/patch_dashboard.py integrations/hf-source/dashboard/index.html
+          cp integrations/hf-source/dashboard/index.html /tmp/rm-dashboard/index.html
+          grep -q '/api/trials' /tmp/rm-dashboard/index.html
+          ! grep -q 'using demo values' /tmp/rm-dashboard/index.html
+          ! grep -q '1,334' /tmp/rm-dashboard/index.html
+          ! grep -q 'ZK-proof' /tmp/rm-dashboard/index.html
+
+      - name: Push optimizer
+        run: |
+          set -euo pipefail
+          cd /tmp/rm-optimizer
+          git add cpp_os_server.cpp
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add receipt-backed public trial intake'
+            git push origin HEAD:main
+          fi
+
+      - name: Push dashboard
+        run: |
+          set -euo pipefail
+          cd /tmp/rm-dashboard
+          git add index.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'Replace mock dashboard with live evidence-driven UI'
+            git push origin HEAD:main
+          fi
+
+      - name: Verify live Spaces
+        run: |
+          set -euo pipefail
+          optimizer_ok=0
+          dashboard_ok=0
+          for attempt in $(seq 1 8); do
+            if curl -fsS --max-time 25 "${OPTIMIZER_URL}/api/trials" | grep -q 'trial_count'; then optimizer_ok=1; fi
+            if curl -fsS --max-time 25 "${DASHBOARD_URL}/" | grep -q 'proof instead of theater'; then dashboard_ok=1; fi
+            if [[ "$optimizer_ok" == 1 && "$dashboard_ok" == 1 ]]; then
+              echo 'Hugging Face optimizer and dashboard verified live.'
+              exit 0
+            fi
+            sleep 25
+          done
+          echo "optimizer_ok=${optimizer_ok} dashboard_ok=${dashboard_ok}"
+          exit 1

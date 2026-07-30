@@ -1,0 +1,15 @@
+{
+  "milestone_id": "M-90",
+  "title": "Commercial pilot ready",
+  "type": "predicate",
+  "pass_conditions": [
+    {"check": "api_exists", "predicate": "Continuation protocol exposed as REST or gRPC API"},
+    {"check": "dashboard_exists", "predicate": "Minimal dashboard shows continuation status and evidence"},
+    {"check": "design_partners", "predicate": ">= 3 design partners identified"},
+    {"check": "paid_pilot", "predicate": ">= 1 paid pilot agreement signed"},
+    {"check": "operational_data", "predicate": ">= 100 cross-host continuation runs completed"}
+  ],
+  "status": "PENDING",
+  "evidence": [],
+  "last_verified": null
+}

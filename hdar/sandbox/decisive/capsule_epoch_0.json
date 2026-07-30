@@ -1,0 +1,93 @@
+{
+  "spec_version": "1.0",
+  "agent_id": "agent-decisive",
+  "agent_name": "decisive-agent",
+  "epoch": {
+    "epoch_id": "82220235879f4c3dae66f96f226d3aad",
+    "agent_id": "agent-decisive",
+    "sequence": 0,
+    "parent_epoch": null,
+    "created_at": 1784301719.351512
+  },
+  "parent_capsule_hash": null,
+  "objective": "Implement and verify solve(n) = sum(1..n)",
+  "continuation_point": "step 3 of 3: verify solve(10)=55",
+  "working_summary": "",
+  "workspace_manifest": {
+    "root_hash": "d1fc16a3661bc4afc1884496c9b2e6d59ce6f861fc6dcbfb3306846b3c61bb97",
+    "files": [
+      {
+        "rel_path": "PROGRESS.md",
+        "content_hash": "c610a998777836d9e49fb359a9ce11cc2651ec1b0ed458b02636bcf2dfae753b",
+        "size": 197,
+        "mode": 420
+      },
+      {
+        "rel_path": "__pycache__/solve.cpython-312.pyc",
+        "content_hash": "e2bfdb7cb3ac94f7cb1626a08aa876fb3fcdc8a9712df9eb9974c639c9211f2b",
+        "size": 292,
+        "mode": 420
+      },
+      {
+        "rel_path": "solve.py",
+        "content_hash": "d7ac291b1e0e3a2e2d68b0c8142028fba4b7e0285927b1d661ad539c28361f15",
+        "size": 46,
+        "mode": 420
+      },
+      {
+        "rel_path": "test_solve.py",
+        "content_hash": "0ec073a9ec14d85c2cf55e0aab9271351e15bd4bc81524a868b846d790b784bd",
+        "size": 123,
+        "mode": 420
+      }
+    ],
+    "total_size": 658
+  },
+  "capabilities": {
+    "grants": [
+      {
+        "name": "filesystem.write",
+        "scope": "/workspace",
+        "granted": true,
+        "constraints": {}
+      },
+      {
+        "name": "shell.exec",
+        "scope": "python3",
+        "granted": true,
+        "constraints": {}
+      }
+    ]
+  },
+  "capability_note": "authority never expands on migration",
+  "secret_references": [],
+  "pending_operations": [],
+  "runtime_compatibility": {},
+  "restoration_contract": "exact",
+  "receipts": [
+    {
+      "receipt_type": "SEAL",
+      "agent_id": "agent-decisive",
+      "epoch_id": "82220235879f4c3dae66f96f226d3aad",
+      "timestamp": 1784301729.418727,
+      "prior_receipt_hash": null,
+      "action": "capsule_sealed",
+      "action_payload": {
+        "workspace_root_hash": "d1fc16a3661bc4afc1884496c9b2e6d59ce6f861fc6dcbfb3306846b3c61bb97",
+        "file_count": 4,
+        "total_size": 658,
+        "objective": "Implement and verify solve(n) = sum(1..n)",
+        "fencing_token": "fbaf6be5ee4a4d2ab76fc863c090ebc4"
+      },
+      "state_root": "d1fc16a3661bc4afc1884496c9b2e6d59ce6f861fc6dcbfb3306846b3c61bb97",
+      "signer_fingerprint": "f6a892680e7aa3bb",
+      "signer_role": "owner",
+      "receipt_hash": "ad2d0057bcc7d9a29785208424d55411c5a0d77e157ff4a4d201ba2367a85dcf",
+      "signature": "6732286d836033c43d781e63293a59a3366e1e86ff27686c35ef974b78ab525d4b198f1b0fc13a33f52599cbec194de0438fd1e937b33fa6f8f9cfee9357d609"
+    }
+  ],
+  "manifest_hash": "cd05dd2edcf0a9bdf6598a281caedf40a7df983a79e305dbcc8eefd4d5ede699",
+  "signer_fingerprint": "f6a892680e7aa3bb",
+  "signature": "3d8b4c35b88e8ff0924b1dd4e77dd925151c1c079d83b7f2302840d6af2c7b63983c43b560e4fd5eb90735c9974835eb3d1514f7cb011ea17d8d78fd0e02f808",
+  "sealed_at": 1784301729.418986
+}

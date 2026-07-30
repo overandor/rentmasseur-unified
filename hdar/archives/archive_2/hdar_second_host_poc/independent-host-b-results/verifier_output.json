@@ -1,0 +1,143 @@
+{
+  "all_checks_passed": true,
+  "boolean_predicates": {
+    "epoch_advanced_exactly_once": true,
+    "evidence_packet_signature_valid": true,
+    "host_b_signature_valid": true,
+    "overall_accept": true,
+    "platforms_differ": true,
+    "report_e1_cross_check": true,
+    "report_e2_cross_check": true,
+    "source_manifest_hash_valid": true,
+    "source_owner_signature_valid": true,
+    "state_transition_valid": true,
+    "successor_manifest_hash_valid": true,
+    "successor_parent_matches_source": true,
+    "task_result_valid": true
+  },
+  "checks": [
+    {
+      "check": "owner_signature",
+      "ok": true,
+      "public_key": "b39945ae207837a4410254a5850a1a4d448598a67bacec897e69ffcfb8d84031",
+      "reason": "Host A owner Ed25519 signature verified"
+    },
+    {
+      "check": "e1_integrity",
+      "epoch": 1,
+      "manifest_hash": "ae63bedc13db06207b21660fd2cb70fbaac6e9850fd9156a8b90fc3fb1ec8f53",
+      "ok": true,
+      "parent_manifest_hash": null,
+      "reason": "all content blocks and receipt verified",
+      "workspace_root_hash": "3e1fb9cf5e64dde46a017fee5f044aaa63227973d9fddadc21b7c32bfd1812ac"
+    },
+    {
+      "check": "e2_integrity",
+      "epoch": 2,
+      "manifest_hash": "9597186c981eaed292df7496a61be6f5f6bee84971cad86dda181872b407fd8d",
+      "ok": true,
+      "parent_manifest_hash": "ae63bedc13db06207b21660fd2cb70fbaac6e9850fd9156a8b90fc3fb1ec8f53",
+      "reason": "all content blocks and receipt verified",
+      "workspace_root_hash": "d39c0f006978e29bdc99556e480280e129ee81d2720ae90b0601c7ad89278956"
+    },
+    {
+      "check": "lineage",
+      "e1_epoch": 1,
+      "e1_manifest_hash": "ae63bedc13db06207b21660fd2cb70fbaac6e9850fd9156a8b90fc3fb1ec8f53",
+      "e2_epoch": 2,
+      "e2_parent_manifest_hash": "ae63bedc13db06207b21660fd2cb70fbaac6e9850fd9156a8b90fc3fb1ec8f53",
+      "ok": true,
+      "reason": "lineage chain verified"
+    },
+    {
+      "check": "state_advanced",
+      "e1_root": "3e1fb9cf5e64dde46a017fee5f044aaa63227973d9fddadc21b7c32bfd1812ac",
+      "e2_root": "d39c0f006978e29bdc99556e480280e129ee81d2720ae90b0601c7ad89278956",
+      "ok": true,
+      "reason": "workspace root hash changed \u2014 state advanced"
+    },
+    {
+      "check": "host_b_signature",
+      "ok": true,
+      "public_key": "5472063717151d40fe5bd0bf2def63e8415fee687073b0cf97eef9ba4e1b3715",
+      "reason": "Host B Ed25519 signature verified"
+    },
+    {
+      "check": "task_continuation",
+      "computed_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+      "expected_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+      "ok": true,
+      "reason": "task passed: multi_stage_analysis_pipeline \u2014 stages=5, output_hash=bd47317bec2e1974...",
+      "stages_completed": 5,
+      "task": "multi_stage_analysis_pipeline"
+    },
+    {
+      "check": "platforms_differ",
+      "host_a_platform": "macOS-26.5.2-arm64-arm-64bit",
+      "host_b_platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.39",
+      "ok": true,
+      "reason": "platforms differ \u2014 consistent with independent host"
+    },
+    {
+      "check": "report_e1_cross_check",
+      "ok": true,
+      "reason": "Host B report input_capsule manifest_hash matches E1"
+    },
+    {
+      "check": "report_e2_cross_check",
+      "ok": true,
+      "reason": "Host B report successor_capsule manifest_hash matches E2"
+    },
+    {
+      "check": "evidence_packet_signature",
+      "ok": true,
+      "reason": "evidence packet has independent Ed25519 signature (distinct from report signature)"
+    }
+  ],
+  "failed": 0,
+  "passed": 11,
+  "predicate_details": {
+    "epoch_advanced_exactly_once": {
+      "passed": true
+    },
+    "evidence_packet_signature_valid": {
+      "passed": true
+    },
+    "host_b_signature_valid": {
+      "passed": true
+    },
+    "overall_accept": {
+      "passed": true
+    },
+    "platforms_differ": {
+      "passed": true
+    },
+    "report_e1_cross_check": {
+      "passed": true
+    },
+    "report_e2_cross_check": {
+      "passed": true
+    },
+    "source_manifest_hash_valid": {
+      "passed": true
+    },
+    "source_owner_signature_valid": {
+      "passed": true
+    },
+    "state_transition_valid": {
+      "passed": true
+    },
+    "successor_manifest_hash_valid": {
+      "passed": true
+    },
+    "successor_parent_matches_source": {
+      "passed": true
+    },
+    "task_result_valid": {
+      "passed": true
+    }
+  },
+  "schema": "hdar.third-party-verification/v0.2",
+  "total_checks": 11,
+  "verifier": "neither-host-a-nor-host-b"
+}

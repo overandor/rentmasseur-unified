@@ -1,0 +1,14 @@
+claim_id: CLM-0012
+statement: "State advancement is cryptographically proven through workspace root hash change."
+evidence_ids:
+  - EVP-0009
+  - EVP-0010
+independent_verification_procedure: |
+  1. Compare workspace_root_hash in E1 manifest vs E2 manifest
+  2. They must differ, proving state changed
+  3. Both hashes must be valid SHA-256 values
+  4. Verify state_advanced check in verifier output
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: state_advanced

@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0018",
+  "source_files": ["hdar-deploy-package.tar.gz"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["Deploy package assembled with runner, capsule, Host A report, owner key, verifier, instructions"],
+  "runtime_logs": [],
+  "generation_tool": "manual packaging",
+  "schema_version": "hdar.evidence/v0.1"
+}

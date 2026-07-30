@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Where files live — MirrorLease</title>
+  <meta name="description" content="The exact storage boundaries for MirrorLease files, leases, keys, invitations, receipts, Finder helper, and local CLI.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="wrap">
+    <nav>
+      <a class="brand" href="/"><i></i>MirrorLease</a>
+      <div class="links">
+        <a href="/storage/">Where files live</a>
+        <a href="/developers/">Developers</a>
+        <a class="button" href="/">Home →</a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="section wrap">
+      <div class="eyebrow">No hand-waving</div>
+      <h1 style="font-size:clamp(48px,7vw,82px)">Where does my file reside?</h1>
+      <p class="lede">Exactly where you saved it. MirrorLease records a private mapping; it does not silently move the original into the website, a wallet, a blockchain, or an AI provider.</p>
+    </section>
+
+    <section class="section dark">
+      <div class="wrap">
+        <h2>The storage map</h2>
+        <div class="grid3">
+          <article class="card" style="color:var(--ink)"><span class="num">ORIGINAL</span><h3>Your existing local path</h3><p>Documents, Downloads, an external disk — wherever the selected file already lives.</p></article>
+          <article class="card" style="color:var(--ink)"><span class="num">PRIVATE RECORD</span><h3>Application Support</h3><p><code>~/Library/Application Support/MirrorLease/leases/</code></p></article>
+          <article class="card" style="color:var(--ink)"><span class="num">PRIVATE KEY</span><h3>Local owner key</h3><p>Finder helper: macOS Keychain. Local CLI smoke path: <code>~/Library/Application Support/MirrorLease/keys/</code> with private file permissions.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="storage">
+        <div>
+          <h2>Clipboard</h2>
+          <p class="lede">A public, disposable <code>mirrorlease:v1:</code> invitation: public file identifiers, exact grants, challenge, expiration, issuer public key, signature, and one-use lease capability. No raw local path. No device private key.</p>
+        </div>
+        <div>
+          <h2>Audit trail</h2>
+          <p class="lede"><code>~/Library/Application Support/MirrorLease/audit.jsonl</code> contains hash-linked, device-signed receipts for knocks, approvals or denials, requests, expiration, revocation, and destruction.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="yes">
+        <h3>Website boundary</h3>
+        <p>This public website explains the product and protocol. It has no route that accepts your private file and no storage binding for lease content. The actual access path is the owner-machine guardian and its signed lease record.</p>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap foot"><strong>MirrorLease</strong><span>Your laptop owns the truth.</span></div></footer>
+</body>
+</html>

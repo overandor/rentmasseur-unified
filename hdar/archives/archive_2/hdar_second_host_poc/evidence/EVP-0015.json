@@ -1,0 +1,12 @@
+{
+  "evidence_id": "EVP-0015",
+  "source_files": ["host_b_evidence_packet.json"],
+  "hashes": {
+    "evidence_packet_sha256": "computed-on-verification"
+  },
+  "signatures": ["evidence_packet Ed25519 signature (independent from report signature)"],
+  "verifier_outputs": ["evidence_packet_signature: PASS"],
+  "runtime_logs": [],
+  "generation_tool": "run_on_host_b.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

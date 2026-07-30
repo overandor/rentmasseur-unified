@@ -1,0 +1,6 @@
+{"id": "6bd5af25-08a", "timestamp": "2026-06-26T07:15:01.806722+00:00", "decision": "BLOCK_NO_SIGNAL", "reason": "No metrics ingested. Cannot make decision without real data.", "active_experiment_id": null, "gate_info": null}
+{"id": "3eff0704-dc5", "timestamp": "2026-06-26T07:15:08.359220+00:00", "decision": "BLOCK_NO_SIGNAL", "reason": "No metrics ingested. Cannot make decision without real data.", "active_experiment_id": null, "gate_info": null}
+{"id": "00094d5e-be8", "timestamp": "2026-06-26T07:15:11.797866+00:00", "decision": "BLOCK_NO_SIGNAL", "reason": "No metrics ingested. Cannot make decision without real data.", "active_experiment_id": null, "gate_info": null}
+{"id": "4dd978de-13d", "timestamp": "2026-06-26T07:17:23.995225+00:00", "decision": "BLOCK_NO_SIGNAL", "reason": "No metrics ingested. Cannot make decision without real data.", "active_experiment_id": null, "gate_info": null}
+{"id": "fb3e01fb-0c9", "timestamp": "2026-06-26T07:27:18.365504+00:00", "decision": "BLOCK_NO_SIGNAL", "reason": "No metrics ingested. Cannot make decision without real data.", "active_experiment_id": null, "gate_info": null}
+{"id": "6942ff50-ada", "timestamp": "2026-06-26T07:27:28.355268+00:00", "decision": "BLOCK_NO_SIGNAL", "reason": "No metrics ingested. Cannot make decision without real data.", "active_experiment_id": null, "gate_info": null}

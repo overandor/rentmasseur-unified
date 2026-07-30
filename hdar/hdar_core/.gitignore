@@ -1,0 +1,22 @@
+# Build artifacts
+cpp/build/
+__pycache__/
+*.pyc
+*.o
+*.a
+*.dylib
+
+# Test artifacts
+/tmp/hdar-test-*
+*.db
+sandbox/
+
+# OS files
+.DS_Store
+native/hdar_native
+evidence_bundle.txt
+
+# Generated evidence packages (use generate_evidence.sh)
+evidence/
+*.pem
+evidence/

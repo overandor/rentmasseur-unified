@@ -1,0 +1,42 @@
+{
+  "agent_id": "hdar-seed-poc-agent",
+  "epoch": 1,
+  "host_a_label": "host-a-local-mac",
+  "host_b_label": "codespace-host-b",
+  "last_event": {
+    "epoch_from": 1,
+    "epoch_to": 2,
+    "event": "continued_on_host_b",
+    "host_label": "codespace-host-b",
+    "host_platform": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.39",
+    "machine_hostname": "codespaces-ad33bf",
+    "task_result": {
+      "computed_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+      "expected_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+      "ok": true,
+      "passed": true,
+      "stages_completed": 5,
+      "task": "multi_stage_analysis_pipeline"
+    },
+    "timestamp": 1784613893.5585861
+  },
+  "machine_hostname": "codespaces-ad33bf",
+  "next_action": "return successor capsule to Host A or another provider and verify lineage.",
+  "status": "continued_on_host_b",
+  "task": "multi_stage_analysis_pipeline",
+  "task_completed": {
+    "computed_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+    "expected_output_hash": "bd47317bec2e1974a880aa250280909a6568255a2f81387642faea82638e9ac2",
+    "ok": true,
+    "passed": true,
+    "stages_completed": 5,
+    "task": "multi_stage_analysis_pipeline"
+  },
+  "task_stages": [
+    "parse",
+    "filter",
+    "aggregate",
+    "classify",
+    "report"
+  ]
+}

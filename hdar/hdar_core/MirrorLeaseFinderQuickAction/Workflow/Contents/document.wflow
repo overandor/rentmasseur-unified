@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>actions</key>
+    <array>
+        <dict>
+            <key>ActionBundlePath</key><string>/System/Library/Automator/Run Shell Script.action</string>
+            <key>ActionName</key><string>Run Shell Script</string>
+            <key>ActionParameters</key>
+            <dict>
+                <key>CheckedForUserDefaultShell</key><true/>
+                <key>COMMAND_STRING</key><string>/Users/alep/Library/Application Support/MirrorLease/bin/mirrorlease-share "$@"</string>
+                <key>inputMethod</key><integer>1</integer>
+                <key>shell</key><string>/bin/zsh</string>
+                <key>source</key><string></string>
+            </dict>
+            <key>AMAccepts</key><dict><key>Container</key><dict><key>UseAutomaticType</key><true/><key>UTTypes</key><array><string>com.apple.cocoa.path</string></array></dict></dict>
+            <key>AMActionVersion</key><string>2.0.3</string>
+            <key>AMApplication</key><array><string>Automator</string></array>
+            <key>AMBundleIdentifier</key><string>com.apple.RunShellScript</string>
+            <key>AMProvides</key><dict><key>Container</key><dict><key>UTTypes</key><array><string>com.apple.cocoa.path</string></array></dict></dict>
+            <key>arguments</key><dict/>
+            <key>BundleIdentifier</key><string>com.apple.Automator.RunShellScript</string>
+            <key>CanShowSelectedInputWhenRun</key><true/>
+            <key>CanShowWhenRun</key><true/>
+            <key>Category</key><string>AMCategoryUtilities</string>
+            <key>CFBundleVersion</key><string>2.0.3</string>
+            <key>Class Name</key><string>RunShellScriptAction</string>
+            <key>InputUUID</key><string>F8DFEBC3-4B47-4F3F-B49B-328F72C46404</string>
+            <key>isViewVisible</key><true/>
+            <key>Keywords</key><array><string>Shell</string><string>Script</string><string>Run</string></array>
+            <key>location</key><integer>430</integer>
+            <key>nibPath</key><string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
+            <key>OutputUUID</key><string>06F746F2-7D34-43E8-B092-832A04FF2297</string>
+            <key>UUID</key><string>F595C41B-6AAC-45DA-AE0A-33B8EFF59DCF</string>
+        </dict>
+    </array>
+    <key>AMApplicationBuild</key><string>523</string>
+    <key>AMApplicationVersion</key><string>2.10</string>
+    <key>AMDocumentVersion</key><string>2</string>
+    <key>connectors</key><dict/>
+    <key>workflowMetaData</key>
+    <dict>
+        <key>applicationBundleIDsByPath</key><dict/>
+        <key>applicationPaths</key><array/>
+        <key>inputTypeIdentifier</key><string>com.apple.Automator.fileSystemObject</string>
+        <key>outputTypeIdentifier</key><string>com.apple.Automator.nothing</string>
+        <key>processesInput</key><true/>
+        <key>serviceApplicationPath</key><string>/System/Library/CoreServices/Finder.app</string>
+        <key>serviceInputTypeIdentifier</key><string>com.apple.Automator.fileSystemObject</string>
+        <key>serviceOutputTypeIdentifier</key><string>com.apple.Automator.nothing</string>
+        <key>systemImageName</key><string>NSActionTemplate</string>
+        <key>useAutomaticInputType</key><true/>
+    </dict>
+</dict>
+</plist>
+

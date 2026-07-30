@@ -1,0 +1,10 @@
+{
+  "evidence_id": "EVP-0008",
+  "source_files": ["src/worker.py"],
+  "hashes": {},
+  "signatures": [],
+  "verifier_outputs": ["sum_of_primes_below(100) = 1060 (deterministic)"],
+  "runtime_logs": [],
+  "generation_tool": "n/a (source file in capsule workspace)",
+  "schema_version": "hdar.evidence/v0.1"
+}

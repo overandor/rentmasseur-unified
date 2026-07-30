@@ -1,0 +1,12 @@
+{
+  "evidence_id": "EVP-0004",
+  "source_files": ["host_b_report.json"],
+  "hashes": {
+    "restored_root_hash": "45d811a423318d5ca553c4d27c88916e8ef25fd4017771ffe99d8bf6a1a2bbfa"
+  },
+  "signatures": ["host_b Ed25519 signature on report"],
+  "verifier_outputs": ["restore.exact: true", "file_count matches manifest"],
+  "runtime_logs": ["Workspace restored: exact=True"],
+  "generation_tool": "run_on_host_b.py",
+  "schema_version": "hdar.evidence/v0.1"
+}

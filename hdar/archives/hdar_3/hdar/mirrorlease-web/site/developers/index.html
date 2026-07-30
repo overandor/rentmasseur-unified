@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Developer portal — MirrorLease</title>
+  <meta name="description" content="MirrorLease protocol, transports, authentication, lifecycle, receipts, local CLI, and gateway contract.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="wrap">
+    <nav>
+      <a class="brand" href="/"><i></i>MirrorLease</a>
+      <div class="links">
+        <a href="/storage/">Where files live</a>
+        <a href="/developers/">Developers</a>
+        <a class="button" href="/">Home →</a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="section wrap">
+      <div class="eyebrow">Developer portal</div>
+      <h1 style="font-size:clamp(48px,7vw,82px)">Adapters are shells.<br>The engine is authority.</h1>
+      <p class="lede">An adapter parses and delivers. It does not authorize. Every door emits the same canonical knock, lease check, request, receipt, expiration behavior, and audit trail.</p>
+      <div style="margin-top:28px">
+        <span class="tag">mirrorlease/v1</span>
+        <span class="tag">Ed25519</span>
+        <span class="tag">TLS 1.2+ for public HTTPS</span>
+        <span class="tag">Bearer lease capability</span>
+        <span class="tag">JSON-RPC MCP</span>
+      </div>
+    </section>
+
+    <section class="section dark">
+      <div class="wrap">
+        <h2>Canonical flow</h2>
+        <pre class="code">POST /v1/knocks
+{
+  "invitation": "mirrorlease:v1:...",
+  "agent_id": "gpt-action-or-mcp-client"
+}
+
+POST /v1/requests
+{
+  "invitation_id": "...",
+  "token": "...",
+  "citizen_id": "file-...",
+  "operation": "read"
+}</pre>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="eyebrow">Local commands</div>
+      <h2>Smoke the mechanism without the website.</h2>
+      <pre class="code">python -m mirrorlease_protocol.local_cli create ./sample.txt --clipboard
+python -m mirrorlease_protocol.local_cli serve --host 127.0.0.1 --port 9443</pre>
+      <p class="lede">The local server is for owner-machine testing. The guarded public HTTPS adapter refuses startup without an explicit certificate and key.</p>
+    </section>
+
+    <section class="section wrap">
+      <div class="eyebrow">Adapter status</div>
+      <h2>Implemented surfaces</h2>
+      <div class="status"><b>Finder right-click</b><span>Top-level Service menu + clipboard invitation</span></div>
+      <div class="status"><b>Local CLI</b><span>Creates signed leases and starts a localhost gateway</span></div>
+      <div class="status"><b>Guarded HTTPS</b><span>Refuses startup without an explicit TLS cert and key</span></div>
+      <div class="status"><b>GPT Action</b><span>OpenAPI 3.1 contract over the guarded endpoint</span></div>
+      <div class="status"><b>MCP</b><span>initialize, tools/list, tools/call at <code>/mcp</code></span></div>
+      <div class="status"><b>Disposable email</b><span>Optional RFC 822 private inbox/outbox spool</span></div>
+      <div class="status"><b>Owner approval</b><span>Native macOS Allow once / Deny dialog before disclosure</span></div>
+    </section>
+
+    <section class="section wrap">
+      <div class="grid3">
+        <article class="card"><span class="num">AUTHORITY</span><h3>Lease, not chat identity</h3><p>The ChatGPT conversation id is a label. Access comes from a valid device signature, private matching record, disposable token, exact grant, live state, and owner approval.</p></article>
+        <article class="card"><span class="num">EXPIRATION</span><h3>Atomic states</h3><p>Open, waiting, used, expired, revoked, destroyed. There is no ambiguous permission decay or zombie mailbox.</p></article>
+        <article class="card"><span class="num">EVIDENCE</span><h3>Receipts, not consciousness</h3><p>A signed receipt proves a handled request and result commitment. It does not prove model understanding, attention, or wisdom.</p></article>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="yes">
+        <h3>Deployment boundary</h3>
+        <p>The endpoint code is implemented locally. A publicly reachable guardian still requires an owner-chosen domain or tunnel, an explicit TLS certificate/key, and platform-side GPT Action or MCP registration. MirrorLease does not invent or install those credentials silently.</p>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap foot"><strong>MirrorLease developer portal</strong><span>Protocol evidence stays separate from product claims.</span></div></footer>
+</body>
+</html>

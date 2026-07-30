@@ -1,0 +1,14 @@
+claim_id: CLM-0003
+statement: "A deterministic continuation task can be resumed and verified on Host B."
+evidence_ids:
+  - EVP-0007
+  - EVP-0008
+independent_verification_procedure: |
+  1. Execute src/worker.py on restored workspace
+  2. Compare output against expected result (1060)
+  3. Record exit code and stdout
+  4. Verify task_result.ok == true in host_b_report.json
+current_status: independently_verified
+last_verified: "2026-07-20"
+independent_reproduction: "GitHub Codespaces, Ubuntu 24.04, x86_64"
+verifier_check: task_continuation

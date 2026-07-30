@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  # ─── Hosted runner: compilation, Python tests, simulated migrations ───
+  build-and-unit-test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install openssl@3 sqlite3 cmake
+
+      - name: Build native C++ HDAR
+        run: |
+          cd native
+          make clean
+          make
+
+      - name: Verify native binary compiles
+        run: test -x native/hdar_native
+
+      - name: Build C++ test suite
+        run: |
+          cd cpp
+          cmake -B build -S .
+          make -C build -j8
+
+      - name: Run C++ unit tests
+        run: ./build/bin/test_hdar
+        working-directory: cpp
+
+  python-test:
+    runs-on: macos-26
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install cryptography
+
+      - name: Run continuity demo
+        run: python3 demo_continuity.py
+
+      - name: Run adversarial tests
+        run: python3 test_adversarial.py
+
+      - name: Run migration harness (simulated, 50 migrations)
+        run: python3 migration_harness.py --count 50 --failures 0.10
+
+      - name: Run existing test suite
+        run: python3 -m pytest tests/ -v
+
+  # ─── Self-hosted runner: real Apple Containerization VM tests ───
+  # NOTE: GitHub-hosted macOS runners do NOT support nested virtualization.
+  # Apple Containerization requires Apple Silicon + macOS 26 with VM support.
+  # This job must run on a self-hosted physical Apple Silicon Mac.
+  native-real-vm-test:
+    runs-on: [self-hosted, apple-silicon, macos-26]
+    if: ${{ vars.HDAR_SELF_HOSTED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install openssl@3 container
+
+      - name: Start Apple Containerization
+        run: container system start
+
+      - name: Configure container kernel
+        run: container system kernel set --recommended
+
+      - name: Pull Ubuntu image (correct singular syntax)
+        run: container image pull docker.io/library/ubuntu:24.04
+
+      - name: Build native C++ HDAR
+        run: |
+          cd native
+          make clean
+          make
+
+      - name: Run native decisive loop (real VMs)
+        run: ./hdar_native
+        working-directory: native
+
+      - name: Run 100-migration real-VM battle test
+        run: python3 real_vm_harness.py --count 100 --failures 0.40 --output sandbox/battle_test_100.json

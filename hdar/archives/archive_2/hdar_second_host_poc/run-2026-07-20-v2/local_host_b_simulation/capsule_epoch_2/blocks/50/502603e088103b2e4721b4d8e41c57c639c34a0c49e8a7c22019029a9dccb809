@@ -1,0 +1,2 @@
+{"event": "created_on_host_a", "host_label": "host-a-local-mac", "next_action": "seal capsule and destroy host A runtime", "timestamp": 1784585069.4878778}
+{"epoch_from": 1, "epoch_to": 2, "event": "continued_on_host_b", "host_label": "host-b-local-simulation-not-seed-proof", "host_platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O", "timestamp": 1784585069.612551}

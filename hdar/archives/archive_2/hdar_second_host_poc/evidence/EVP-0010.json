@@ -1,0 +1,13 @@
+{
+  "evidence_id": "EVP-0010",
+  "source_files": ["capsule_epoch_2/manifest.json"],
+  "hashes": {
+    "parent_manifest_hash": "228dff4fb4d59b271caf31c265e308bd5fc1017cc9498b4fd74fd310fd62ac6c",
+    "workspace_root_hash": "differs_from_e1 (state advanced)"
+  },
+  "signatures": ["host_b Ed25519"],
+  "verifier_outputs": ["e2_integrity: PASS", "lineage: PASS", "state_advanced: PASS"],
+  "runtime_logs": [],
+  "generation_tool": "run_on_host_b.py (seal_workspace)",
+  "schema_version": "hdar.evidence/v0.1"
+}

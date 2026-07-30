@@ -1,0 +1,8 @@
+{
+  "negative_evidence_id": "NEG-006",
+  "test": "Runner hash mismatch — modify run_on_host_b.py after packaging",
+  "expected": "Reject — runner SHA-256 does not match expected hash",
+  "observed": "Rejected (RUNNER HASH MISMATCH error, execution aborts)",
+  "status": "PASS",
+  "evidence": "run_on_host_b.py: --verify-runner-hash check aborts on mismatch"
+}
