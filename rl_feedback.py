@@ -147,16 +147,43 @@ def _save_history(history: list):
 
 
 def scrape_profile_stats() -> dict:
-    """Scrape profile view/click stats from RentMasseur dashboard."""
+    """Pull profile view/click stats from RentMasseur API (reliable, no Selenium)."""
+    try:
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "rm_pri", "py"))
+        from api_client import RentMasseurAPI
+
+        api = RentMasseurAPI(min_request_interval=2.0)
+        if not api.login(RENTMASSEUR_USERNAME, RENTMASSEUR_PASSWORD):
+            logger.error("Login failed for stats collection")
+            return {}
+
+        ad_stats = api.get_ad_statistics()
+        profile_stats = ad_stats.get("profileStatistics", {}) if isinstance(ad_stats, dict) else {}
+
+        stats = {
+            "scraped_at": datetime.now(timezone.utc).isoformat(),
+            "views": profile_stats.get("totalPageViews", 0),
+            "email_clicks": profile_stats.get("totalContactClicks", 0),
+            "phone_clicks": profile_stats.get("totalContactClicks", 0),
+            "booking_inquiries": profile_stats.get("newEmails", 0),
+            "favorites": profile_stats.get("favorites", 0),
+            "messages": profile_stats.get("newEmails", 0),
+            "new_visits": profile_stats.get("newVisits", 0),
+            "source": "api",
+        }
+
+        logger.info("API stats: %s", json.dumps(stats))
+        return stats
+
+    except Exception as e:
+        logger.error("API stats error: %s — falling back to Selenium scrape", e)
+
     try:
         from selenium import webdriver
-        from selenium.webdriver.common.by import By
         from selenium.webdriver.chrome.options import Options
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
 
         options = Options()
-        options.add_argument("--headless")
+        options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-blink-features=AutomationControlled")
@@ -185,10 +212,10 @@ def scrape_profile_stats() -> dict:
                 "booking_inquiries": 0,
                 "favorites": 0,
                 "messages": 0,
+                "source": "selenium",
             }
 
             page_text = driver.execute_script("return document.body ? document.body.innerText : '';") or ""
-            page_html = driver.execute_script("return document.documentElement ? document.documentElement.outerHTML : '';") or ""
 
             import re
             patterns = {
@@ -207,7 +234,7 @@ def scrape_profile_stats() -> dict:
                         stats[key] = int(match.group(1))
                         break
 
-            logger.info("Scraped stats: %s", json.dumps(stats))
+            logger.info("Scraped stats (fallback): %s", json.dumps(stats))
             return stats
 
         finally:

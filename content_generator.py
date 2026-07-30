@@ -124,6 +124,8 @@ def main():
         total += generate_interviews()
 
     logger.info("Content generation complete: %d items", total)
+    if total == 0:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -47,6 +47,16 @@ CONTENT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content"
 ORCHESTRATOR_LOG = os.path.join(CONTENT_DIR, "orchestrator.log")
 VERCEL_BACKEND_URL = os.getenv("VERCEL_BACKEND_URL", "")
 REBRANDLY_LINK = os.getenv("REBRANDLY_LINK", "")
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")
+
+
+def _check_auth(request: Request) -> bool:
+    if not ADMIN_TOKEN:
+        return True
+    auth = request.headers.get("Authorization", "")
+    if auth.startswith("Bearer "):
+        return auth[7:] == ADMIN_TOKEN
+    return request.query_params.get("token") == ADMIN_TOKEN
 
 try:
     from rebrandly_client import RebrandlyClient
@@ -606,6 +616,8 @@ async def api_os_train(background_tasks: BackgroundTasks):
 @app.post("/api/os/ingest")
 async def api_os_ingest(request: Request):
     """Ingest metrics from Vercel functions or extension."""
+    if not _check_auth(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
     data = await request.json()
     os.makedirs(CONTENT_DIR, exist_ok=True)
     ingest_path = os.path.join(CONTENT_DIR, "metrics_ingest.jsonl")
@@ -624,7 +636,9 @@ async def api_rl_state():
 
 
 @app.post("/api/rl/state")
-async def api_rl_state_post(state: dict):
+async def api_rl_state_post(request: Request, state: dict):
+    if not _check_auth(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
     with open(os.path.join(CONTENT_DIR, "rl_state.json"), "w") as f:
         json.dump(state, f)
     return JSONResponse({"status": "saved"})
