@@ -48,6 +48,12 @@ ORCHESTRATOR_LOG = os.path.join(CONTENT_DIR, "orchestrator.log")
 VERCEL_BACKEND_URL = os.getenv("VERCEL_BACKEND_URL", "")
 REBRANDLY_LINK = os.getenv("REBRANDLY_LINK", "")
 
+try:
+    from rebrandly_client import RebrandlyClient
+    HAS_REBRANDLY = True
+except ImportError:
+    HAS_REBRANDLY = False
+
 ENGAGEMENT_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "artifacts", "engagement", "engagement.db")
 BIO_EXPERIMENTS_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "artifacts", "engagement", "bio_experiments.db")
 BIO_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "artifacts", "engagement", "current_bio.json")
@@ -86,6 +92,24 @@ def _load_all_bios():
                     "preview": fh.read()[:200],
                 })
     return bios
+
+
+def _rebrandly_stats():
+    if not HAS_REBRANDLY or not os.getenv("REBRANDLY_API_KEY"):
+        return {"available": False, "links": [], "total_clicks": 0}
+    try:
+        rb = RebrandlyClient()
+        main_stats = rb.get_carpathianwolf_stats()
+        bio_clicks = rb.get_all_bio_clicks()
+        total_clicks = main_stats.get("clicks", 0) + sum(b.get("clicks", 0) for b in bio_clicks)
+        return {
+            "available": True,
+            "main_link": main_stats,
+            "bio_links": bio_clicks,
+            "total_clicks": total_clicks,
+        }
+    except Exception as e:
+        return {"available": False, "error": str(e), "links": [], "total_clicks": 0}
 
 
 def _engagement_stats():
@@ -522,6 +546,7 @@ async def api_os_report():
         "availability": availability,
         "competitors_analyzed": len(competitors),
         "rebrandly_link": REBRANDLY_LINK,
+        "rebrandly_stats": _rebrandly_stats(),
         "engagement": _engagement_stats(),
         "bio_experiments": _bio_experiments(),
         "current_bio": _current_bio(),

@@ -50,6 +50,12 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("grpw", "")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 REBRANDLY_LINK = os.getenv("REBRANDLY_LINK", "https://rebrand.ly/your-booking-link")
 
+try:
+    from rebrandly_client import RebrandlyClient
+    HAS_REBRANDLY = True
+except ImportError:
+    HAS_REBRANDLY = False
+
 CONTENT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content")
 GA_STATE_PATH = os.path.join(CONTENT_DIR, "ga_rl_state.json")
 
@@ -439,8 +445,22 @@ def apply_config_to_profile(config: AccountConfig) -> bool:
             logger.info("Applying winning GA config to profile...")
             logger.info("Price: $%d, CTA: %s, Headline: %s", config.price, config.cta, config.headline)
 
+            # Use Rebrandly API to create a variant-specific short link if available
+            short_link = REBRANDLY_LINK
+            rebrandly_link_id = None
+            if HAS_REBRANDLY and os.getenv("REBRANDLY_API_KEY"):
+                try:
+                    rb = RebrandlyClient()
+                    variant_key = config.id.split("_")[0] if "_" in config.id else "X"
+                    link_data = rb.create_bio_link(variant_key, REBRANDLY_LINK)
+                    short_link = link_data.get("shortUrl", REBRANDLY_LINK)
+                    rebrandly_link_id = link_data.get("id")
+                    logger.info("Rebrandly variant link: %s (id=%s)", short_link, rebrandly_link_id)
+                except Exception as e:
+                    logger.warning("Rebrandly API error, using fallback: %s", e)
+
             # Combine bio + CTA + rebrandly link
-            full_bio = f"{config.headline}\n\n{config.bio}\n\n{config.cta}\nBook now: {REBRANDLY_LINK}"
+            full_bio = f"{config.headline}\n\n{config.bio}\n\n{config.cta}\nBook now: {short_link}"
 
             result = update_bio(driver, "")
             if result is None or (isinstance(result, dict) and result.get("error")):
