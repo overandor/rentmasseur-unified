@@ -5,34 +5,17 @@
   "description": "Book RentMasseur providers directly from their profile pages.",
   "permissions": [
     "activeTab",
-    "storage",
-    "clipboardRead"
+    "storage"
   ],
   "host_permissions": [
     "https://rentmasseur.com/*",
-    "http://localhost:3000/*",
-    "<all_urls>"
+    "http://localhost:3000/*"
   ],
   "content_scripts": [
     {
-      "matches": [
-        "https://rentmasseur.com/*"
-      ],
-      "js": [
-        "content.js"
-      ],
-      "css": [
-        "content.css"
-      ],
-      "run_at": "document_idle"
-    },
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "tts_content.js"
-      ],
+      "matches": ["https://rentmasseur.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
       "run_at": "document_idle"
     }
   ],

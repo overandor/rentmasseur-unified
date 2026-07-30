@@ -31,11 +31,12 @@ import os
 import random
 import re
 import sqlite3
+import sys
 import time
 import traceback
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 BASE_URL = "https://rentmasseur.com"
 ARTIFACTS = Path("artifacts/demo_agent")
@@ -190,7 +191,7 @@ def record_visitor_sighting(conn, username: str, visit_count: int = 1,
             last_online = COALESCE(excluded.last_online, last_online),
             last_visit_my_page = COALESCE(excluded.last_visit_my_page, last_visit_my_page),
             location = COALESCE(excluded.location, location)
-    """, (username, now, now, last_online, last_visit_my_page, location))
+    """, (username, now, last_online, last_visit_my_page, location))
     conn.commit()
 
 
@@ -218,12 +219,6 @@ def record_message_sent(conn, username: str, message_text: str):
         "WHERE rowid = (SELECT rowid FROM visitor_history WHERE username = ? AND messaged = 0 ORDER BY seen_at DESC LIMIT 1)",
         (message_text, now, username)
     )
-    cur = conn.execute("SELECT changes()")
-    if cur.fetchone()[0] == 0:
-        conn.execute(
-            "INSERT INTO visitor_history (username, seen_at, visit_count, messaged, message_text, messaged_at, session_id) VALUES (?, ?, 0, 1, ?, ?, ?)",
-            (username, now, message_text, now, SESSION_ID)
-        )
     conn.commit()
 
 
@@ -234,9 +229,9 @@ def pick_message(username: str) -> str:
 
 def should_message_visitor(conn, username: str, threshold: int, cooldown_days: int = 3) -> tuple[bool, str]:
     stats = get_visitor_stats(conn, username)
-    sightings = stats.get("total_sightings", 0)
-    if sightings < threshold:
-        return False, f"only {sightings} sightings (threshold={threshold})"
+    visit_count = stats.get("total_sightings", 0)
+    if visit_count < threshold:
+        return False, f"only {visit_count} sightings (threshold={threshold})"
     if stats.get("last_messaged_at"):
         try:
             last = datetime.fromisoformat(stats["last_messaged_at"])
@@ -566,12 +561,10 @@ class PlaywrightAgent:
         log("Browser closed (Playwright)")
 
     def screenshot(self, name: str) -> str:
-        ts = time.strftime("%Y%m%d_%H%M%S", time.gmtime())
-        fname = f"{ts}_{SESSION_ID}_{name}.png"
-        path = SCREENSHOTS / fname
+        path = SCREENSHOTS / f"{name}.png"
         try:
             self.page.screenshot(path=str(path), full_page=False)
-            log(f"Screenshot: {fname}")
+            log(f"Screenshot: {name}.png")
         except Exception as e:
             log(f"Screenshot failed: {e}", "WARN")
             return ""
@@ -946,12 +939,10 @@ class SeleniumAgent:
         log("Browser closed (Selenium)")
 
     def screenshot(self, name: str) -> str:
-        ts = time.strftime("%Y%m%d_%H%M%S", time.gmtime())
-        fname = f"{ts}_{SESSION_ID}_{name}.png"
-        path = SCREENSHOTS / fname
+        path = SCREENSHOTS / f"{name}.png"
         try:
             self.driver.save_screenshot(str(path))
-            log(f"Screenshot: {fname}")
+            log(f"Screenshot: {name}.png")
         except Exception as e:
             log(f"Screenshot failed: {e}", "WARN")
             return ""
@@ -1504,31 +1495,25 @@ def main():
         traceback.print_exc()
         write_receipt("fatal", "error", {"error": str(e), "traceback": traceback.format_exc()})
     finally:
-        try:
-            conn.close()
-        except Exception:
-            pass
-        try:
-            agent.stop()
-        except Exception:
-            pass
+        conn.close()
+        agent.stop()
 
-        # Write session summary (in finally so it runs even on SystemExit)
-        results["end_time"] = now_iso()
-        results["total_elapsed_s"] = elapsed()
-        summary_path = ARTIFACTS / f"session_{SESSION_ID}.json"
-        summary_path.write_text(json.dumps(results, indent=2, default=str), encoding="utf-8")
+    # Write session summary
+    results["end_time"] = now_iso()
+    results["total_elapsed_s"] = elapsed()
+    summary_path = ARTIFACTS / f"session_{SESSION_ID}.json"
+    summary_path.write_text(json.dumps(results, indent=2, default=str), encoding="utf-8")
 
-        receipt_count = len(list(RECEIPTS.glob("*.json")))
-        screenshot_count = len(list(SCREENSHOTS.glob("*.png")))
+    receipt_count = len(list(RECEIPTS.glob("*.json")))
+    screenshot_count = len(list(SCREENSHOTS.glob("*.png")))
 
-        log("=" * 60)
-        log(f"SESSION COMPLETE — {SESSION_ID}")
-        log(f"  Duration: {elapsed():.1f}s")
-        log(f"  Receipts: {receipt_count} → {RECEIPTS}/")
-        log(f"  Screenshots: {screenshot_count} → {SCREENSHOTS}/")
-        log(f"  Summary: {summary_path}")
-        log("=" * 60)
+    log("=" * 60)
+    log(f"SESSION COMPLETE — {SESSION_ID}")
+    log(f"  Duration: {elapsed():.1f}s")
+    log(f"  Receipts: {receipt_count} → {RECEIPTS}/")
+    log(f"  Screenshots: {screenshot_count} → {SCREENSHOTS}/")
+    log(f"  Summary: {summary_path}")
+    log("=" * 60)
 
 
 if __name__ == "__main__":

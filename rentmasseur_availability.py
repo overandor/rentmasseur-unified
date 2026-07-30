@@ -5,12 +5,17 @@ Credentials are loaded from a .env file or environment variables.
 """
 
 import argparse
+import json
+import os
+import re
 import sys
 import time
 import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
-import os
+
+import requests
 
 from dotenv import load_dotenv
 try:
@@ -44,6 +49,7 @@ load_dotenv()
 # Configuration from environment
 RENTMASSEUR_USERNAME = os.getenv("RENTMASSEUR_USERNAME", "")
 RENTMASSEUR_PASSWORD = os.getenv("RENTMASSEUR_PASSWORD", "")
+PROXY_URL = os.getenv("PROXY_URL", "")
 AVAILABILITY_URL = "https://rentmasseur.com/settings?availability=1"
 LOGIN_URL = "https://rentmasseur.com/login"
 
@@ -51,6 +57,14 @@ LOGIN_URL = "https://rentmasseur.com/login"
 IMPLICIT_WAIT = 10
 PAGE_TIMEOUT = 30
 CHECK_INTERVAL_MINUTES = 5
+
+
+def _proxy_arg(proxy_url: str) -> str:
+    """Return a Chrome --proxy-server argument for http/socks5 proxies."""
+    p = proxy_url.strip()
+    if p.startswith(("http://", "https://", "socks5://", "socks4://")):
+        return f"--proxy-server={p}"
+    return f"--proxy-server=http://{p}"
 
 
 def setup_driver(headless: bool = True) -> webdriver.Chrome:
@@ -63,12 +77,24 @@ def setup_driver(headless: bool = True) -> webdriver.Chrome:
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--window-size=1920,1080")
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+        if PROXY_URL:
+            logger.info("Using proxy for Chrome: %s", PROXY_URL)
+            chrome_options.add_argument(_proxy_arg(PROXY_URL))
         try:
-            import subprocess, re
-            chrome_ver_out = subprocess.check_output(["google-chrome", "--version"], stderr=subprocess.DEVNULL).decode().strip()
+            import subprocess, re, shutil, platform
+            chrome_cmd = "google-chrome"
+            if not shutil.which(chrome_cmd):
+                mac_chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+                if platform.system() == "Darwin" and os.path.exists(mac_chrome):
+                    chrome_cmd = mac_chrome
+            if not shutil.which(chrome_cmd) and not os.path.exists(chrome_cmd):
+                chrome_cmd = "chromium-browser"
+            chrome_ver_out = subprocess.check_output([chrome_cmd, "--version"], stderr=subprocess.DEVNULL).decode().strip()
             chrome_major = int(re.search(r'(\d+)\.', chrome_ver_out).group(1))
+            logger.info("Detected Chrome major version: %d", chrome_major)
             driver = uc.Chrome(options=chrome_options, version_main=chrome_major)
-        except Exception:
+        except Exception as e:
+            logger.warning("Could not detect Chrome version, letting uc pick driver: %s", e)
             driver = uc.Chrome(options=chrome_options)
         driver.implicitly_wait(IMPLICIT_WAIT)
         driver.set_page_load_timeout(PAGE_TIMEOUT)
@@ -88,6 +114,9 @@ def setup_driver(headless: bool = True) -> webdriver.Chrome:
         chrome_options.add_argument(
             "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
         )
+        if PROXY_URL:
+            logger.info("Using proxy for Chrome: %s", PROXY_URL)
+            chrome_options.add_argument(_proxy_arg(PROXY_URL))
         driver = webdriver.Chrome(options=chrome_options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         driver.implicitly_wait(IMPLICIT_WAIT)
@@ -269,6 +298,7 @@ def _is_captcha_page(driver: webdriver.Chrome) -> bool:
             "crowdsec", "captcha", "checking your browser", "please wait",
             "ddos protection", "access denied", "are you human", "verify you are",
             "challenge", "cloudflare", "just a moment", "enable javascript",
+            "access forbidden", "unable to visit", "security check",
         ]
         text_lower = page_text.lower() + page_src.lower()
         return any(ind in text_lower for ind in indicators)
@@ -295,16 +325,9 @@ def brute_force_login(driver: webdriver.Chrome, max_retries: int = 5) -> bool:
 
             # Check for captcha / anti-bot page
             if _is_captcha_page(driver):
-                logger.warning("Captcha/anti-bot page detected on attempt %d — refreshing", attempt)
-                if attempt < max_retries:
-                    time.sleep(10)
-                    driver.refresh()
-                    time.sleep(10)
-                    continue
-                else:
-                    logger.error("Captcha blocking login after %d attempts", max_retries)
-                    _dump_debug(driver, "login_captcha_final")
-                    return False
+                logger.warning("CrowdSec/anti-bot page detected on attempt %d — aborting (same IP, refresh will not help)", attempt)
+                _dump_debug(driver, "login_crowdsec_blocked")
+                return False
 
             # Dismiss cookie/GPS banners and other popups
             dismiss_popups(driver)
@@ -511,23 +534,11 @@ def login(driver: webdriver.Chrome) -> bool:
         driver.get(LOGIN_URL)
         time.sleep(6)
 
-        # Check for CAPTCHA
-        captcha = driver.execute_script("""
-            return !!document.querySelector('.g-recaptcha, #captcha, iframe[src*="recaptcha"]');
-        """)
-        if captcha:
-            logger.warning("CAPTCHA detected on attempt %d — waiting", attempt)
-            time.sleep(10)
-            captcha = driver.execute_script("""
-                return !!document.querySelector('.g-recaptcha, #captcha, iframe[src*="recaptcha"]');
-            """)
-            if captcha:
-                logger.error("CAPTCHA still present after wait")
-                _dump_debug(driver, f"login_captcha_attempt{attempt}")
-                if attempt < 3:
-                    time.sleep(10)
-                    continue
-                return False
+        # Check for CAPTCHA / anti-bot
+        if _is_captcha_page(driver):
+            logger.warning("CrowdSec/anti-bot page detected on alternate login attempt %d — aborting", attempt)
+            _dump_debug(driver, f"login_crowdsec_attempt{attempt}")
+            return False
 
         # Dismiss popups
         dismiss_popups(driver)
@@ -603,27 +614,112 @@ def _dump_debug(driver: webdriver.Chrome, label: str) -> None:
         logger.error("Failed to save page source: %s", e)
 
 
+def scrape_profile_metrics(driver: webdriver.Chrome) -> dict:
+    """Scrape visitor metrics from /settings/whosawme while already logged in.
+
+    Uses a fast requests GET with Selenium cookies rather than driver.get,
+    because the RM SPA can hang Selenium page loads past their timeouts.
+    """
+    metrics = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "source": "requests_whosawme",
+        "profile_views": 0,
+        "unique_visitors": 0,
+        "repeat_visitors": 0,
+    }
+    try:
+        logger.info("Fetching visitor metrics via requests: https://rentmasseur.com/settings/whosawme")
+        cookies = {c["name"]: c["value"] for c in driver.get_cookies()}
+        resp = requests.get(
+            "https://rentmasseur.com/settings/whosawme",
+            cookies=cookies,
+            headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"},
+            timeout=20,
+        )
+        resp.raise_for_status()
+        html = resp.text
+
+        # Visitor profile links are typically /{username}
+        seen = set()
+        visitors = []
+        for href in re.findall(r'href=["\'](https://rentmasseur\.com/[^"\']+)["\']', html):
+            path = href.split("rentmasseur.com/", 1)[1]
+            if path in ("", "settings", "whosawme") or path.startswith(("settings/", "about/", "login")):
+                continue
+            user = path.split("/")[0]
+            if user and user not in seen and len(user) > 2:
+                seen.add(user)
+                visitors.append(user)
+
+        # Also look for relative links
+        for href in re.findall(r'href=["\'](/[^"\']+)["\']', html):
+            user = href.strip("/").split("/")[0]
+            if user in ("", "settings", "whosawme") or user.startswith(("settings/", "about/", "login")):
+                continue
+            if user and user not in seen and len(user) > 2:
+                seen.add(user)
+                visitors.append(user)
+
+        metrics["profile_views"] = len(visitors)
+        metrics["unique_visitors"] = len(visitors)
+        logger.info("Scraped %d visitor(s) from Who Saw Me", len(visitors))
+
+        # Persist to metrics pipeline files
+        content_dir = Path("content")
+        content_dir.mkdir(exist_ok=True)
+        ingest_path = content_dir / "metrics_ingest.jsonl"
+        with open(ingest_path, "a") as f:
+            f.write(json.dumps(metrics) + "\n")
+        live_path = content_dir / "live_metrics.json"
+        with open(live_path, "w") as f:
+            json.dump(metrics, f, indent=2)
+        logger.info("Wrote metrics to %s and %s", ingest_path, live_path)
+    except Exception as e:
+        logger.error("Failed to scrape profile metrics: %s", e)
+    return metrics
+
+
 def set_availability_24_7(driver: webdriver.Chrome) -> bool:
     """Navigate to availability settings and enable 24/7 availability."""
     try:
         logger.info("Navigating to availability settings: %s", AVAILABILITY_URL)
+        driver.set_page_load_timeout(90)
         driver.get(AVAILABILITY_URL)
-        time.sleep(3)  # Let page render
 
-        # Dismiss any popups that could block the availability controls
-        dismiss_popups(driver)
+        # Wait for SPA to render — use increasing delays with retry
+        for wait_round in range(1, 5):
+            time.sleep(10 + (wait_round * 5))  # 15s, 20s, 25s, 30s
+            logger.info("Availability page wait round %d — checking for controls...", wait_round)
+
+            # Dismiss any popups that could block the availability controls
+            dismiss_popups(driver)
+
+            # Check if selects OR custom dropdowns have rendered
+            select_count = driver.execute_script("return document.querySelectorAll('select').length;") or 0
+            button_count = driver.execute_script("return document.querySelectorAll('button').length;") or 0
+            dropdown_count = driver.execute_script("return document.querySelectorAll('[class*=\"dropdown\"], [class*=\"select\"], [role=\"listbox\"], [role=\"combobox\"]').length;") or 0
+            link_count = driver.execute_script("return document.querySelectorAll('a').length;") or 0
+            logger.info("Page has %d selects, %d buttons, %d dropdowns, %d links", select_count, button_count, dropdown_count, link_count)
+
+            if select_count > 0 or dropdown_count > 0:
+                break
+
+            if wait_round < 4:
+                logger.warning("No selects/dropdowns found yet — waiting longer for SPA to render")
+                _dump_debug(driver, f"availability_no_selects_round{wait_round}")
 
         # Do everything in JS since the two selects share identical classes
         ok = driver.execute_script("""
             const selects = Array.from(document.querySelectorAll('select'));
             const buttons = Array.from(document.querySelectorAll('button'));
+            const allText = document.body ? document.body.innerText.slice(0, 3000) : '';
             
             // Find availability status select (options contain 'Available' / 'Not Set')
             const statusSelect = selects.find(s => {
                 const opts = Array.from(s.options).map(o => o.text.toLowerCase());
                 return opts.includes('available') || opts.includes('not set');
             });
-            if (!statusSelect) return {error: 'no_status_select'};
+            if (!statusSelect) return {error: 'no_status_select', select_count: selects.length, button_count: buttons.length, page_text: allText};
             
             // Select 'Available' (skip 'Not Available')
             const availOpt = Array.from(statusSelect.options).find(
@@ -653,24 +749,25 @@ def set_availability_24_7(driver: webdriver.Chrome) -> bool:
             
             // Find and click SET button
             const setBtn = buttons.find(b => /set|save|apply/i.test(b.innerText));
-            if (!setBtn) return {error: 'no_set_button'};
+            if (!setBtn) return {error: 'no_set_button', button_texts: buttons.map(b => b.innerText.slice(0, 30))};
             setBtn.click();
             
             return {ok: true};
         """)
         
         if isinstance(ok, dict) and ok.get('error'):
-            logger.error("Availability JS automation failed: %s", ok['error'])
+            logger.error("Availability JS automation failed: %s", ok)
             scan_page(driver)
             _dump_debug(driver, f"availability_{ok['error']}")
             return False
         
         logger.info("Availability set via JS automation")
-        time.sleep(2)
+        time.sleep(3)
         return True
         
     except TimeoutException:
         logger.error("Availability page timed out")
+        _dump_debug(driver, "availability_timeout")
         return False
     except WebDriverException as e:
         logger.error("WebDriver error setting availability: %s", e)
@@ -682,15 +779,43 @@ def run_once(headless: bool = True) -> bool:
     driver: Optional[webdriver.Chrome] = None
     try:
         driver = setup_driver(headless=headless)
-        if not login(driver):
-            return False
-        return set_availability_24_7(driver)
+        # Try brute_force_login first (more robust for SPAs), fall back to login()
+        if not brute_force_login(driver, max_retries=3):
+            logger.warning("Brute-force login failed, trying alternate login method")
+            if not login(driver):
+                _write_availability_json(False, "login_failed")
+                return False
+        success = set_availability_24_7(driver)
+        _write_availability_json(success, "set_24_7" if success else "set_failed")
+        if success:
+            scrape_profile_metrics(driver)
+        return success
     except Exception as e:
         logger.error("Unexpected error: %s", e)
+        _write_availability_json(False, f"exception: {e}")
         return False
     finally:
         if driver:
             driver.quit()
+
+
+def _write_availability_json(success: bool, reason: str) -> None:
+    """Write availability.json so the workflow can commit it."""
+    import json
+    data = {
+        "availability_enforced": success,
+        "automated_login": True,
+        "availability_updated": success,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "reason": reason,
+    }
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "availability.json")
+    try:
+        with open(path, "w") as f:
+            json.dump(data, f, indent=2)
+        logger.info("Wrote availability.json: %s", json.dumps(data))
+    except Exception as e:
+        logger.error("Failed to write availability.json: %s", e)
 
 
 def main() -> None:

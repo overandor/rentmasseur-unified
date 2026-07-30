@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install undetected-chromedriver selenium playwright requests
+          pip install -r requirements.txt
           python -m playwright install chromium --with-deps
 
       - name: Install Chrome and ChromeDriver
@@ -57,13 +57,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
           echo "Chrome: $(google-chrome --version)"
-
-      - name: Restore engagement DB
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: demo-agent-db
-          path: artifacts/demo_agent/
 
       - name: Run demo agent
         id: agent
@@ -148,56 +141,18 @@ jobs:
           print(f'All {len(list(receipts_dir.glob(\"*.json\")))} receipts valid.')
           "
 
-      - name: Print DB stats
-        if: always()
-        run: |
-          python3 -c "
-          import sqlite3, pathlib
-          db = pathlib.Path('artifacts/demo_agent/engagement.db')
-          if not db.exists():
-              print('No DB found')
-              exit(0)
-          conn = sqlite3.connect(str(db))
-          tables = [r[0] for r in conn.execute(\"SELECT name FROM sqlite_master WHERE type='table'\").fetchall()]
-          print(f'Tables: {tables}')
-          for t in tables:
-              if t == 'sqlite_sequence': continue
-              count = conn.execute(f'SELECT COUNT(*) FROM {t}').fetchone()[0]
-              print(f'  {t}: {count} rows')
-          visitors = conn.execute('SELECT COUNT(*) FROM visitor_stats').fetchone()[0] if 'visitor_stats' in tables else 0
-          messaged = conn.execute('SELECT COUNT(*) FROM visitor_stats WHERE messaged_count > 0').fetchone()[0] if 'visitor_stats' in tables else 0
-          repeats = conn.execute('SELECT COUNT(*) FROM visitor_stats WHERE total_sightings >= 3').fetchone()[0] if 'visitor_stats' in tables else 0
-          provenance = conn.execute('SELECT COUNT(*) FROM persuasion_provenance').fetchone()[0] if 'persuasion_provenance' in tables else 0
-          print(f'\\nVisitors tracked: {visitors}')
-          print(f'Repeat visitors (3+ sightings): {repeats}')
-          print(f'Visitors messaged: {messaged}')
-          print(f'Provenance entries: {provenance}')
-          if visitors > 0:
-              top = conn.execute('SELECT username, total_sightings, messaged_count, last_seen FROM visitor_stats ORDER BY total_sightings DESC LIMIT 10').fetchall()
-              print('\\nTop visitors:')
-              for r in top:
-                  print(f'  {r[0]}: {r[1]} sightings | messaged={r[2]} | last_seen={r[3][:19] if r[3] else \"never\"}')
-          "
-
-      - name: Commit receipts, screenshots, and DB
+      - name: Commit receipts and screenshots
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add artifacts/demo_agent/receipts/*.json artifacts/demo_agent/session_*.json artifacts/demo_agent/engagement.db artifacts/demo_agent/screenshots/*.png 2>/dev/null || true
+          git add artifacts/demo_agent/receipts/*.json artifacts/demo_agent/session_*.json artifacts/demo_agent/engagement.db 2>/dev/null || true
           if [ -n "$(git status --porcelain)" ]; then
             git commit -m "demo-agent: receipts $(date -u +%Y-%m-%d-%H:%M) [skip-ci]"
             git push
           else
             echo "No receipt changes to commit"
           fi
-
-      - name: Upload DB artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: demo-agent-db
-          path: artifacts/demo_agent/engagement.db
-          retention-days: 90
 
       - name: Upload artifacts
         if: always()
@@ -206,7 +161,6 @@ jobs:
           name: rm-demo-agent-${{ github.run_id }}
           path: |
             artifacts/demo_agent/
-            !artifacts/demo_agent/engagement.db
           retention-days: 30
 
       - name: Create issue on failure

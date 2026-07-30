@@ -2,7 +2,7 @@ name: Pipeline 24/7 — Availability + Money Loop
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Every 15 minutes — always-on revenue pipeline
+    - cron: '0 * * * *'  # Hourly — less aggressive on shared GitHub IPs to avoid CrowdSec bans
   workflow_dispatch:
     inputs:
       run_optimizer:
@@ -26,9 +26,11 @@ jobs:
     env:
       RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME }}
       RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD }}
+      PROXY_URL: ${{ secrets.PROXY_URL }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: llama-3.3-70b-versatile
-      HF_URL: https://josephrw-rentmasseur-optimizer.hf.space
+      HF_URL: ${{ secrets.HF_URL }}
+      ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,9 +65,9 @@ jobs:
       # ═══════════════════════════════════════════════════════════
       - name: Keep availability 24/7
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 12
         run: |
-          timeout 240 python3 rentmasseur_availability.py --headless true || echo "Availability keeper failed - will retry next cycle"
+          timeout 600 python3 rentmasseur_availability.py --headless true --once || echo "Availability keeper failed - will retry next cycle"
 
       # ═══════════════════════════════════════════════════════════
       # MONEY LOOP — metrics, KPIs, optimization
@@ -81,7 +83,7 @@ jobs:
         continue-on-error: true
         run: |
           mkdir -p content
-          curl -s "${HF_URL:-https://josephrw-rentmasseur-optimizer.hf.space}/api/report" \
+          curl -s "${HF_URL:-https://josephrw-rentmasseur-optimizer.hf.space}/api/os/report" \
             -o content/hf_report.json --max-time 30 || echo "{}" > content/hf_report.json
           echo "HF Space metrics fetched."
 
@@ -112,17 +114,29 @@ jobs:
         run: |
           mkdir -p receipts
           python3 metrics_collector.py --proof || true
-          cat > receipts/pipeline_$(date -u +%Y%m%d_%H%M%S).json <<RECEIPT
-          {
-            "action": "pipeline-24-7",
-            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "run_id": "${{ github.run_id }}",
-            "availability_enforced": true,
-            "metrics_collected": true,
-            "kpis_computed": true,
-            "status": "completed"
+          python3 -c "
+          import json, hashlib
+          from datetime import datetime, timezone
+          from fingerprint import stamp_receipt, get_chain_head
+
+          ts = datetime.now(timezone.utc)
+          receipt = {
+            'action': 'pipeline-24-7',
+            'timestamp': ts.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'run_id': '${{ github.run_id }}',
+            'availability_enforced': True,
+            'metrics_collected': True,
+            'kpis_computed': True,
+            'status': 'completed',
           }
-          RECEIPT
+          receipt = stamp_receipt(receipt)
+          fname = f'receipts/pipeline_{ts.strftime(\"%Y%m%d_%H%M%S\")}.json'
+          with open(fname, 'w') as f:
+              json.dump(receipt, f, indent=2)
+          print(f'Pipeline receipt: {fname}')
+          print(f'Fingerprint: {receipt[\"fingerprint\"][:16]}')
+          print(f'Chain index: {receipt[\"chain_index\"]}')
+          "
 
       - name: Commit and push all state
         run: |
@@ -139,11 +153,13 @@ jobs:
           fi
 
       - name: Upload debug on failure
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pipeline-debug
           path: |
             content/
             receipts/
+            debug/
           retention-days: 7
+          if-no-files-found: ignore

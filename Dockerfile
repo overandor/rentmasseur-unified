@@ -33,4 +33,4 @@ ENV PORT=7860
 
 EXPOSE 7860
 
-CMD ["./cpp_os_server", "7860"]
+CMD ["python3", "hf_app.py"]

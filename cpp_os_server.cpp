@@ -126,8 +126,8 @@ static CommandResult run_command_evidence(const std::string& cmd) {
     std::string output;
     while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
         output += buffer;
-        if (output.size() > 6000) {
-            output = output.substr(output.size() - 6000);
+        if (output.size() > 20000) {
+            output = output.substr(output.size() - 20000);
         }
     }
     int status = pclose(pipe);
@@ -638,6 +638,13 @@ function setTag(id, text, cls) {
   el.className = 'tag ' + cls;
 }
 
+const state = document.getElementById('state');
+const metricsPanel = document.getElementById('metrics-panel');
+const candidatesPanel = document.getElementById('candidates-panel');
+const decisionPanel = document.getElementById('decision-panel');
+const jobsPanel = document.getElementById('jobs-panel');
+const cicdPanel = document.getElementById('cicd-panel');
+
 fetch('/api/health').then(r=>r.json()).then(j=>{
   setTag('tag-health', 'HEALTH: ' + (j.status||'?'), j.status==='GREEN_REAL' ? 'tag-green' : 'tag-red');
 }).catch(()=>setTag('tag-health','HEALTH: OFFLINE','tag-red'));
@@ -874,7 +881,11 @@ static void handle_client(int client_socket) {
     } else if (path == "/api/cicd/list") {
         response = gh_api("GET", "actions/workflows");
     } else if (path == "/api/cicd/runs") {
-        response = gh_api("GET", "actions/runs?per_page=10");
+        {
+            std::string cmd = "curl -sS -X GET -H \"Authorization: Bearer " + GH_TOKEN + "\" -H \"Accept: application/vnd.github+json\" -H \"X-GitHub-Api-Version: 2022-11-28\" \"https://api.github.com/repos/" + GH_REPO + "/actions/runs?per_page=5\" | python3 -c \"import sys,json; d=json.load(sys.stdin); print(json.dumps({'workflow_runs':[{'name':r['name'],'status':r['status'],'conclusion':r.get('conclusion'),'created_at':r['created_at']} for r in d.get('workflow_runs',[])]}))\"";
+            CommandResult r = run_command_evidence(cmd);
+            response = r.output.empty() ? "{\"status\":\"error\",\"exit_code\":" + std::to_string(r.exit_code) + "}" : r.output;
+        }
     } else if (path.rfind("/api/cicd/trigger/", 0) == 0) {
         std::string wf = path.substr(18);
         std::string raw = gh_api("POST", "actions/workflows/" + url_encode_workflow(wf) + "/dispatches", "{\"ref\":\"main\"}");

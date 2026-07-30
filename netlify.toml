@@ -1,27 +1,13 @@
 [build]
-  publish = "."
-  functions = "netlify/functions"
+  command = "pip install -r requirements.txt"
+  publish = "netlify_dist"
 
-[[redirects]]
-  from = "/api/intake"
-  to = "/.netlify/functions/intake"
-  status = 200
-  force = true
+[build.environment]
+  PYTHON_VERSION = "3.11"
 
+# Proxy API calls to Hugging Face Space
 [[redirects]]
-  from = "/api/trials"
-  to = "/.netlify/functions/trials"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/health"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/engine/*"
+  from = "/api/*"
   to = "https://josephrw-rentmasseur-optimizer.hf.space/api/:splat"
   status = 200
   force = true
@@ -32,19 +18,8 @@
   status = 200
   force = true
 
-# Netlify is a traffic-collection node. All public page authority is
-# consolidated into the canonical Vercel origin while paths and query
-# parameters are preserved for attribution.
+# Serve dashboard as fallback
 [[redirects]]
   from = "/*"
-  to = "https://rentmasseur-unified-prod-happo.vercel.app/:splat"
-  status = 301
-  force = true
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    X-Robots-Tag = "noindex, follow"
+  to = "/index.html"
+  status = 200

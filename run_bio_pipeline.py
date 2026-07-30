@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Add rm_pri to path (api_client lives in the optimizer repo)
-sys.path.insert(0, str(Path("/Users/alep/Downloads/rentmasseur-optimizer/rm_pri/py")))
+sys.path.insert(0, str(Path(__file__).parent / "rm_pri" / "py"))
 
 from api_client import RentMasseurAPI
 

@@ -18,15 +18,41 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+from fingerprint import stamp_receipt
+
 CONTENT_DIR = Path("content")
 AVAILABILITY_FILE = Path("availability.json")
 METRICS_INGEST = CONTENT_DIR / "metrics_ingest.jsonl"
+
+
+def _write_live_metrics_from_availability():
+    """Write content/live_metrics.json from availability.json when no metrics ingested."""
+    if not AVAILABILITY_FILE.exists():
+        return
+    try:
+        with open(AVAILABILITY_FILE) as f:
+            avail = json.load(f)
+        live_metrics = {
+            "timestamp": avail.get("timestamp", datetime.now(timezone.utc).isoformat()),
+            "source": "availability_keeper",
+            "availability_enforced": avail.get("availability_enforced", False),
+            "availability_updated": avail.get("availability_updated", False),
+            "automated_login": avail.get("automated_login", False),
+            "reason": avail.get("reason", "unknown"),
+        }
+        CONTENT_DIR.mkdir(exist_ok=True)
+        with open(CONTENT_DIR / "live_metrics.json", "w") as f:
+            json.dump(live_metrics, f, indent=2)
+        print("[metrics] Wrote content/live_metrics.json from availability.json")
+    except Exception as e:
+        print(f"[metrics] Could not write live_metrics from availability: {e}")
 
 
 def process_ingested_metrics():
     """Read all ingested metrics and produce a summary."""
     if not METRICS_INGEST.exists():
         print("[metrics] No ingested metrics file found.")
+        _write_live_metrics_from_availability()
         return {"status": "no_data", "message": "No metrics ingested yet."}
 
     metrics = []
@@ -77,6 +103,29 @@ def process_ingested_metrics():
     with open(CONTENT_DIR / "metrics_summary.json", "w") as f:
         json.dump(summary, f, indent=2)
 
+    # Always write live_metrics.json so the dashboard sees data
+    live_metrics = summary.get("latest_metrics", {})
+    if not live_metrics and AVAILABILITY_FILE.exists():
+        try:
+            with open(AVAILABILITY_FILE) as f:
+                avail = json.load(f)
+            live_metrics = {
+                "timestamp": avail.get("timestamp", datetime.now(timezone.utc).isoformat()),
+                "source": "availability_keeper",
+                "availability_enforced": avail.get("availability_enforced", False),
+                "availability_updated": avail.get("availability_updated", False),
+                "automated_login": avail.get("automated_login", False),
+                "reason": avail.get("reason", "unknown"),
+            }
+        except Exception as e:
+            print(f"[metrics] Could not read availability for live_metrics: {e}")
+            live_metrics = {}
+
+    if live_metrics:
+        with open(CONTENT_DIR / "live_metrics.json", "w") as f:
+            json.dump(live_metrics, f, indent=2)
+        print("[metrics] Wrote content/live_metrics.json")
+
     print(f"[metrics] Processed {len(metrics)} ingested metric entries.")
     return summary
 
@@ -103,10 +152,12 @@ def generate_proof():
     proof["summary"] = summary
 
     proof_path = receipts_dir / f"metrics_{timestamp}.json"
+    proof = stamp_receipt(proof)
     with open(proof_path, "w") as f:
         json.dump(proof, f, indent=2)
 
     print(f"[proof] Receipt written: {proof_path}")
+    print(f"[proof] Fingerprint: {proof.get('fingerprint', '?')[:16]}")
     return proof
 
 
