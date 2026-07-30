@@ -433,7 +433,6 @@ pre {{
     <a href="/run/ga-rl?apply=1" class="btn primary">Train GA+RL & Apply Winner</a>
     <a href="/run/orchestrator?all=1" class="btn">Run Full Orchestrator</a>
     <a href="/run/availability" class="btn">Run Availability Keeper</a>
-    <a href="/api/os/train" class="btn">Train on All Bios</a>
     <a href="/api/os/report" class="btn">Full OS Report</a>
     <a href="/api/os/competitors" class="btn">Competitor Intel</a>
 </div>
