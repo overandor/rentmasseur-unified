@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Checkout without Git LFS smudge
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: false
+          submodules: false
+
+      - name: Reject unresolved LFS pointers required by deploy surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(index.html netlify.toml vercel.json wrangler.toml)
+          for file in "${required[@]}"; do
+            if [[ -f "$file" ]] && head -n 1 "$file" | grep -q '^version https://git-lfs.github.com/spec/v1$'; then
+              echo "Required deploy file is an unresolved LFS pointer: $file" >&2
+              exit 1
+            fi
+          done
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile Python sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import compileall
+          import pathlib
+          import sys
+
+          ignored = {'.git', '.venv', 'venv', 'node_modules', '.next', 'dist', 'build'}
+          roots = [p for p in pathlib.Path('.').iterdir() if p.name not in ignored]
+          ok = all(compileall.compile_dir(root, quiet=1, force=False) if root.is_dir()
+                   else (compileall.compile_file(str(root), quiet=1) if root.suffix == '.py' else True)
+                   for root in roots)
+          sys.exit(0 if ok else 1)
+          PY
+
+      - name: Seed and verify CI database
+        run: python scripts/ci_seed_db.py --rows 50 --db artifacts/ci/rentmasseur_ci.sqlite3
+
+      - name: Verify seeded content
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+
+          path = Path('artifacts/ci/rentmasseur_ci.sqlite3')
+          assert path.is_file() and path.stat().st_size > 0
+          with sqlite3.connect(path) as db:
+              assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+              assert db.execute('SELECT COUNT(*) FROM leads').fetchone()[0] == 50
+              assert db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0] == 50
+              assert db.execute('SELECT COUNT(*) FROM deployment_health').fetchone()[0] == 3
+              assert db.execute('SELECT COUNT(DISTINCT receipt_id) FROM leads').fetchone()[0] == 50
+          print('database seed verified')
+          PY
+
+      - name: Upload seeded database
+        uses: actions/upload-artifact@v4
+        with:
+          name: rentmasseur-ci-database-${{ github.sha }}
+          path: artifacts/ci/rentmasseur_ci.sqlite3
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Write CI summary
+        shell: bash
+        run: |
+          {
+            echo '## RentMasseur Unified CI'
+            echo '- Checkout: LFS smudge disabled'
+            echo '- Python: syntax compiled'
+            echo '- SQLite: integrity verified'
+            echo '- Seeded leads: 50'
+            echo '- Seeded receipts: 50'
+            echo '- Deployment providers: 3'
+          } >> "$GITHUB_STEP_SUMMARY"

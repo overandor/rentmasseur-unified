@@ -1,0 +1,7 @@
+name = "rentmasseur-unified"
+pages_build_output_dir = "."
+compatibility_date = "2026-07-28"
+
+# Optional production bindings:
+# 1. Create a KV namespace and bind it as LEADS in Cloudflare Pages settings.
+# 2. Add LEAD_WEBHOOK_URL and optional LEAD_WEBHOOK_TOKEN as encrypted variables.

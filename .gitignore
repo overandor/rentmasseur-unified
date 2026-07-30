@@ -46,3 +46,14 @@ receipts/hf_action_*.json
 
 # Test binary
 cpp_os_server_test
+
+# Screenshots — too large for git, use CI artifacts instead
+artifacts/*/screenshots/*.png
+artifacts/*/screenshots/*.jpg
+
+# Compiled binaries
+cpp_os_server
+*.o
+
+# Browser storage state (contains session cookies)
+.rm_storage_state.json
