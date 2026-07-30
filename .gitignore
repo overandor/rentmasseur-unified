@@ -57,3 +57,4 @@ cpp_os_server
 
 # Browser storage state (contains session cookies)
 .rm_storage_state.json
+testfile.txt
