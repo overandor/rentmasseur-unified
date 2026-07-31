@@ -524,7 +524,7 @@ def main():
         selenium_res = stage_selenium(merge_res, skip_availability=args.skip_availability, skip_bio=args.skip_bio)
 
     # Stage 7: Save
-    scrape_res = {"providers_scraped": 0}  # legacy placeholder
+    scrape_res = {"providers_scraped": "not_applicable", "status": "scraping_moved_to_engagement_engine"}
     summary = stage_save(scrape_res, agi_train_res, agi_pipe_res, groq_res, merge_res, selenium_res)
 
     elapsed = time.time() - start

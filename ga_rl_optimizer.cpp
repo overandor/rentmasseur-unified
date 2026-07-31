@@ -145,6 +145,12 @@ static double calculate_fitness(const std::map<std::string, int>& stats, double 
     return reward + target_bonus - target_penalty;
 }
 
+static const std::string PLACEHOLDER_MARKER = "[Generated bio placeholder";
+
+static bool is_deployable(const AccountConfig& c) {
+    return c.bio.find(PLACEHOLDER_MARKER) == std::string::npos;
+}
+
 static AccountConfig create_random_config(int generation) {
     AccountConfig c;
     c.id = "cfg_" + iso_timestamp() + "_" + std::to_string(random_int(1000, 9999));
@@ -228,6 +234,9 @@ static void print_report(const GAState& state) {
         std::cout << "  CTA: " << state.best_config.cta << "\n";
         std::cout << "  Headline: " << state.best_config.headline << "\n";
         std::cout << "  Photo: " << state.best_config.photo_style << "\n";
+        if (!is_deployable(state.best_config)) {
+            std::cout << "\n  WARNING: bio is a placeholder — DO NOT DEPLOY. Run Python ga_rl_optimizer.py --apply-winner to generate real bio via LLM.\n";
+        }
     }
 }
 
@@ -317,8 +326,10 @@ int main(int argc, char* argv[]) {
     auto state = evolve(population_size, generations, target);
     print_report(state);
 
-    if (state.best_revenue >= target * 0.5) {
+    if (state.best_revenue >= target * 0.5 && is_deployable(state.best_config)) {
         std::cout << "\nWinning config reaches target. Apply with Python ga_rl_optimizer.py --apply-winner\n";
+    } else if (!is_deployable(state.best_config)) {
+        std::cout << "\nBest config has placeholder bio — C++ GA optimizes structure only. Use Python ga_rl_optimizer.py for deployable bios.\n";
     } else {
         std::cout << "\nNo config reached target threshold. Continue evolving.\n";
     }
