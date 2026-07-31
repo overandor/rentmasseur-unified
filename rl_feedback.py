@@ -146,8 +146,18 @@ def _save_history(history: list):
         json.dump(history[-500:], f, indent=2)
 
 
+NO_OBSERVATION = {"observation": "unavailable", "views": 0, "email_clicks": 0,
+                    "phone_clicks": 0, "booking_inquiries": 0, "favorites": 0,
+                    "messages": 0, "new_visits": 0, "source": "none",
+                    "raw_available": False}
+
+
 def scrape_profile_stats() -> dict:
-    """Pull profile view/click stats from RentMasseur API (reliable, no Selenium)."""
+    """Pull profile view/click stats from RentMasseur API (reliable, no Selenium).
+
+    Returns NO_OBSERVATION sentinel when stats are genuinely unavailable,
+    so callers can distinguish 'no data' from 'zero engagement'.
+    """
     try:
         sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "rm_pri", "py"))
         from api_client import RentMasseurAPI
@@ -155,14 +165,15 @@ def scrape_profile_stats() -> dict:
         api = RentMasseurAPI(min_request_interval=2.0)
         if not api.login(RENTMASSEUR_USERNAME, RENTMASSEUR_PASSWORD):
             logger.error("Login failed for stats collection")
-            return {}
+            return dict(NO_OBSERVATION, error="login_failed")
 
         ad_stats = api.get_ad_statistics()
         logger.info("Raw ad_statistics response: %s", json.dumps(ad_stats)[:500] if ad_stats else "None")
 
         profile_stats = ad_stats.get("profileStatistics") if isinstance(ad_stats, dict) else None
-        if not isinstance(profile_stats, dict):
-            profile_stats = {}
+        if not isinstance(profile_stats, dict) or not profile_stats:
+            logger.warning("profileStatistics is null/empty — stats unavailable via API")
+            return dict(NO_OBSERVATION, error="profileStatistics_null", scraped_at=datetime.now(timezone.utc).isoformat())
 
         stats = {
             "scraped_at": datetime.now(timezone.utc).isoformat(),
@@ -174,7 +185,8 @@ def scrape_profile_stats() -> dict:
             "messages": profile_stats.get("newEmails", 0) or profile_stats.get("messages", 0) or 0,
             "new_visits": profile_stats.get("newVisits", 0) or profile_stats.get("visits", 0) or 0,
             "source": "api",
-            "raw_available": bool(profile_stats),
+            "raw_available": True,
+            "observation": "available",
         }
 
         logger.info("API stats: %s", json.dumps(stats))
@@ -204,7 +216,7 @@ def scrape_profile_stats() -> dict:
             from rentmasseur_core import login
             if not login(driver):
                 logger.error("Login failed for stats scraping")
-                return {}
+                return dict(NO_OBSERVATION, error="selenium_login_failed")
 
             driver.get(DASHBOARD_URL)
             time.sleep(5)
@@ -218,6 +230,7 @@ def scrape_profile_stats() -> dict:
                 "favorites": 0,
                 "messages": 0,
                 "source": "selenium",
+                "observation": "pending",
             }
 
             page_text = driver.execute_script("return document.body ? document.body.innerText : '';") or ""
@@ -232,13 +245,21 @@ def scrape_profile_stats() -> dict:
                 "messages": [r"(\d+)\s*messages?", r"messages?:\s*(\d+)"],
             }
 
+            parsed_any = False
             for key, patterns_list in patterns.items():
                 for pattern in patterns_list:
                     match = re.search(pattern, page_text, re.IGNORECASE)
                     if match:
                         stats[key] = int(match.group(1))
+                        parsed_any = True
                         break
 
+            if not parsed_any:
+                logger.warning("Selenium fallback parsed no stats — returning NO_OBSERVATION")
+                return dict(NO_OBSERVATION, error="selenium_no_match", scraped_at=datetime.now(timezone.utc).isoformat())
+
+            stats["observation"] = "available"
+            stats["raw_available"] = True
             logger.info("Scraped stats (fallback): %s", json.dumps(stats))
             return stats
 
@@ -246,7 +267,7 @@ def scrape_profile_stats() -> dict:
             driver.quit()
     except Exception as e:
         logger.error("Stats scraping error: %s", e)
-        return {}
+        return dict(NO_OBSERVATION, error=str(e))
 
 
 def calculate_reward(stats: dict, bio_age_days: float) -> float:
@@ -259,12 +280,37 @@ def calculate_reward(stats: dict, bio_age_days: float) -> float:
 
 
 def update_rl_state(stats: dict) -> dict:
-    """Update RL state with new stats and calculate reward for current bio."""
+    """Update RL state with new stats and calculate reward for current bio.
+
+    If stats carry observation='unavailable', the previous RL state is preserved
+    and no rotation decision is made. A history entry records the observation failure.
+    """
     state = _load_rl_state()
     current_bio_id = state.get("current_bio_id")
 
     if not current_bio_id:
         logger.warning("No current bio ID in RL state — nothing to reward")
+        return state
+
+    # ── NO_OBSERVATION guard: stats unavailable, preserve state ──
+    if stats.get("observation") == "unavailable":
+        logger.warning("Stats unavailable (%s) — preserving previous RL state, no rotation",
+                        stats.get("error", "unknown"))
+        history = _load_history()
+        history.append({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "bio_id": current_bio_id,
+            "observation": "unavailable",
+            "error": stats.get("error", "unknown"),
+            "delta_reward": 0,
+            "total_reward": state["bios"].get(current_bio_id, {}).get("total_reward", 0),
+        })
+        _save_history(history)
+        state["should_rotate"] = False
+        state["rotate_reason"] = "no_observation — stats unavailable"
+        state["last_observation_error"] = stats.get("error", "unknown")
+        state["last_observation_at"] = datetime.now(timezone.utc).isoformat()
+        _save_rl_state(state)
         return state
 
     bio_entry = state["bios"].get(current_bio_id, {})
@@ -477,16 +523,20 @@ def main():
     logger.info("Collecting profile stats...")
     stats = scrape_profile_stats()
     if not stats:
-        logger.error("Failed to collect stats")
+        logger.error("Failed to collect stats — no response from API or Selenium")
         sys.exit(1)
 
     state = update_rl_state(stats)
+    current_bio = state.get("current_bio_id", "")
+    bio_entry = state.get("bios", {}).get(current_bio, {}) if current_bio else {}
     print(json.dumps({
         "stats": stats,
+        "observation": stats.get("observation", "unknown"),
         "should_rotate": state.get("should_rotate", False),
         "rotate_reason": state.get("rotate_reason", ""),
-        "current_bio": state.get("current_bio_id"),
-        "total_reward": state["bios"].get(state.get("current_bio_id", ""), {}).get("total_reward", 0),
+        "current_bio": current_bio,
+        "total_reward": bio_entry.get("total_reward", 0),
+        "last_observation_error": state.get("last_observation_error"),
     }, indent=2))
 
 
