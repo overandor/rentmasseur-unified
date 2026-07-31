@@ -1350,111 +1350,126 @@ def main():
         # Visit back + engagement
         if args.visit_back:
             visitors = agent.scrape_visitors(max_load_more=args.max_load_more)
-            results["visitors_found"] = len(visitors)
 
-            # Record all visitor sightings in DB
-            log("=== RECORDING VISITOR SIGHTINGS ===")
-            for v in visitors:
-                record_visitor_sighting(
-                    conn, v["username"],
-                    visit_count=v.get("visit_count", 1),
-                    last_online=v.get("last_online"),
-                    last_visit_my_page=v.get("last_visit_my_page"),
-                    location=v.get("location"),
-                    profile_url=v.get("url"),
-                )
-            log(f"  Recorded {len(visitors)} sightings in DB")
-
-            if args.dry_run:
-                log(f"DRY RUN — would visit {min(len(visitors), args.limit) if args.limit else len(visitors)} profiles")
-                # Still show engagement stats in dry run
-                if args.engagement_report or args.auto_message:
-                    all_stats = get_all_visitor_stats(conn)
-                    eligible = [s for s in all_stats if s["total_sightings"] >= args.message_threshold]
-                    log(f"  Engagement: {len(all_stats)} unique visitors, {len(eligible)} eligible for messaging (threshold={args.message_threshold})")
-                    for s in eligible[:10]:
-                        log(f"    {s['username']}: {s['total_sightings']} sightings, messaged={s['messaged_count']}, last={s.get('last_messaged_at', 'never')}")
-
-                write_receipt("visit_back", "dry_run", {
-                    "visitors_found": len(visitors),
-                    "would_visit": min(len(visitors), args.limit) if args.limit else len(visitors),
-                    "visitor_list": visitors[:30],
+            # NO_OBSERVATION guard: if scrape returned a sentinel, skip all visitor processing
+            if visitors and isinstance(visitors[0], dict) and visitors[0].get("observation") == "unavailable":
+                sentinel = visitors[0]
+                log(f"VISITOR SCRAPE UNAVAILABLE: {sentinel.get('error', 'unknown')}", "ERROR")
+                results["visitors_found"] = 0
+                results["observation"] = "unavailable"
+                results["scrape_error"] = sentinel.get("error", "unknown")
+                write_receipt("visit_back", "unavailable", {
+                    "observation": "unavailable",
+                    "error": sentinel.get("error", "unknown"),
+                    "reason": sentinel.get("reason"),
+                    "source": sentinel.get("source", "scrape_visitors"),
                 })
             else:
-                visited = []
-                to_visit = visitors[:args.limit] if args.limit > 0 else visitors
-                for i, v in enumerate(to_visit):
-                    r = agent.visit_profile(v, i, len(to_visit))
-                    visited.append(r)
-                    # Update DB with profile metadata
-                    if r.get("status") == "ok":
-                        conn.execute(
-                            "UPDATE visitor_stats SET last_online = COALESCE(?, last_online), location = COALESCE(?, location) WHERE username = ?",
-                            (r.get("last_online"), r.get("location"), v["username"])
-                        )
-                        conn.commit()
-                    human_delay(2, 4)
+                results["visitors_found"] = len(visitors)
 
-                results["visited"] = visited
-                write_receipt("visit_back_summary", "pass", {
-                    "visitors_found": len(visitors),
-                    "visited_count": len(visited),
-                    "ok_count": sum(1 for v in visited if v.get("status") == "ok"),
-                    "blocked_count": sum(1 for v in visited if v.get("status") == "blocked"),
-                    "error_count": sum(1 for v in visited if v.get("status") == "error"),
-                })
+                # Record all visitor sightings in DB
+                log("=== RECORDING VISITOR SIGHTINGS ===")
+                for v in visitors:
+                    record_visitor_sighting(
+                        conn, v["username"],
+                        visit_count=v.get("visit_count", 1),
+                        last_online=v.get("last_online"),
+                        last_visit_my_page=v.get("last_visit_my_page"),
+                        location=v.get("location"),
+                        profile_url=v.get("url"),
+                    )
+                log(f"  Recorded {len(visitors)} sightings in DB")
 
-                # Auto-message visitors above threshold
-                if args.auto_message:
-                    log(f"=== AUTO-MESSAGING (threshold={args.message_threshold}, max={args.max_messages}, delay={args.message_delay}s) ===")
-                    messaged = []
-                    skipped = []
-                    msg_count = 0
-                    for v in visitors:
-                        if msg_count >= args.max_messages:
-                            log(f"  Max messages ({args.max_messages}) reached — stopping")
-                            break
-                        uname = v["username"]
-                        eligible, reason = should_message_visitor(conn, uname, args.message_threshold)
-                        if eligible:
-                            template_idx = random.randint(0, len(MESSAGE_TEMPLATES) - 1)
-                            msg = MESSAGE_TEMPLATES[template_idx].format(name=uname)
-                            stats = get_visitor_stats(conn, uname)
-                            signal, detail = determine_trigger_signal(stats, v.get("visit_count", 1))
-                            log(f"  Messaging {uname} [{signal}]: \"{msg[:60]}...\"")
-                            r = agent.send_message(uname, msg)
-                            if r.get("status") == "sent":
-                                record_message_sent(conn, uname, msg)
-                                prov_id = record_provenance(
-                                    conn, uname, template_idx, msg,
-                                    signal, detail,
-                                    visitor_sightings=stats.get("total_sightings", 0),
-                                    visitor_visit_count=v.get("visit_count", 1),
-                                    visitor_location=v.get("location"),
-                                    visitor_last_online=v.get("last_online"),
-                                    message_status="sent"
-                                )
-                                record_autonomy_metric(conn, uname, "message_sent", str(prov_id), prov_id)
-                                r["provenance_id"] = prov_id
-                                r["trigger_signal"] = signal
-                                messaged.append(r)
-                                msg_count += 1
-                                if msg_count < args.max_messages:
-                                    log(f"  Waiting {args.message_delay}s (anti-spam)...")
-                                    time.sleep(args.message_delay)
-                            else:
-                                skipped.append({"username": uname, "reason": r.get("status")})
-                        else:
-                            skipped.append({"username": uname, "reason": reason})
+                if args.dry_run:
+                    log(f"DRY RUN — would visit {min(len(visitors), args.limit) if args.limit else len(visitors)} profiles")
+                    # Still show engagement stats in dry run
+                    if args.engagement_report or args.auto_message:
+                        all_stats = get_all_visitor_stats(conn)
+                        eligible = [s for s in all_stats if s["total_sightings"] >= args.message_threshold]
+                        log(f"  Engagement: {len(all_stats)} unique visitors, {len(eligible)} eligible for messaging (threshold={args.message_threshold})")
+                        for s in eligible[:10]:
+                            log(f"    {s['username']}: {s['total_sightings']} sightings, messaged={s['messaged_count']}, last={s.get('last_messaged_at', 'never')}")
 
-                    results["messaged"] = messaged
-                    results["messaging_skipped"] = skipped
-                    log(f"  Messaged: {len(messaged)} | Skipped: {len(skipped)}")
-                    write_receipt("auto_message_summary", "pass", {
-                        "messaged_count": len(messaged),
-                        "skipped_count": len(skipped),
-                        "threshold": args.message_threshold,
+                    write_receipt("visit_back", "dry_run", {
+                        "visitors_found": len(visitors),
+                        "would_visit": min(len(visitors), args.limit) if args.limit else len(visitors),
+                        "visitor_list": visitors[:30],
                     })
+                else:
+                    visited = []
+                    to_visit = visitors[:args.limit] if args.limit > 0 else visitors
+                    for i, v in enumerate(to_visit):
+                        r = agent.visit_profile(v, i, len(to_visit))
+                        visited.append(r)
+                        # Update DB with profile metadata
+                        if r.get("status") == "ok":
+                            conn.execute(
+                                "UPDATE visitor_stats SET last_online = COALESCE(?, last_online), location = COALESCE(?, location) WHERE username = ?",
+                                (r.get("last_online"), r.get("location"), v["username"])
+                            )
+                            conn.commit()
+                        human_delay(2, 4)
+
+                    results["visited"] = visited
+                    write_receipt("visit_back_summary", "pass", {
+                        "visitors_found": len(visitors),
+                        "visited_count": len(visited),
+                        "ok_count": sum(1 for v in visited if v.get("status") == "ok"),
+                        "blocked_count": sum(1 for v in visited if v.get("status") == "blocked"),
+                        "error_count": sum(1 for v in visited if v.get("status") == "error"),
+                    })
+
+                    # Auto-message visitors above threshold
+                    if args.auto_message:
+                        log(f"=== AUTO-MESSAGING (threshold={args.message_threshold}, max={args.max_messages}, delay={args.message_delay}s) ===")
+                        messaged = []
+                        skipped = []
+                        msg_count = 0
+                        for v in visitors:
+                            if msg_count >= args.max_messages:
+                                log(f"  Max messages ({args.max_messages}) reached — stopping")
+                                break
+                            uname = v["username"]
+                            eligible, reason = should_message_visitor(conn, uname, args.message_threshold)
+                            if eligible:
+                                template_idx = random.randint(0, len(MESSAGE_TEMPLATES) - 1)
+                                msg = MESSAGE_TEMPLATES[template_idx].format(name=uname)
+                                stats = get_visitor_stats(conn, uname)
+                                signal, detail = determine_trigger_signal(stats, v.get("visit_count", 1))
+                                log(f"  Messaging {uname} [{signal}]: \"{msg[:60]}...\"")
+                                r = agent.send_message(uname, msg)
+                                if r.get("status") == "sent":
+                                    record_message_sent(conn, uname, msg)
+                                    prov_id = record_provenance(
+                                        conn, uname, template_idx, msg,
+                                        signal, detail,
+                                        visitor_sightings=stats.get("total_sightings", 0),
+                                        visitor_visit_count=v.get("visit_count", 1),
+                                        visitor_location=v.get("location"),
+                                        visitor_last_online=v.get("last_online"),
+                                        message_status="sent"
+                                    )
+                                    record_autonomy_metric(conn, uname, "message_sent", str(prov_id), prov_id)
+                                    r["provenance_id"] = prov_id
+                                    r["trigger_signal"] = signal
+                                    messaged.append(r)
+                                    msg_count += 1
+                                    if msg_count < args.max_messages:
+                                        log(f"  Waiting {args.message_delay}s (anti-spam)...")
+                                        time.sleep(args.message_delay)
+                                else:
+                                    skipped.append({"username": uname, "reason": r.get("status")})
+                            else:
+                                skipped.append({"username": uname, "reason": reason})
+
+                        results["messaged"] = messaged
+                        results["messaging_skipped"] = skipped
+                        log(f"  Messaged: {len(messaged)} | Skipped: {len(skipped)}")
+                        write_receipt("auto_message_summary", "pass", {
+                            "messaged_count": len(messaged),
+                            "skipped_count": len(skipped),
+                            "threshold": args.message_threshold,
+                        })
 
         # Engagement report
         if args.engagement_report:
