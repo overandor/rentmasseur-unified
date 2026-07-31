@@ -46,45 +46,54 @@ PROFILE_URL = "https://rentmasseur.com/settings?profile=1"
 IMPLICIT_WAIT = 10
 PAGE_TIMEOUT = 30
 
-BIO_HISTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bio_history.json")
-BIOS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bios")
+BIO_HISTORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content", "bio_history.json")
+BIOS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content", "bios")
 os.makedirs(BIOS_DIR, exist_ok=True)
 
 
 def setup_driver(headless: bool = True) -> webdriver.Chrome:
     if HAS_UC:
-        opts = uc.ChromeOptions()
-        if headless:
-            opts.add_argument("--headless=new")
-        opts.add_argument("--no-sandbox")
-        opts.add_argument("--disable-dev-shm-usage")
-        opts.add_argument("--window-size=1920,1080")
-        opts.add_argument("--disable-blink-features=AutomationControlled")
         try:
-            import subprocess
-            chrome_ver_out = subprocess.check_output(["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "--version"], stderr=subprocess.DEVNULL).decode().strip()
-            chrome_major = int(re.search(r'(\d+)\.', chrome_ver_out).group(1))
-            driver = uc.Chrome(options=opts, version_main=chrome_major)
-        except Exception:
-            driver = uc.Chrome(options=opts)
-        driver.implicitly_wait(IMPLICIT_WAIT)
-        driver.set_page_load_timeout(PAGE_TIMEOUT)
-        return driver
-    else:
-        opts = Options()
-        if headless:
-            opts.add_argument("--headless=new")
-        opts.add_argument("--no-sandbox")
-        opts.add_argument("--disable-dev-shm-usage")
-        opts.add_argument("--disable-gpu")
-        opts.add_argument("--window-size=1920,1080")
-        opts.add_argument(
-            "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
-        )
-        driver = webdriver.Chrome(options=opts)
-        driver.implicitly_wait(IMPLICIT_WAIT)
-        driver.set_page_load_timeout(PAGE_TIMEOUT)
-        return driver
+            opts = uc.ChromeOptions()
+            if headless:
+                opts.add_argument("--headless=new")
+            opts.add_argument("--no-sandbox")
+            opts.add_argument("--disable-dev-shm-usage")
+            opts.add_argument("--window-size=1920,1080")
+            opts.add_argument("--disable-blink-features=AutomationControlled")
+            try:
+                import subprocess, shutil, platform
+                chrome_cmd = "google-chrome"
+                if not shutil.which(chrome_cmd):
+                    mac_chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+                    if platform.system() == "Darwin" and os.path.exists(mac_chrome):
+                        chrome_cmd = mac_chrome
+                if not shutil.which(chrome_cmd) and not os.path.exists(chrome_cmd):
+                    chrome_cmd = "chromium-browser"
+                chrome_ver_out = subprocess.check_output([chrome_cmd, "--version"], stderr=subprocess.DEVNULL).decode().strip()
+                chrome_major = int(re.search(r'(\d+)\.', chrome_ver_out).group(1))
+                driver = uc.Chrome(options=opts, version_main=chrome_major)
+            except Exception:
+                driver = uc.Chrome(options=opts)
+            driver.implicitly_wait(IMPLICIT_WAIT)
+            driver.set_page_load_timeout(PAGE_TIMEOUT)
+            return driver
+        except Exception as uc_err:
+            logger.warning("undetected-chromedriver failed: %s — falling back to standard Selenium", uc_err)
+    opts = Options()
+    if headless:
+        opts.add_argument("--headless=new")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument("--disable-dev-shm-usage")
+    opts.add_argument("--disable-gpu")
+    opts.add_argument("--window-size=1920,1080")
+    opts.add_argument(
+        "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+    )
+    driver = webdriver.Chrome(options=opts)
+    driver.implicitly_wait(IMPLICIT_WAIT)
+    driver.set_page_load_timeout(PAGE_TIMEOUT)
+    return driver
 
 
 def _dump_debug(driver: webdriver.Chrome, label: str) -> None:

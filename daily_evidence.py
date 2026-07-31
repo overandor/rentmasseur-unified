@@ -37,6 +37,12 @@ from typing import Optional
 sys.path.insert(0, str(Path(__file__).parent / "rm_pri" / "py"))
 from api_client import RentMasseurAPI
 
+try:
+    from rebrandly_client import RebrandlyClient
+    HAS_REBRANDLY = True
+except ImportError:
+    HAS_REBRANDLY = False
+
 from dotenv import load_dotenv
 
 # Paths
@@ -102,7 +108,7 @@ def save_ledger(ledger: dict):
     LEDGER_PATH.write_text(json.dumps(ledger, indent=2))
 
 
-def snapshot_profile(api: RentMasseurAPI) -> dict:
+def snapshot_profile(api: RentMasseurAPI, ledger: dict = None) -> dict:
     """Capture live profile state."""
     dash = api.get_dashboard()
     stats = api.get_ad_statistics()
@@ -129,6 +135,27 @@ def snapshot_profile(api: RentMasseurAPI) -> dict:
     description = assets.get("description", "")
     rebrandly_present = REBRANDLY_LINK in description
 
+    # Pull Rebrandly click analytics if API key is configured
+    rebrandly_clicks = 0
+    rebrandly_sessions = 0
+    rebrandly_last_click = None
+    if HAS_REBRANDLY and os.environ.get("REBRANDLY_API_KEY"):
+        try:
+            rb = RebrandlyClient()
+            link_id = ledger.get("current_rebrandly_link_id") if 'ledger' in dir() else None
+            if link_id:
+                stats = rb.get_link_clicks(link_id)
+                rebrandly_clicks = stats.get("clicks", 0)
+                rebrandly_sessions = stats.get("sessions", 0)
+                rebrandly_last_click = stats.get("last_click")
+            else:
+                stats = rb.get_carpathianwolf_stats()
+                rebrandly_clicks = stats.get("clicks", 0)
+                rebrandly_sessions = stats.get("sessions", 0)
+                rebrandly_last_click = stats.get("last_click")
+        except Exception as e:
+            print(f"  Rebrandly analytics error: {e}")
+
     return {
         "timestamp": now_iso(),
         "total_page_views": total_views,
@@ -141,6 +168,9 @@ def snapshot_profile(api: RentMasseurAPI) -> dict:
         "headline": headline,
         "bio_length": len(description),
         "rebrandly_present": rebrandly_present,
+        "rebrandly_clicks": rebrandly_clicks,
+        "rebrandly_sessions": rebrandly_sessions,
+        "rebrandly_last_click": rebrandly_last_click,
         "bio_preview": description[:300],
     }
 
@@ -226,6 +256,9 @@ def build_evidence_packet(snapshot: dict, deltas: dict, decision: str, ledger: d
             "is_available": snapshot["is_available"],
             "availability_message": snapshot["availability_message"],
             "rebrandly_present": snapshot["rebrandly_present"],
+            "rebrandly_clicks": snapshot.get("rebrandly_clicks", 0),
+            "rebrandly_sessions": snapshot.get("rebrandly_sessions", 0),
+            "rebrandly_last_click": snapshot.get("rebrandly_last_click"),
         },
         "current_headline": snapshot["headline"],
         "bio_length": snapshot["bio_length"],
@@ -267,6 +300,8 @@ def write_receipt(packet: dict, decision: str):
         "delta_clicks": packet["metrics"]["delta_clicks"],
         "delta_ctr": packet["metrics"]["delta_ctr"],
         "hours_exposed": packet["metrics"]["hours_exposed"],
+        "rebrandly_clicks": packet["profile_state"].get("rebrandly_clicks", 0),
+        "rebrandly_sessions": packet["profile_state"].get("rebrandly_sessions", 0),
     }
     path = RECEIPTS_DIR / f"evidence_{ts}.json"
     path.write_text(json.dumps(receipt, indent=2))
@@ -295,9 +330,14 @@ def main():
         sys.exit(1)
     print("Login successful")
 
+    # Load ledger first (needed for Rebrandly link ID in snapshot)
+    ledger = load_ledger()
+    print(f"\nCurrent bio: {ledger.get('current_bio_id', 'none')}")
+    print(f"Started at: {ledger.get('current_bio_started_at', 'none')}")
+
     # Snapshot
     print("\nSnapshotting live profile...")
-    snapshot = snapshot_profile(api)
+    snapshot = snapshot_profile(api, ledger=ledger)
     print(f"  Total views: {snapshot['total_page_views']}")
     print(f"  Total clicks: {snapshot['total_contact_clicks']}")
     print(f"  New visits: {snapshot['new_visits']}")
@@ -306,12 +346,9 @@ def main():
     print(f"  Available: {snapshot['is_available']} ({snapshot['availability_message']})")
     print(f"  Headline: {snapshot['headline']}")
     print(f"  Rebrandly: {'YES' if snapshot['rebrandly_present'] else 'NO'}")
+    print(f"  Rebrandly clicks: {snapshot.get('rebrandly_clicks', 0)}")
+    print(f"  Rebrandly sessions: {snapshot.get('rebrandly_sessions', 0)}")
     print(f"  Bio length: {snapshot['bio_length']} chars")
-
-    # Load ledger
-    ledger = load_ledger()
-    print(f"\nCurrent bio: {ledger.get('current_bio_id', 'none')}")
-    print(f"Started at: {ledger.get('current_bio_started_at', 'none')}")
 
     # Compute deltas
     deltas = compute_deltas(snapshot, ledger)

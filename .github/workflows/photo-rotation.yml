@@ -34,14 +34,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests python-dotenv
+          pip install -r requirements.txt
 
       - name: Rotate photos via API (reorder)
         if: ${{ github.event.inputs.mode != 'upload' }}
         run: |
           python3 -c "
           import sys, json
-          sys.path.insert(0, 'rm_traffic')
+          sys.path.insert(0, 'rm_pri/py')
           from api_client import RentMasseurAPI
           import os
 

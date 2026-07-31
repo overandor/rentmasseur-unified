@@ -37,6 +37,7 @@ jobs:
       RM_PASS: ${{ secrets.RENTMASSEUR_PASSWORD || secrets.RM_PASS }}
       RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME || secrets.RM_USER }}
       RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD || secrets.RM_PASS }}
+      REBRANDLY_API_KEY: ${{ secrets.REBRANDLY_API_KEY }}
 
       OLLAMA_HOST: http://127.0.0.1:11434
       OLLAMA_MODEL: llama3.2:3b
@@ -57,12 +58,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install \
-            undetected-chromedriver \
-            selenium \
-            requests \
-            fastapi \
-            uvicorn
+          pip install -r requirements.txt
 
       - name: Install Google Chrome
         run: |

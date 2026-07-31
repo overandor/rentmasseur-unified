@@ -23,6 +23,12 @@ sys.path.insert(0, str(Path(__file__).parent / "rm_pri" / "py"))
 
 from api_client import RentMasseurAPI
 
+try:
+    from rebrandly_client import RebrandlyClient
+    HAS_REBRANDLY = True
+except ImportError:
+    HAS_REBRANDLY = False
+
 CONTENT_DIR = Path(__file__).parent / "content"
 BIOS_DIR = CONTENT_DIR / "bios"
 RECEIPTS_DIR = Path(__file__).parent / "receipts"
@@ -57,9 +63,10 @@ BIO_VARIANTS = [
 ]
 
 REBRANDLY_LINK = "rebrand.ly/carpathianwolf"
+BOOKING_URL = os.environ.get("BOOKING_URL", "https://calendly.com/carpathianwolf/clone?back=1&month=2024-08")
 
 
-def load_bio_content(filename: str) -> str:
+def load_bio_content(filename: str, short_link: str = None) -> str:
     """Load bio markdown and clean it for the API."""
     path = BIOS_DIR / filename
     if not path.exists():
@@ -71,9 +78,10 @@ def load_bio_content(filename: str) -> str:
     if lines and lines[0].startswith("#"):
         lines = lines[1:]
     bio = "\n".join(lines).strip()
-    # Ensure rebrandly link is present
-    if REBRANDLY_LINK not in bio:
-        bio += f"\n\nBook: {REBRANDLY_LINK}"
+    # Use variant-specific short link if provided, else fallback
+    link = short_link or REBRANDLY_LINK
+    if link not in bio:
+        bio += f"\n\nBook: {link}"
     return bio
 
 
@@ -140,17 +148,35 @@ def run_rotator_pick() -> dict:
 
 def push_bio_to_profile(variant: dict):
     """Login to RentMasseur and push the selected bio."""
-    bio_content = load_bio_content(variant["file"])
+    # Create per-variant Rebrandly short link if API is available
+    short_link = REBRANDLY_LINK
+    rebrandly_link_id = None
+    rebrandly_clicks_before = 0
+    if HAS_REBRANDLY and os.environ.get("REBRANDLY_API_KEY"):
+        try:
+            rb = RebrandlyClient()
+            variant_key = variant["id"].split("_")[1] if "_" in variant["id"] else "X"
+            variant_key = variant_key[0].upper() if variant_key else "X"
+            link_data = rb.create_bio_link(variant_key, BOOKING_URL)
+            short_link = link_data.get("shortUrl", REBRANDLY_LINK)
+            rebrandly_link_id = link_data.get("id")
+            rebrandly_clicks_before = link_data.get("clicks", 0)
+            print(f"  Rebrandly variant link: {short_link} (id={rebrandly_link_id})")
+            print(f"  Current clicks: {rebrandly_clicks_before}")
+        except Exception as e:
+            print(f"  Rebrandly API error (using fallback): {e}")
+
+    bio_content = load_bio_content(variant["file"], short_link=short_link)
 
     # Verify rebrandly link
-    if REBRANDLY_LINK not in bio_content:
-        print(f"ERROR: Bio does not contain rebrandly link: {REBRANDLY_LINK}")
+    if short_link not in bio_content:
+        print(f"ERROR: Bio does not contain rebrandly link: {short_link}")
         sys.exit(1)
 
     print(f"\nBio to push ({variant['id']}):")
     print(f"  Headline: {variant['headline']}")
     print(f"  Length: {len(bio_content)} chars")
-    print(f"  Rebrandly link: PRESENT")
+    print(f"  Rebrandly link: {short_link}")
     print(f"  Content preview: {bio_content[:200]}...")
 
     # Load credentials from .env
@@ -180,8 +206,8 @@ def push_bio_to_profile(variant: dict):
         current = api.get_about()
         print(f"Current headline: {current.get('headline', 'unknown')}")
         current_desc = current.get("description", "")
-        if REBRANDLY_LINK in current_desc:
-            print("Current bio already has rebrandly link")
+        if short_link in current_desc:
+            print("Current bio already has this rebrandly link")
     except Exception as e:
         print(f"Warning: Could not fetch current bio: {e}")
 
@@ -199,7 +225,7 @@ def push_bio_to_profile(variant: dict):
         sys.exit(1)
 
     # Write receipt
-    write_receipt(variant, bio_content, result)
+    write_receipt(variant, bio_content, result, short_link, rebrandly_link_id, rebrandly_clicks_before)
 
     # Verify
     print("\nVerifying update...")
@@ -207,16 +233,16 @@ def push_bio_to_profile(variant: dict):
         verify = api.get_about()
         print(f"Verified headline: {verify.get('headline', 'unknown')}")
         verified_desc = verify.get("description", "")
-        if REBRANDLY_LINK in verified_desc:
+        if short_link in verified_desc:
             print("VERIFIED: Rebrandly link is live in profile bio")
         else:
-            print("WARNING: Rebrandly link not found in verified bio")
+            print(f"WARNING: Rebrandly link ({short_link}) not found in verified bio")
         print(f"Verified bio length: {len(verified_desc)} chars")
     except Exception as e:
         print(f"Warning: Could not verify: {e}")
 
 
-def write_receipt(variant: dict, bio_content: str, api_result: dict):
+def write_receipt(variant: dict, bio_content: str, api_result: dict, short_link: str = None, rebrandly_link_id: str = None, rebrandly_clicks_before: int = 0):
     """Write a receipt for the bio update."""
     RECEIPTS_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc)
@@ -227,8 +253,10 @@ def write_receipt(variant: dict, bio_content: str, api_result: dict):
         "strategy": variant["strategy"],
         "headline": variant["headline"],
         "bio_length": len(bio_content),
-        "rebrandly_link": REBRANDLY_LINK,
-        "rebrandly_present": REBRANDLY_LINK in bio_content,
+        "short_link": short_link or REBRANDLY_LINK,
+        "rebrandly_link_id": rebrandly_link_id,
+        "rebrandly_clicks_before": rebrandly_clicks_before,
+        "rebrandly_present": (short_link or REBRANDLY_LINK) in bio_content,
         "api_result": api_result,
         "status": "pushed",
     }

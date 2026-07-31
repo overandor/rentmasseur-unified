@@ -67,61 +67,76 @@ def _proxy_arg(proxy_url: str) -> str:
     return f"--proxy-server=http://{p}"
 
 
+def _build_uc_options(headless: bool = True):
+    """Build fresh ChromeOptions for undetected-chromedriver (must be new instance each call)."""
+    opts = uc.ChromeOptions()
+    if headless:
+        opts.add_argument("--headless=new")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument("--disable-dev-shm-usage")
+    opts.add_argument("--window-size=1920,1080")
+    opts.add_argument("--disable-blink-features=AutomationControlled")
+    if PROXY_URL:
+        logger.info("Using proxy for Chrome: %s", PROXY_URL)
+        opts.add_argument(_proxy_arg(PROXY_URL))
+    return opts
+
+
+def _build_selenium_options(headless: bool = True):
+    """Build fresh ChromeOptions for standard Selenium."""
+    opts = Options()
+    if headless:
+        opts.add_argument("--headless=new")
+    opts.add_argument("--no-sandbox")
+    opts.add_argument("--disable-dev-shm-usage")
+    opts.add_argument("--disable-gpu")
+    opts.add_argument("--window-size=1920,1080")
+    opts.add_argument("--disable-blink-features=AutomationControlled")
+    opts.add_argument("--disable-extensions")
+    opts.add_experimental_option("excludeSwitches", ["enable-automation"])
+    opts.add_experimental_option("useAutomationExtension", False)
+    opts.add_argument(
+        "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+    )
+    if PROXY_URL:
+        logger.info("Using proxy for Chrome: %s", PROXY_URL)
+        opts.add_argument(_proxy_arg(PROXY_URL))
+    return opts
+
+
 def setup_driver(headless: bool = True) -> webdriver.Chrome:
     """Configure and return a Chrome WebDriver instance with stealth options."""
     if HAS_UC:
-        chrome_options = uc.ChromeOptions()
-        if headless:
-            chrome_options.add_argument("--headless=new")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--window-size=1920,1080")
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        if PROXY_URL:
-            logger.info("Using proxy for Chrome: %s", PROXY_URL)
-            chrome_options.add_argument(_proxy_arg(PROXY_URL))
         try:
-            import subprocess, re, shutil, platform
-            chrome_cmd = "google-chrome"
-            if not shutil.which(chrome_cmd):
-                mac_chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-                if platform.system() == "Darwin" and os.path.exists(mac_chrome):
-                    chrome_cmd = mac_chrome
-            if not shutil.which(chrome_cmd) and not os.path.exists(chrome_cmd):
-                chrome_cmd = "chromium-browser"
-            chrome_ver_out = subprocess.check_output([chrome_cmd, "--version"], stderr=subprocess.DEVNULL).decode().strip()
-            chrome_major = int(re.search(r'(\d+)\.', chrome_ver_out).group(1))
-            logger.info("Detected Chrome major version: %d", chrome_major)
-            driver = uc.Chrome(options=chrome_options, version_main=chrome_major)
-        except Exception as e:
-            logger.warning("Could not detect Chrome version, letting uc pick driver: %s", e)
-            driver = uc.Chrome(options=chrome_options)
-        driver.implicitly_wait(IMPLICIT_WAIT)
-        driver.set_page_load_timeout(PAGE_TIMEOUT)
-        return driver
-    else:
-        chrome_options = Options()
-        if headless:
-            chrome_options.add_argument("--headless=new")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--window-size=1920,1080")
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        chrome_options.add_argument("--disable-extensions")
-        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        chrome_options.add_experimental_option("useAutomationExtension", False)
-        chrome_options.add_argument(
-            "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
-        )
-        if PROXY_URL:
-            logger.info("Using proxy for Chrome: %s", PROXY_URL)
-            chrome_options.add_argument(_proxy_arg(PROXY_URL))
-        driver = webdriver.Chrome(options=chrome_options)
-        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-        driver.implicitly_wait(IMPLICIT_WAIT)
-        driver.set_page_load_timeout(PAGE_TIMEOUT)
-        return driver
+            chrome_options = _build_uc_options(headless)
+            try:
+                import subprocess, re, shutil, platform
+                chrome_cmd = "google-chrome"
+                if not shutil.which(chrome_cmd):
+                    mac_chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+                    if platform.system() == "Darwin" and os.path.exists(mac_chrome):
+                        chrome_cmd = mac_chrome
+                if not shutil.which(chrome_cmd) and not os.path.exists(chrome_cmd):
+                    chrome_cmd = "chromium-browser"
+                chrome_ver_out = subprocess.check_output([chrome_cmd, "--version"], stderr=subprocess.DEVNULL).decode().strip()
+                chrome_major = int(re.search(r'(\d+)\.', chrome_ver_out).group(1))
+                logger.info("Detected Chrome major version: %d", chrome_major)
+                driver = uc.Chrome(options=chrome_options, version_main=chrome_major)
+            except Exception as e:
+                logger.warning("uc.Chrome with version detection failed: %s — retrying with fresh options", e)
+                chrome_options = _build_uc_options(headless)
+                driver = uc.Chrome(options=chrome_options)
+            driver.implicitly_wait(IMPLICIT_WAIT)
+            driver.set_page_load_timeout(PAGE_TIMEOUT)
+            return driver
+        except Exception as uc_err:
+            logger.warning("undetected-chromedriver failed: %s — falling back to standard Selenium", uc_err)
+    chrome_options = _build_selenium_options(headless)
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    driver.implicitly_wait(IMPLICIT_WAIT)
+    driver.set_page_load_timeout(PAGE_TIMEOUT)
+    return driver
 
 
 POPUP_DISMISS_SELECTORS = [
@@ -796,7 +811,10 @@ def run_once(headless: bool = True) -> bool:
         return False
     finally:
         if driver:
-            driver.quit()
+            try:
+                driver.quit()
+            except Exception:
+                pass
 
 
 def _write_availability_json(success: bool, reason: str) -> None:

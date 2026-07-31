@@ -15,6 +15,8 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: llama-3.3-70b-versatile
       RENTMASSEUR_USERNAME: ${{ secrets.RENTMASSEUR_USERNAME }}
+      RENTMASSEUR_PASSWORD: ${{ secrets.RENTMASSEUR_PASSWORD }}
+      REBRANDLY_API_KEY: ${{ secrets.REBRANDLY_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,7 +31,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Generate bios via Groq
+        run: |
+          python3 content_generator.py --bios-only
+
+      - name: Generate blog posts
+        continue-on-error: true
+        run: |
+          python3 content_generator.py --blogs-only
+
+      - name: Generate interview Q&A
+        continue-on-error: true
+        run: |
+          python3 content_generator.py --interviews-only
+
       - name: Generate daily evidence packet
+        continue-on-error: true
         run: |
           python3 daily_evidence.py
 

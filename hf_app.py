@@ -47,6 +47,22 @@ CONTENT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "content"
 ORCHESTRATOR_LOG = os.path.join(CONTENT_DIR, "orchestrator.log")
 VERCEL_BACKEND_URL = os.getenv("VERCEL_BACKEND_URL", "")
 REBRANDLY_LINK = os.getenv("REBRANDLY_LINK", "")
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")
+
+
+def _check_auth(request: Request) -> bool:
+    if not ADMIN_TOKEN:
+        return True
+    auth = request.headers.get("Authorization", "")
+    if auth.startswith("Bearer "):
+        return auth[7:] == ADMIN_TOKEN
+    return request.query_params.get("token") == ADMIN_TOKEN
+
+try:
+    from rebrandly_client import RebrandlyClient
+    HAS_REBRANDLY = True
+except ImportError:
+    HAS_REBRANDLY = False
 
 ENGAGEMENT_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "artifacts", "engagement", "engagement.db")
 BIO_EXPERIMENTS_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "artifacts", "engagement", "bio_experiments.db")
@@ -86,6 +102,24 @@ def _load_all_bios():
                     "preview": fh.read()[:200],
                 })
     return bios
+
+
+def _rebrandly_stats():
+    if not HAS_REBRANDLY or not os.getenv("REBRANDLY_API_KEY"):
+        return {"available": False, "links": [], "total_clicks": 0}
+    try:
+        rb = RebrandlyClient()
+        main_stats = rb.get_carpathianwolf_stats()
+        bio_clicks = rb.get_all_bio_clicks()
+        total_clicks = main_stats.get("clicks", 0) + sum(b.get("clicks", 0) for b in bio_clicks)
+        return {
+            "available": True,
+            "main_link": main_stats,
+            "bio_links": bio_clicks,
+            "total_clicks": total_clicks,
+        }
+    except Exception as e:
+        return {"available": False, "error": str(e), "links": [], "total_clicks": 0}
 
 
 def _engagement_stats():
@@ -399,7 +433,6 @@ pre {{
     <a href="/run/ga-rl?apply=1" class="btn primary">Train GA+RL & Apply Winner</a>
     <a href="/run/orchestrator?all=1" class="btn">Run Full Orchestrator</a>
     <a href="/run/availability" class="btn">Run Availability Keeper</a>
-    <a href="/api/os/train" class="btn">Train on All Bios</a>
     <a href="/api/os/report" class="btn">Full OS Report</a>
     <a href="/api/os/competitors" class="btn">Competitor Intel</a>
 </div>
@@ -522,6 +555,7 @@ async def api_os_report():
         "availability": availability,
         "competitors_analyzed": len(competitors),
         "rebrandly_link": REBRANDLY_LINK,
+        "rebrandly_stats": _rebrandly_stats(),
         "engagement": _engagement_stats(),
         "bio_experiments": _bio_experiments(),
         "current_bio": _current_bio(),
@@ -568,8 +602,10 @@ async def api_os_competitors():
     return JSONResponse({"competitors": competitors[:50]})
 
 
-@app.get("/api/os/train")
-async def api_os_train(background_tasks: BackgroundTasks):
+@app.post("/api/os/train")
+async def api_os_train(background_tasks: BackgroundTasks, request: Request):
+    if not _check_auth(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
     def run():
         subprocess.run(["python3", "bio_ab_tester.py", "--competitors-only"], cwd=os.path.dirname(__file__), capture_output=True, timeout=600)
         subprocess.run(["python3", "content_generator.py", "--bios-only"], cwd=os.path.dirname(__file__), capture_output=True, timeout=900)
@@ -581,6 +617,8 @@ async def api_os_train(background_tasks: BackgroundTasks):
 @app.post("/api/os/ingest")
 async def api_os_ingest(request: Request):
     """Ingest metrics from Vercel functions or extension."""
+    if not _check_auth(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
     data = await request.json()
     os.makedirs(CONTENT_DIR, exist_ok=True)
     ingest_path = os.path.join(CONTENT_DIR, "metrics_ingest.jsonl")
@@ -599,7 +637,9 @@ async def api_rl_state():
 
 
 @app.post("/api/rl/state")
-async def api_rl_state_post(state: dict):
+async def api_rl_state_post(request: Request, state: dict):
+    if not _check_auth(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
     with open(os.path.join(CONTENT_DIR, "rl_state.json"), "w") as f:
         json.dump(state, f)
     return JSONResponse({"status": "saved"})

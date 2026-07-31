@@ -29,6 +29,7 @@ jobs:
       PROXY_URL: ${{ secrets.PROXY_URL }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: llama-3.3-70b-versatile
+      REBRANDLY_API_KEY: ${{ secrets.REBRANDLY_API_KEY }}
       HF_URL: ${{ secrets.HF_URL }}
       ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     steps:
@@ -94,6 +95,12 @@ jobs:
       - name: Compute KPIs (immortality + virality scores)
         run: |
           python3 kpis.py
+
+      - name: RL feedback loop
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          python3 rl_feedback.py || echo "RL feedback skipped"
 
       - name: GA+RL optimizer (hourly auto or manual trigger)
         continue-on-error: true

@@ -21,6 +21,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "rm_pri" / "py"))
 from api_client import RentMasseurAPI
 
+try:
+    from rebrandly_client import RebrandlyClient
+    HAS_REBRANDLY = True
+except ImportError:
+    HAS_REBRANDLY = False
+
 from dotenv import load_dotenv
 
 EXT_DIR = Path(__file__).parent
@@ -30,6 +36,7 @@ RECEIPTS_DIR = EXT_DIR / "receipts"
 LEDGER_PATH = CONTENT_DIR / "experiment_ledger.json"
 
 REBRANDLY_LINK = "rebrand.ly/carpathianwolf"
+BOOKING_URL = os.environ.get("BOOKING_URL", "https://calendly.com/carpathianwolf/clone?back=1&month=2024-08")
 
 VARIANTS = {
     "A": {
@@ -37,23 +44,26 @@ VARIANTS = {
         "file": "bio_A_clinical_recovery.md",
         "strategy": "clinical_recovery",
         "headline": "KARPATHIAN WOLF — Professional Therapeutic Massage",
+        "booking_url": BOOKING_URL,
     },
     "B": {
         "id": "bio_W_winning_production",
         "file": "bio_W_winning_production.md",
         "strategy": "controlled_wolf",
         "headline": "KARPATHIAN WOLF — Targeted Recovery in Manhattan",
+        "booking_url": BOOKING_URL,
     },
     "C": {
         "id": "bio_C_luxury_concierge",
         "file": "bio_C_luxury_concierge.md",
         "strategy": "luxury_concierge",
         "headline": "KARPATHIAN WOLF — Manhattan's Private Recovery Specialist",
+        "booking_url": BOOKING_URL,
     },
 }
 
 
-def load_bio(filename: str) -> str:
+def load_bio(filename: str, short_link: str = None) -> str:
     path = BIOS_DIR / filename
     if not path.exists():
         print(f"ERROR: Bio file not found: {path}")
@@ -64,9 +74,10 @@ def load_bio(filename: str) -> str:
     if lines and lines[0].startswith("#"):
         lines = lines[1:]
     bio = "\n".join(lines).strip()
-    # Ensure rebrandly link
-    if REBRANDLY_LINK not in bio:
-        bio += f"\n\nBook: {REBRANDLY_LINK}"
+    # Use variant-specific short link if provided, else fallback to default
+    link = short_link or REBRANDLY_LINK
+    if link not in bio:
+        bio += f"\n\nBook: {link}"
     return bio
 
 
@@ -90,13 +101,36 @@ def main():
         sys.exit(1)
 
     variant = VARIANTS[variant_key]
-    bio_content = load_bio(variant["file"])
+
+    # Create or update per-variant Rebrandly short link for A/B click tracking
+    short_link = REBRANDLY_LINK
+    rebrandly_link_id = None
+    rebrandly_clicks_before = 0
+    if HAS_REBRANDLY and os.environ.get("REBRANDLY_API_KEY"):
+        try:
+            rb = RebrandlyClient()
+            print(f"\n--- Rebrandly: creating variant {variant_key} link ---")
+            link_data = rb.create_bio_link(variant_key, variant.get("booking_url", BOOKING_URL))
+            short_link = link_data.get("shortUrl", REBRANDLY_LINK)
+            rebrandly_link_id = link_data.get("id")
+            rebrandly_clicks_before = link_data.get("clicks", 0)
+            print(f"  Short link: {short_link}")
+            print(f"  Link ID: {rebrandly_link_id}")
+            print(f"  Current clicks: {rebrandly_clicks_before}")
+        except Exception as e:
+            print(f"  Rebrandly API error (using fallback link): {e}")
+            short_link = REBRANDLY_LINK
+    else:
+        print(f"\n  (Rebrandly API not configured — using static link {REBRANDLY_LINK})")
+
+    bio_content = load_bio(variant["file"], short_link=short_link)
 
     print("=" * 60)
     print(f"BIO PUSH — Variant {variant_key}: {variant['id']}")
     print("=" * 60)
     print(f"  Strategy: {variant['strategy']}")
     print(f"  Headline: {variant['headline']}")
+    print(f"  Short link: {short_link}")
     print(f"  Length: {len(bio_content)} chars")
     print(f"\n  Bio preview:\n{bio_content[:300]}...")
 
@@ -192,6 +226,9 @@ def main():
     ledger["current_bio_started_at"] = now_iso()
     ledger["current_bio_start_views"] = before_views
     ledger["current_bio_start_clicks"] = before_clicks
+    ledger["current_rebrandly_link"] = short_link
+    ledger["current_rebrandly_link_id"] = rebrandly_link_id
+    ledger["current_rebrandly_clicks_start"] = rebrandly_clicks_before
     save_ledger(ledger)
     print(f"\n  Experiment ledger updated: {variant['id']}")
 
@@ -206,8 +243,11 @@ def main():
         "strategy": variant["strategy"],
         "headline": variant["headline"],
         "bio_length": len(bio_content),
-        "rebrandly_present": REBRANDLY_LINK in bio_content,
-        "rebrandly_verified_live": REBRANDLY_LINK in v_bio,
+        "short_link": short_link,
+        "rebrandly_link_id": rebrandly_link_id,
+        "rebrandly_clicks_before": rebrandly_clicks_before,
+        "rebrandly_present": short_link in bio_content,
+        "rebrandly_verified_live": short_link in v_bio,
         "before_views": before_views,
         "before_clicks": before_clicks,
         "old_headline": old_headline,
@@ -221,7 +261,11 @@ def main():
     print("PUSH COMPLETE")
     print(f"  Bio: {variant['id']}")
     print(f"  Headline: {v_headline}")
-    print(f"  Rebrandly: {'LIVE' if REBRANDLY_LINK in v_bio else 'NOT FOUND'}")
+    print(f"  Rebrandly: {'LIVE' if short_link in v_bio else 'NOT FOUND'}")
+    print(f"  Short link: {short_link}")
+    if rebrandly_link_id:
+        print(f"  Rebrandly link ID: {rebrandly_link_id}")
+        print(f"  Clicks at push: {rebrandly_clicks_before}")
     print(f"  Baseline views: {before_views}")
     print(f"  Baseline clicks: {before_clicks}")
     print("=" * 60)
