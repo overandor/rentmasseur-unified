@@ -1355,7 +1355,7 @@ def main():
             if visitors and isinstance(visitors[0], dict) and visitors[0].get("observation") == "unavailable":
                 sentinel = visitors[0]
                 log(f"VISITOR SCRAPE UNAVAILABLE: {sentinel.get('error', 'unknown')}", "ERROR")
-                results["visitors_found"] = 0
+                results["visitors_found"] = None
                 results["observation"] = "unavailable"
                 results["scrape_error"] = sentinel.get("error", "unknown")
                 write_receipt("visit_back", "unavailable", {
