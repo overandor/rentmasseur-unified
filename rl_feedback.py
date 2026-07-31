@@ -172,8 +172,8 @@ def scrape_profile_stats() -> dict:
 
         profile_stats = ad_stats.get("profileStatistics") if isinstance(ad_stats, dict) else None
         if not isinstance(profile_stats, dict) or not profile_stats:
-            logger.warning("profileStatistics is null/empty — stats unavailable via API")
-            return dict(NO_OBSERVATION, error="profileStatistics_null", scraped_at=datetime.now(timezone.utc).isoformat())
+            logger.warning("profileStatistics is null/empty — falling back to Selenium scrape")
+            raise ValueError("profileStatistics_null")
 
         stats = {
             "scraped_at": datetime.now(timezone.utc).isoformat(),
