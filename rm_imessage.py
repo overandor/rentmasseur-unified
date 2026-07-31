@@ -82,7 +82,7 @@ def get_conversations(limit: int = 50) -> list:
     """Get all conversations with message counts and last message time."""
     conn = get_imessage_conn()
     if not conn:
-        return []
+        return [{"observation": "unavailable", "error": "imessage_db_not_found", "source": "get_conversations"}]
 
     rows = conn.execute("""
         SELECT
@@ -117,7 +117,7 @@ def get_conversation_messages(contact: str, limit: int = 50) -> list:
     """Get messages from a specific contact."""
     conn = get_imessage_conn()
     if not conn:
-        return []
+        return [{"observation": "unavailable", "error": "imessage_db_not_found", "source": "get_conversation_messages"}]
 
     rows = conn.execute("""
         SELECT
@@ -327,7 +327,7 @@ Reply:"""
 def match_visitors_to_contacts() -> list:
     """Try to match RM visitor usernames to iMessage contacts."""
     if not ENGAGEMENT_DB.exists():
-        return []
+        return [{"observation": "unavailable", "error": "engagement_db_not_found", "source": "match_visitors_to_contacts"}]
 
     eng_conn = sqlite3.connect(str(ENGAGEMENT_DB))
     visitors = eng_conn.execute("SELECT username FROM visitors").fetchall()
@@ -335,7 +335,7 @@ def match_visitors_to_contacts() -> list:
 
     im_conn = get_imessage_conn()
     if not im_conn:
-        return []
+        return [{"observation": "unavailable", "error": "imessage_db_not_found", "source": "match_visitors_to_contacts"}]
 
     # Get all iMessage contacts
     contacts = im_conn.execute("SELECT DISTINCT id FROM handle").fetchall()

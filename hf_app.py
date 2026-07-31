@@ -152,7 +152,7 @@ def _engagement_stats():
 
 def _bio_experiments():
     if not os.path.exists(BIO_EXPERIMENTS_DB):
-        return []
+        return [{"observation": "unavailable", "error": "db_not_found", "source": "bio_experiments"}]
     conn = sqlite3.connect(BIO_EXPERIMENTS_DB)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
@@ -167,9 +167,9 @@ def _current_bio():
         try:
             with open(BIO_CACHE) as f:
                 return json.load(f)
-        except Exception:
-            pass
-    return {"bio": "(not fetched)", "char_count": 0}
+        except Exception as e:
+            return {"bio": "(fetch failed)", "char_count": 0, "observation": "unavailable", "error": str(e)}
+    return {"bio": "(not fetched)", "char_count": 0, "observation": "unavailable", "error": "bio_cache_missing"}
 
 
 @app.get("/", response_class=HTMLResponse)

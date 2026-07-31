@@ -661,7 +661,7 @@ class PlaywrightAgent:
         if block:
             log(f"BLOCKED: {block}", "ERROR")
             write_receipt("scrape_visitors", "blocked", {"reason": block})
-            return []
+            return [{"observation": "unavailable", "error": "blocked", "reason": block, "source": "scrape_visitors"}]
 
         load_more_count = 0
         for _ in range(max_load_more):
@@ -751,8 +751,8 @@ class PlaywrightAgent:
                     return {last_online: oMatch?oMatch[1].trim():null, location: lMatch?lMatch[1].trim():null, profile_views: sMatch?parseInt(sMatch[1]):null};
                 }
             """)
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"observation": "unavailable", "error": str(e), "source": "extract_profile_metadata"}
 
     def visit_profile(self, visitor: dict, idx: int, total: int) -> dict:
         uname = visitor["username"]
@@ -834,7 +834,7 @@ class PlaywrightAgent:
         cfg = PAGES.get(page_name)
         if not cfg:
             log(f"Unknown page: {page_name}", "WARN")
-            return {}
+            return {"observation": "unavailable", "error": "unknown_page", "page": page_name, "source": "probe_page"}
 
         log(f"=== PROBE: {page_name} ===")
         log(f"  URL: {cfg['url']}")
@@ -1041,7 +1041,7 @@ class SeleniumAgent:
         if block:
             log(f"BLOCKED: {block}", "ERROR")
             write_receipt("scrape_visitors", "blocked", {"reason": block})
-            return []
+            return [{"observation": "unavailable", "error": "blocked", "reason": block, "source": "scrape_visitors"}]
 
         load_more_count = 0
         for _ in range(max_load_more):
@@ -1131,8 +1131,8 @@ class SeleniumAgent:
                 const sMatch = text.match(/(\\d+)\\s*(?:visits?|views?|profile\\s*views?)/i);
                 return {last_online: oMatch?oMatch[1].trim():null, location: lMatch?lMatch[1].trim():null, profile_views: sMatch?parseInt(sMatch[1]):null};
             """)
-        except Exception:
-            return {}
+        except Exception as e:
+            return {"observation": "unavailable", "error": str(e), "source": "extract_profile_metadata"}
 
     def visit_profile(self, visitor: dict, idx: int, total: int) -> dict:
         uname = visitor["username"]
@@ -1230,7 +1230,7 @@ class SeleniumAgent:
 
         cfg = PAGES.get(page_name)
         if not cfg:
-            return {}
+            return {"observation": "unavailable", "error": "unknown_page", "page": page_name, "source": "probe_page"}
 
         log(f"=== PROBE: {page_name} ===")
         try:

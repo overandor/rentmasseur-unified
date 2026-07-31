@@ -105,7 +105,7 @@ def collect_stats() -> dict:
             pass
     except Exception as e:
         logger.error("Stats collection failed: %s", e)
-    return {}
+    return {"observation": "unavailable", "error": "collect_stats_failed", "source": "orchestrator"}
 
 
 def run_bio_rotation(dry_run: bool = False) -> bool:
